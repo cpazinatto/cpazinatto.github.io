@@ -91,6 +91,9 @@
 html,body{margin:0;height:100%;height:100dvh;background:var(--fundo);color:var(--texto);overflow:hidden}
 body{font-family:var(--f-texto);display:flex;align-items:center;justify-content:center}
 math{font-family:var(--f-math)}
+/* Texto dentro de fórmula (\text{...}) na letra do texto (10/11/2026): a Luciole Math não tem letras acentuadas, e o Chrome
+   montava o í com o i de ponto e o acento solto. */
+math mtext{font-family:var(--f-texto)}
 /* A barra começa no canto do traço (tema/ajustar_radical.py); esta é a folga até o conteúdo, e a barra a cobre. */
 msqrt>:first-child,mroot>:first-child{margin-inline-start:.08em}
 
