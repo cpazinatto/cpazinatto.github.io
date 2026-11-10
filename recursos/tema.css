@@ -88,15 +88,16 @@
 }
 
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--fundo);color:var(--texto);overflow:hidden}
+html,body{margin:0;height:100%;height:100dvh;background:var(--fundo);color:var(--texto);overflow:hidden}
 body{font-family:var(--f-texto);display:flex;align-items:center;justify-content:center}
 math{font-family:var(--f-math)}
 /* A barra começa no canto do traço (tema/ajustar_radical.py); esta é a folga até o conteúdo, e a barra a cobre. */
 msqrt>:first-child,mroot>:first-child{margin-inline-start:.08em}
 
 /* Quadro */
-.quadro{display:none;position:relative;width:min(100vw,177.778vh);aspect-ratio:16/9;
-  background:var(--fundo);container-type:inline-size;overflow:hidden}
+/* dvh (10/11/2026): no celular deitado, 100vh inclui a área sob as barras do navegador e o quadro passava da tela. */
+.quadro{display:none;position:relative;width:min(100vw,177.778vh);width:min(100vw,177.778dvh);aspect-ratio:16/9;
+  background:var(--fundo);container-type:inline-size;overflow:hidden;touch-action:pan-y pinch-zoom}
 .quadro.ativo{display:block}
 /* Troca de quadro: um véu da cor de fundo cobre o atual e sai de cima do seguinte (tempo em tema.js).
    O quadro em si nunca fica transparente. */
