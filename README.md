@@ -22,3 +22,7 @@ Câmpus Pelotas), publicada pelo GitHub Pages em https://cpazinatto.github.io/di
 
 O domínio próprio antigo (`cpazinatto.me`, arquivo `CNAME`) saiu em 10/11/2026: o domínio não existia mais, e o endereço
 `cpazinatto.github.io` redirecionava para ele. O arquivo está no histórico do git.
+
+Versão da página (10/11/2026, como no material de Cálculo I): o rodapé de `disciplinas/index.html` diz "Versão de
+dd/mm/aaaa, hh:mm", o momento da última mudança na página. Não há montagem aqui: a cada edição da página, atualizar a
+versão à mão, no mesmo commit.
