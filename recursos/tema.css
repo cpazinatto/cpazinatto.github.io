@@ -147,6 +147,8 @@ html:not(.js) .quadro{display:block;margin:0 auto 12px}
 .divisor .tit{font-weight:700;font-size:calc(4.9cqw*var(--tam));line-height:1.16}
 .divisor .tra{width:15cqw;height:.6cqw;background:var(--define);margin:.8cqw 0}
 .divisor .ses{color:var(--apoio)}
+/* Versão da aula (10/11/2026): discreta, no canto oposto ao logo. */
+.divisor .versao{position:absolute;left:7cqw;bottom:4cqw;font-size:calc(1.5cqw*var(--tam));color:var(--apoio)}
 .in h2,.bloco>h3,.divisor .tit{font-family:var(--f-titulo)}
 .logo{position:absolute;right:4.6cqw;bottom:4cqw;width:16cqw;height:auto}
 /* Logos em SVG (tema/construir.py, logos_defs): cores da marca no claro; no escuro, tudo na cor do texto e sem preenchimentos,
