@@ -1,15 +1,17 @@
 # cpazinatto.github.io
 
 Página principal do material didático das disciplinas do Prof. Cássio Pazinatto (Coordenadoria de Matemática, IFSul
-Câmpus Pelotas), publicada pelo GitHub Pages em https://cpazinatto.github.io/.
+Câmpus Pelotas), publicada pelo GitHub Pages em https://cpazinatto.github.io/disciplinas/.
 
-- `index.html`: a página, com um cartão por disciplina. Para abrir uma disciplina, ponha o endereço do material no `href` do
+- `index.html`: em branco, sem link nenhum (pedido do professor, 10/11/2026): quem abre só `cpazinatto.github.io` não vê o
+  material. Não é proteção, já que o repositório é público; só evita que se chegue ao material sem conhecer o endereço.
+- `disciplinas/index.html`: a página, com um cartão por disciplina. Para abrir uma disciplina, ponha o endereço do material no `href` do
   título e troque a linha de estado (`<span class="estado">`) por `<a class="aula" href="...">Abrir o material</a>`.
   Disciplina nova: um `<article class="disc">` a mais na seção do nível de ensino.
 - Preferências de leitura, as mesmas do material das disciplinas: modo (M), cores (T: Padrão, Alto contraste, Papel,
   Vibrante), letra (L: Luciole, Fira Sans, STIX, Fira Code) e tamanho (A). Ficam guardadas no navegador com o prefixo
   `leitura-`, comum a todas as páginas deste site: a escolha feita aqui vale nas disciplinas publicadas em
-  `cpazinatto.github.io/...`, e vice-versa.
+  `cpazinatto.github.io/...`, e vice-versa. A página usa `../recursos/`.
 - `recursos/`: cópia de `tema.css`, `preferencias.js` e `fontes/` do material de Cálculo I
   (`calculo-i-ifsul-2027`, `saida/recursos/` e `tema/preferencias.js`). Quando o tema mudar lá, copiar de novo para cá.
   As licenças das letras estão em `recursos/fontes/` (Luciole: CC BY 4.0; as demais: SIL Open Font License).
