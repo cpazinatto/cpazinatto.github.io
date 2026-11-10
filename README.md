@@ -5,6 +5,7 @@ Câmpus Pelotas), publicada pelo GitHub Pages em https://cpazinatto.github.io/di
 
 - `index.html`: em branco, sem link nenhum (pedido do professor, 10/11/2026): quem abre só `cpazinatto.github.io` não vê o
   material. Não é proteção, já que o repositório é público; só evita que se chegue ao material sem conhecer o endereço.
+- Todas as páginas levam `<meta name="robots" content="noindex">`: não aparecem na busca do Google.
 - `disciplinas/index.html`: a página, com um cartão por disciplina. Para abrir uma disciplina, ponha o endereço do material no `href` do
   título e troque a linha de estado (`<span class="estado">`) por `<a class="aula" href="...">Abrir o material</a>`.
   Disciplina nova: um `<article class="disc">` a mais na seção do nível de ensino.
