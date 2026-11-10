@@ -1,0 +1,317 @@
+/* Tema das aulas de Cálculo I, IFSul Pelotas, 2027/1.
+   Cores por função: nenhum quadro usa cor fixa. O modo troca só os valores.
+   Unidades em cqw (% da largura do quadro): 3,09cqw equivale a 14 pt em 160 mm. */
+@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Regular.ttf) format("truetype");font-weight:400}
+@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Bold.ttf) format("truetype");font-weight:700}
+@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Regular-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
+@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Bold-Italic.ttf) format("truetype");font-weight:700;font-style:italic}
+/* A Luciole declara ascendente de 0,791 em, mas os acentos sobem até 1,09 em, e o Chrome chega a cortar o excesso
+   no alto de títulos grandes até redesenhar. Esta cópia da Bold declara a altura real. Ascendente e descendente
+   crescem juntos (a diferença segue 0,567 em) para a linha de base não sair do lugar com line-height explícito. */
+@font-face{font-display:block;font-family:"Luciole Titulo";src:url(fontes/Luciole-Bold.ttf) format("truetype");ascent-override:112%;descent-override:55.3%;line-gap-override:0%;font-weight:700}
+@font-face{font-display:block;font-family:"Luciole Math";src:url(fontes/Luciole-Math-Raiz.otf) format("opentype")}
+/* Outras letras, cada uma com a sua fonte de matemática. Só são carregadas se escolhidas (tema/preferencias.js). */
+@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Regular.ttf) format("truetype");font-weight:400}
+@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Bold.ttf) format("truetype");font-weight:700}
+@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
+@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-BoldItalic.ttf) format("truetype");font-weight:700;font-style:italic}
+@font-face{font-display:block;font-family:"Fira Math";src:url(fontes/FiraMath-Regular.otf) format("opentype")}
+@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Regular.ttf) format("truetype");font-weight:400}
+@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Bold.ttf) format("truetype");font-weight:700}
+@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
+@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-BoldItalic.ttf) format("truetype");font-weight:700;font-style:italic}
+@font-face{font-display:block;font-family:"STIX Two Math";src:url(fontes/STIXTwoMath-Regular.ttf) format("truetype")}
+/* Fira Code: monoespaçada da família Fira, sem ligaduras (recortadas fora) e sem itálico próprio (o Chrome inclina a regular).
+   Monoespaçada ocupa uns 27% a mais de linha que a Luciole; size-adjust a traz para a largura para a qual os quadros foram escritos. */
+@font-face{font-display:block;font-family:"Fira Code";src:url(fontes/FiraCode-Regular.ttf) format("truetype");font-weight:400;size-adjust:79%}
+@font-face{font-display:block;font-family:"Fira Code";src:url(fontes/FiraCode-Bold.ttf) format("truetype");font-weight:700;size-adjust:79%}
+
+:root{
+  --f-texto:Luciole,Verdana,sans-serif;--f-titulo:"Luciole Titulo",Luciole,Verdana,sans-serif;--f-math:"Luciole Math",Luciole,serif;
+}
+:root{--tam:1}
+/* Tamanho da letra: só o texto muda; o quadro, os gráficos e os espaços ficam. Grande é o tamanho para o qual os
+   quadros foram escritos (e o do PDF); acima dele o conteúdo não cabe, por isso as outras opções são menores. */
+:root[data-tamanho="medio"]{--tam:.92}
+:root[data-tamanho="pequeno"]{--tam:.85}
+:root[data-letra="fira"]{--f-texto:"Fira Sans",Verdana,sans-serif;--f-titulo:"Fira Sans",Verdana,sans-serif;--f-math:"Fira Math","Fira Sans",math}
+:root[data-letra="mono"]{--f-texto:"Fira Code",Menlo,monospace;--f-titulo:"Fira Code",Menlo,monospace;--f-math:"Fira Math","Fira Code",math}
+:root[data-letra="stix"]{--f-texto:"STIX Two Text",Georgia,serif;--f-titulo:"STIX Two Text",Georgia,serif;--f-math:"STIX Two Math","STIX Two Text",math}
+
+/* Cores: o significado de cada uma é fixo (definição verde, exemplo azul, Sua vez âmbar...); o tema muda só o tom.
+   Cada tema tem modo claro e escuro. */
+:root{
+  --fundo:#FCFCF9;--texto:#12161C;--apoio:#4A5361;--grade:#DDDFDA;--eixo:#20252C;
+  --define:#0A6B47;--exemplo:#0A5CA8;--suavez:#855000;--sobre-suavez:#FFFFFF;
+  --atencao:#B02E0D;--gancho:#6E2AA8;--neutro:#4A5361;--curva-a:#B3186F;--curva-b:#00696F;
+  color-scheme:light;
+}
+:root[data-modo="escuro"]{
+  --fundo:#11151C;--texto:#F4F5F0;--apoio:#B9C1CC;--grade:#2E3643;--eixo:#DDE1E7;
+  --define:#4ADE9D;--exemplo:#6CC4FF;--suavez:#FFC83D;--sobre-suavez:#11151C;
+  --atencao:#FF8A66;--gancho:#D9A6FF;--neutro:#B9C1CC;--curva-a:#FF7AC6;--curva-b:#5CE1E6;
+  color-scheme:dark;
+}
+/* Alto contraste: branco e preto puros, cores mais fechadas no claro e mais abertas no escuro. */
+:root[data-cores="contraste"]{
+  --fundo:#FFFFFF;--texto:#000000;--apoio:#2E3540;--grade:#C4C8CE;--eixo:#000000;
+  --define:#005C36;--exemplo:#00489A;--suavez:#6B3E00;--sobre-suavez:#FFFFFF;
+  --atencao:#9A1F00;--gancho:#5B1A99;--neutro:#2E3540;--curva-a:#9C0059;--curva-b:#00585D;
+}
+:root[data-cores="contraste"][data-modo="escuro"]{
+  --fundo:#000000;--texto:#FFFFFF;--apoio:#D0D6DE;--grade:#3A424E;--eixo:#FFFFFF;
+  --define:#5CF2AE;--exemplo:#8AD3FF;--suavez:#FFD54A;--sobre-suavez:#000000;
+  --atencao:#FFA083;--gancho:#E4BFFF;--neutro:#D0D6DE;--curva-a:#FF94D2;--curva-b:#7CF0F4;
+}
+/* Papel: fundo creme e tinta quente, menos brilho na tela. */
+:root[data-cores="papel"]{
+  --fundo:#F7F1E3;--texto:#2A2118;--apoio:#5C5040;--grade:#E2D9C4;--eixo:#2A2118;
+  --define:#1D6638;--exemplo:#1F5491;--suavez:#7F4500;--sobre-suavez:#FFFFFF;
+  --atencao:#A3300E;--gancho:#672B94;--neutro:#5C5040;--curva-a:#9E1960;--curva-b:#0A615D;
+}
+:root[data-cores="papel"][data-modo="escuro"]{
+  --fundo:#1E1913;--texto:#F1E8D6;--apoio:#C2B59E;--grade:#3A3226;--eixo:#E6DCC8;
+  --define:#7DD9A0;--exemplo:#8CC2F0;--suavez:#F2C14E;--sobre-suavez:#1E1913;
+  --atencao:#F79A78;--gancho:#D3AEF5;--neutro:#C2B59E;--curva-a:#F28CC0;--curva-b:#6FD6CF;
+}
+/* Vibrante: cores saturadas e caixas mais tingidas. No claro, fundo branco (o creme acinzenta as caixas) e tinta índigo; no escuro, fundo roxo
+   quase preto e cores neon. Contraste com o fundo de 5,4:1 ou mais em todas as cores. */
+:root[data-cores="vibrante"]{
+  --fundo:#FFFFFF;--texto:#1B0B3A;--apoio:#4B3A78;--grade:#D5CCEB;--eixo:#1B0B3A;
+  --define:#007A3C;--exemplo:#0047E0;--suavez:#B04A00;--sobre-suavez:#FFFFFF;
+  --atencao:#C80028;--gancho:#8A00D4;--neutro:#4B3A78;--curva-a:#C20072;--curva-b:#00737F;--tinta:14%;
+}
+:root[data-cores="vibrante"][data-modo="escuro"]{
+  --fundo:#0D0221;--texto:#FFFFFF;--apoio:#C9BDF2;--grade:#2C1A52;--eixo:#F2EDFF;
+  --define:#2BFF88;--exemplo:#3DD5FF;--suavez:#FFE600;--sobre-suavez:#0D0221;
+  --atencao:#FF5E3A;--gancho:#E070FF;--neutro:#C9BDF2;--curva-a:#FF3DB4;--curva-b:#00F5D4;--tinta:18%;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--fundo);color:var(--texto);overflow:hidden}
+body{font-family:var(--f-texto);display:flex;align-items:center;justify-content:center}
+math{font-family:var(--f-math)}
+/* A barra começa no canto do traço (tema/ajustar_radical.py); esta é a folga até o conteúdo, e a barra a cobre. */
+msqrt>:first-child,mroot>:first-child{margin-inline-start:.08em}
+
+/* Quadro */
+.quadro{display:none;position:relative;width:min(100vw,177.778vh);aspect-ratio:16/9;
+  background:var(--fundo);container-type:inline-size;overflow:hidden}
+.quadro.ativo{display:block}
+/* Troca de quadro: um véu da cor de fundo cobre o atual e sai de cima do seguinte (tempo em tema.js).
+   O quadro em si nunca fica transparente. */
+.veu{position:fixed;inset:0;z-index:8;background:var(--fundo);opacity:0;pointer-events:none;transition:opacity var(--fade,0s) ease}
+.trocando:not(.geral) .veu{opacity:1}
+/* Sem JavaScript: os quadros aparecem em sequência, em vez de tela em branco. */
+html:not(.js),html:not(.js) body{overflow:auto;height:auto;display:block}
+html:not(.js) .quadro{display:block;margin:0 auto 12px}
+.in{position:absolute;inset:0;padding:3.2cqw 4.6cqw 4.8cqw;font-size:calc(3.09cqw*var(--tam));line-height:1.28;
+  display:flex;flex-direction:column;gap:1.5cqw}
+.in>*{flex:none}
+.in p{margin:0}
+.in h2{margin:0;font-size:calc(4cqw*var(--tam));line-height:1.15;font-weight:700}
+.pe{position:absolute;left:4.6cqw;right:4.6cqw;bottom:1.3cqw;display:flex;justify-content:space-between;
+  font-size:calc(1.75cqw*var(--tam));color:var(--apoio)}
+.oculto{visibility:hidden}
+.centro{justify-content:center}
+
+/* Blocos */
+.bloco{border:.2cqw solid var(--k);border-left-width:.75cqw;--sup:color-mix(in srgb,var(--k) var(--tinta,9%),var(--fundo));background:var(--sup);
+  padding:1cqw 1.8cqw 1.2cqw;display:flex;flex-direction:column;gap:1cqw}
+.bloco>h3{margin:0;color:var(--k);font-size:calc(3.3cqw*var(--tam));line-height:1.2;font-weight:700}
+/* Etiqueta sobre a borda superior, com o título logo abaixo: Definição 2, Exemplo 3, Gancho, Você vai precisar de... */
+.bloco:has(>h3.rotulado){margin-top:1.95cqw}
+.bloco>h3.rotulado{display:flex;flex-direction:column;align-items:flex-start;gap:.5cqw}
+.rot{background:var(--fundo);color:var(--k);border:.2cqw solid var(--k);font-size:calc(2.5cqw*var(--tam));line-height:1;padding:.5cqw .9cqw;
+  margin:-3.15cqw 0 0 -1cqw}
+.de,.te,.con{--k:var(--define)}.ex{--k:var(--exemplo)}.at{--k:var(--atencao)}
+.ga{--k:var(--gancho)}.re,.inf{--k:var(--neutro)}
+/* Etiqueta "Base: B03" no canto direito da retomada, sobre a borda, como a etiqueta da esquerda. */
+.bloco:has(>.base-etq){position:relative;margin-top:1.95cqw}
+.base-etq{position:absolute;top:-1.55cqw;right:1.4cqw;background:var(--fundo);color:var(--k);border:.2cqw solid var(--k);
+  font-size:calc(2.2cqw*var(--tam));line-height:1;padding:.45cqw .8cqw;font-weight:700}
+.base-etq a{color:inherit;text-decoration:none}
+.base-etq a:hover{text-decoration:underline}
+
+/* Sua vez e gabarito */
+.faixa{position:absolute;left:0;right:0;top:0;height:7cqw;padding:0 4.6cqw;display:flex;align-items:center;
+  justify-content:space-between;font-size:calc(3.5cqw*var(--tam));font-weight:700}
+.suavez .faixa{background:var(--suavez);color:var(--sobre-suavez)}
+.gabarito .faixa{color:var(--suavez);border-bottom:.45cqw solid var(--suavez)}
+.suavez .in,.gabarito .in{padding-top:9.2cqw}
+
+/* Divisor de sessão */
+.divisor .in{justify-content:center;padding-left:7cqw;gap:1.2cqw}
+.divisor .cod{color:var(--define);font-weight:700;font-size:calc(3.5cqw*var(--tam))}
+.divisor .tit{font-weight:700;font-size:calc(4.9cqw*var(--tam));line-height:1.16}
+.divisor .tra{width:15cqw;height:.6cqw;background:var(--define);margin:.8cqw 0}
+.divisor .ses{color:var(--apoio)}
+.in h2,.bloco>h3,.divisor .tit{font-family:var(--f-titulo)}
+.logo{position:absolute;right:4.6cqw;bottom:4cqw;width:16cqw;height:auto}
+/* Logos em SVG (tema/construir.py, logos_defs): cores da marca no claro; no escuro, tudo na cor do texto e sem preenchimentos,
+   como os PNG monocromáticos de antes. */
+.lg-defs{position:absolute;width:0;height:0;overflow:hidden}
+.lg{display:block;--lg-verde:#359830;--lg-verm:#C90C0F;--lg-tinta:#281D15;--lg-c1:#ED3237;--lg-c2:#00AFEF;--lg-c3:#00A859;--lg-c4:#FFF212;--lg-fundo:#FEFEFE}
+.lg-coord{--lg-tinta:#201E1E}
+:root[data-modo="escuro"] .lg{--lg-verde:var(--texto);--lg-verm:var(--texto);--lg-tinta:var(--texto);--lg-c1:transparent;--lg-c2:transparent;--lg-c3:transparent;--lg-c4:transparent;--lg-fundo:transparent}
+
+/* Colunas e tabelas */
+.col{display:grid;grid-template-columns:var(--a,1fr) var(--b,1fr);gap:2.6cqw;align-items:center;min-width:0}
+.col.topo{align-items:start}
+/* Conjuntos um dentro do outro (diagrama de Euler), como "extremo local ⊂ ponto crítico" (T20). */
+.conjunto{border:.4cqw solid var(--neutro);border-radius:2.4cqw;padding:1cqw 1.8cqw 1.4cqw;display:flex;flex-direction:column;gap:.8cqw;align-items:flex-start}
+.conjunto>.nome{font-weight:700;color:var(--neutro);white-space:nowrap}
+.conjunto>.dentro{display:flex;align-items:center;gap:2.4cqw}.conjunto>.dentro>span{white-space:nowrap}
+.conjunto.a{border-color:var(--curva-a)}.conjunto.a>.nome{color:var(--curva-a)}
+/* Conta em cadeia (L'Hospital): começo | sinal | resto, com os sinais um embaixo do outro, centrados na coluna. */
+.conta{display:grid;grid-template-columns:auto auto 1fr;column-gap:.35em;row-gap:1.1cqw;align-items:baseline;justify-content:start;min-width:0}
+.conta>p{margin:0}.conta>.s{justify-self:center}
+/* em-pe: o começo da conta numa linha própria, para coluna estreita; os sinais seguem alinhados. */
+.conta.em-pe>:first-child{grid-column:1/-1}
+.col.linhas,.col.linhas.topo{row-gap:1.1cqw;align-items:baseline}
+.col.linhas>p{margin:0}
+.col>*{min-width:0}
+.col3,.col4{display:grid;gap:1.4cqw;align-items:start;min-width:0}
+.col3{grid-template-columns:repeat(3,1fr)}.col4{grid-template-columns:repeat(4,1fr)}
+.col3>*,.col4>*{min-width:0}
+.pilha{display:flex;flex-direction:column;gap:1.1cqw}
+/* Itens lado a lado, (a) (b) ...: grade de colunas, cada uma alinhada à esquerda, começando na margem como o resto do texto. */
+/* Letra de item, (a), (b)...: cor do "Sua vez", sem negrito (09/11/2026), para marcar onde começa o item seguinte. */
+.it{color:var(--suavez)}
+.itens{display:grid;grid-template-columns:repeat(var(--n),auto);column-gap:5cqw;row-gap:1.1cqw;justify-content:start;align-items:baseline}
+/* Conta que continua em linhas começadas por "=": os sinais de igual ficam um embaixo do outro. */
+.igual{display:grid;grid-template-columns:auto 1fr;column-gap:0;row-gap:1.1cqw;align-items:baseline;justify-content:start}
+.igual>p{margin:0}
+.grande{font-size:calc(3.5cqw*var(--tam))}
+.ap{color:var(--apoio)}
+.nw{white-space:nowrap}
+.legenda{font-size:calc(2.6cqw*var(--tam));text-align:center}
+.lista{margin:0;padding-left:3.4cqw;display:flex;flex-direction:column;gap:.9cqw}
+.lista li::marker{color:var(--apoio)}
+table{border-collapse:collapse;text-align:center;font-size:calc(2.9cqw*var(--tam))}
+th{font-weight:400;color:var(--apoio);padding:.5cqw 1.2cqw;border-bottom:.22cqw solid var(--eixo)}
+td{padding:.75cqw 1.2cqw;border-bottom:.07cqw solid var(--grade)}
+.esq td,.esq th{text-align:left}
+.dest{color:var(--k,var(--exemplo));font-weight:700}
+
+/* Quadro de sinais */
+table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
+.qs th,.qs td{padding:.55cqw .6cqw}
+.qs td.r{text-align:right;padding-right:1.8cqw;white-space:nowrap}
+.qs .s{min-width:9.5cqw}
+.qs .p{min-width:4.5cqw;border-left:.14cqw dashed var(--apoio);border-right:.14cqw dashed var(--apoio);color:var(--texto)}
+.qs th.p{border-top:0;font-weight:700}
+.col .qs .s{min-width:3.4cqw}
+.col .qs td.r{padding-right:1cqw}
+.qs .mais{color:var(--curva-b);font-weight:700}
+.qs .menos{color:var(--curva-a);font-weight:700}
+.qs tr.res td{border-top:.3cqw solid var(--eixo);font-weight:700}
+
+/* Gráficos */
+.graf{display:block;margin:auto;max-width:100%;height:auto;overflow:visible}
+.graf .g{stroke:var(--grade);stroke-width:1.5}
+.graf .ax{stroke:var(--eixo);stroke-width:3;fill:none}
+.graf .pt{fill:var(--eixo)}
+.graf .pt.a{fill:var(--curva-a);stroke:none}.graf .pt.b{fill:var(--curva-b);stroke:none}
+.graf text{font-family:var(--f-texto);paint-order:stroke;stroke:var(--sup,var(--fundo));stroke-width:5px;stroke-linejoin:round}
+.graf .tk{fill:var(--texto);font-size:24px}
+.graf.reta .tk{font-size:28px}
+.graf .axl{fill:var(--texto);font-size:26px;font-style:italic}
+.graf polyline{fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-width:6}
+.graf .original{stroke:var(--apoio);stroke-width:4.5;stroke-dasharray:13 11;stroke-linecap:butt}
+.graf .original.sol{stroke:var(--texto);stroke-width:5;stroke-dasharray:none;stroke-linecap:round}
+.graf .a{stroke:var(--curva-a)}
+.graf .b{stroke:var(--curva-b);stroke-dasharray:24 9;stroke-linecap:butt}
+/* Intervalo na reta é sempre linha cheia: tracejado sugeriria que faltam pontos. */
+.graf.reta .b{stroke-dasharray:none}
+.graf .b.sol{stroke-dasharray:none;stroke-linecap:round}
+/* Reta tangente: sólida e mais fina que as curvas, para não disputar com o tracejado do gráfico original. */
+.graf .b.tg{stroke-dasharray:none;stroke-linecap:round;stroke-width:4}
+.graf .guia{stroke:var(--apoio);stroke-width:2.5;stroke-dasharray:6 7}
+.graf .cheia.a{fill:var(--curva-a);stroke:var(--curva-a)}
+.graf .cheia.b{fill:var(--curva-b);stroke:var(--curva-b);stroke-dasharray:none}
+.graf .cheia{stroke-width:2}
+/* Ponto cheio neutro: sem esta regra o SVG pinta de preto, e no modo escuro o ponto some. */
+.graf .cheia.original{fill:var(--apoio);stroke:var(--apoio);stroke-dasharray:none}
+.graf .aberta{fill:var(--sup,var(--fundo));stroke-width:4.5;stroke-dasharray:none}
+.graf .seta{stroke:var(--eixo);stroke-width:3.5;fill:none}
+.graf .lb{font-size:28px;font-weight:400;font-style:italic}
+.graf .lbf{font-size:32px;line-height:60px;color:var(--texto)}
+.graf .lbf.a{color:var(--curva-a)}.graf .lbf.b{color:var(--curva-b)}.graf .lbf.original{color:var(--apoio)}
+.graf .lb.a{fill:var(--curva-a);stroke:var(--sup,var(--fundo))}
+.graf .lb.b{fill:var(--curva-b);stroke:var(--sup,var(--fundo));stroke-dasharray:none}
+.graf .lb.original{fill:var(--apoio);stroke:var(--sup,var(--fundo));stroke-width:5px;stroke-dasharray:none}
+.circ line,.circ rect,.circ path{stroke:var(--eixo);stroke-width:3.5;fill:none}
+/* Cantos e pontas redondos: com a junção em ponta, padrão do SVG, os ângulos agudos (vértice de pirâmide, de trapézio)
+   ganham um esporão que passa do canto. */
+.circ line,.circ rect,.circ path,.circ polygon,.circ polyline{stroke-linejoin:round;stroke-linecap:round}
+.circ .fc{fill:var(--sup,var(--fundo))}
+.circ text{fill:var(--texto);font-size:24px;font-family:var(--f-texto);paint-order:stroke;stroke:var(--sup,var(--fundo));stroke-width:5px;stroke-linejoin:round}
+/* Fórmula em figura feita à mão (raiz, fração): <foreignObject><div class="lbf a">\(\sqrt2\)</div></foreignObject>, como no <grafico>. */
+.circ .lbf{font-size:24px;line-height:36px;color:var(--texto)}
+.circ .lbf.a{color:var(--curva-a)}.circ .lbf.b{color:var(--curva-b)}.circ .lbf.original{color:var(--apoio)}
+/* Com a Fira Code, os rótulos dos gráficos ficam na Fira Sans, da mesma família: em monoespaçada, "t (s)" não cabe no canto do eixo. */
+:root[data-letra="mono"] .graf text,:root[data-letra="mono"] .circ text{font-family:"Fira Sans",Verdana,sans-serif}
+/* A Fira Math não tem size-adjust (é a mesma da letra Fira Sans): reduzida aqui para acompanhar a Fira Code a 79%. */
+:root[data-letra="mono"] math{font-size:.85em}
+
+/* Animações: gráfico com controles deslizantes, grandes para o projetor */
+.anima{display:flex;flex-direction:column;gap:.7cqw;align-self:stretch}
+.controles{display:flex;flex-wrap:wrap;justify-content:center;gap:.5cqw 3cqw}
+.controle{flex:0 1 58cqw;display:flex;align-items:center;gap:1cqw;font-size:calc(3.09cqw*var(--tam));line-height:1.2}
+.anima:not(.lado) .controles:has(.controle+.controle) .controle{flex-basis:43cqw}
+.anima.lado{flex-direction:row;align-items:center;gap:1.5cqw}
+.anima.lado .graf{margin:0}
+.anima.lado .controles{flex:1 1 0;min-width:0;flex-direction:column;flex-wrap:nowrap;gap:1.5cqw}
+.anima.lado .controle{flex:none}
+.controle .valor{text-align:right;white-space:nowrap;color:var(--curva-a);font-weight:700}
+.controle output{font-variant-numeric:tabular-nums}
+.controle .limite{font-size:calc(2.3cqw*var(--tam));color:var(--apoio)}
+.controle input{appearance:none;-webkit-appearance:none;flex:1 1 0;min-width:6cqw;height:3cqw;margin:0;background:transparent;cursor:grab}
+.controle input:active{cursor:grabbing}
+.controle input::-webkit-slider-runnable-track{height:.6cqw;border-radius:.3cqw;background:var(--apoio)}
+.controle input::-webkit-slider-thumb{-webkit-appearance:none;width:2.6cqw;height:2.6cqw;margin-top:-1cqw;border-radius:50%;background:var(--curva-a);border:.3cqw solid var(--fundo);box-shadow:0 0 0 .15cqw var(--curva-a)}
+.controle.escolhido .valor{text-decoration:underline;text-decoration-thickness:.25cqw;text-underline-offset:.5cqw}
+.geral .controles{pointer-events:none}
+
+/* Controles de projeção */
+.ctl{position:fixed;right:10px;bottom:10px;max-width:calc(100vw - 20px);display:flex;flex-wrap:wrap;justify-content:flex-end;white-space:nowrap;gap:4px;align-items:center;opacity:0;transition:opacity .2s;z-index:9;
+  background:var(--fundo);border:1px solid var(--apoio);border-radius:8px;padding:4px;font-size:14px}
+.ctl.ver,.ctl:focus-within{opacity:1}
+.ctl button,.ctl a{font:inherit;color:var(--texto);background:transparent;border:0;border-radius:5px;padding:5px 9px;cursor:pointer;text-decoration:none}
+.ctl button:hover:not(:disabled),.ctl a:hover{background:var(--grade)}
+.ctl button:disabled{opacity:.38;cursor:default}
+.ctl span{padding:0 6px;color:var(--apoio);font-variant-numeric:tabular-nums}
+.ctl.atalhos{top:4px;right:4px;bottom:auto;padding:3px 4px;opacity:1}
+.atalhos kbd{font:inherit;font-weight:700;color:var(--texto);border:1px solid var(--apoio);border-radius:4px;padding:0 6px}
+.atalhos .varios b{font-weight:400;margin-right:6px}
+.atalhos .varios b.esc{font-weight:700;color:var(--curva-a)}
+.geral .atalhos{display:none!important}
+
+/* Visão geral */
+.geral,.geral body{overflow:auto;height:auto}
+.geral body{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding:14px;align-items:start}
+.geral .quadro{display:block;width:100%;outline:1px solid var(--apoio);cursor:pointer}
+.geral .oculto{visibility:visible}
+
+/* Regiões preenchidas (area, entre, entrey) e retângulos de Riemann: tinta da cor da curva, sem traço. */
+.graf .reg{stroke:none;fill:var(--curva-a);fill-opacity:.22}
+.graf .reg.b{fill:var(--curva-b);fill-opacity:.24}
+.graf .reg.original{fill:var(--apoio);fill-opacity:.16}
+.graf .riem{fill:var(--curva-a);fill-opacity:.2;stroke:var(--curva-a);stroke-width:2.5;stroke-dasharray:none;stroke-linejoin:round}
+.graf .riem.b{fill:var(--curva-b);stroke:var(--curva-b)}
+.graf polyline.pol{stroke-width:4;stroke-dasharray:none;stroke-linecap:round}
+.graf .vert{stroke:none}.graf .vert.a{fill:var(--curva-a)}.graf .vert.b{fill:var(--curva-b)}
+/* Sólido 3D (<solido>): a cena ocupa a caixa; os rótulos ficam fora do 3D. Na visão geral, o mouse não gira o sólido. */
+.anima.solido{display:flex;flex-direction:column;align-items:center;gap:1cqw}
+.anima.solido .cena{position:relative;max-width:100%;touch-action:none;cursor:grab}
+.anima.solido .cena canvas{display:block;width:100%!important;height:100%!important}
+.anima.solido .cena .sem3d{display:none}
+.anima.solido .cena.sem .sem3d{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;color:var(--apoio)}
+.anima.solido .rot3{display:flex;gap:2.4cqw;flex-wrap:wrap;justify-content:center}
+.anima.solido .lb3{margin:0;font-style:italic}
+.anima.solido .lb3.a{color:var(--curva-a)}.anima.solido .lb3.b{color:var(--curva-b)}
+.anima.solido .marcas{position:absolute}
+.geral .anima.solido .cena{pointer-events:none}
+.graf .cpt{stroke:none}.graf .cpt.a{fill:var(--curva-a)}.graf .cpt.b{fill:var(--curva-b)}
+.nb{white-space:nowrap}
