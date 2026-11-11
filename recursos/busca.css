@@ -1,0 +1,63 @@
+/* Busca (decisão 28, 11/11/2026): caixa nas páginas de entrada e, por cima da página, nas aulas, listas e módulos (tema/busca.js). */
+.busca{--k:var(--define);margin-top:16px;font-family:var(--f-texto)}
+/* Busca em uso na página de entrada (11/11/2026, pedido do professor: distinguir mais): moldura na cor da busca, fundo
+   tingido e a lupa no campo, para os resultados não se confundirem com a lista de tópicos logo abaixo. */
+.busca.ativa{border:1px solid var(--grade);border-left:6px solid var(--k);border-radius:14px;padding:14px 16px 16px;
+  background:color-mix(in srgb,var(--k) 6%,var(--fundo));box-shadow:0 6px 22px rgba(0,0,0,.08)}
+.b-campo{position:relative}
+.b-campo svg{position:absolute;left:12px;top:50%;width:22px;height:22px;transform:translateY(-50%);fill:none;stroke:var(--apoio);stroke-width:2.4;stroke-linecap:round;pointer-events:none}
+.busca .b-campo input{padding-left:44px}
+.busca.ativa .b-campo svg,.busca .b-campo input:focus+svg{stroke:var(--k)}
+.busca.ativa input,.busca input:focus{border-color:var(--k)}
+.busca input{font:inherit;font-size:calc(18px*var(--tam,1));width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid var(--apoio);border-radius:10px;background:var(--fundo);color:var(--texto)}
+.busca input:focus-visible,.busca button:focus-visible,.b-item:focus-visible{outline:3px solid var(--suavez);outline-offset:2px}
+.b-chips{display:grid;gap:8px;margin-top:12px}
+.b-linha{display:grid;grid-template-columns:5.6em 1fr;gap:8px;align-items:baseline}
+.b-op{display:flex;flex-wrap:wrap;gap:6px 8px}
+.b-chips .b-gr{font-size:14px;color:var(--apoio);font-weight:700}
+.b-chips button{font:inherit;font-size:15px;color:var(--apoio);background:transparent;border:1px solid var(--apoio);border-radius:999px;padding:3px 12px;cursor:pointer}
+.b-chips button[aria-pressed=true]{background:var(--apoio);color:var(--fundo)}
+.b-res{margin-top:8px}
+.b-conta,.b-nada{margin:10px 0 0;font-size:15px;color:var(--apoio)}
+.b-grupo{margin-top:14px}
+.b-grupo h4{margin:0 0 4px;font-size:15px;color:var(--apoio)}
+.b-grupo.c-EE h4{color:var(--exemplo)}.b-grupo.c-EQ h4{color:var(--gancho)}
+.b-item{display:block;text-decoration:none;color:var(--texto);padding:8px 12px;border-radius:8px;border:1px solid var(--grade);margin-top:6px}
+.b-item:hover{border-color:var(--apoio)}
+.b-item b{display:block;font-weight:700}
+.b-item span{display:block;font-size:15px;color:var(--apoio);margin-top:2px}
+.b-item mark{background:color-mix(in srgb,var(--suavez) 28%,transparent);color:inherit;border-radius:3px}
+.busca-sobre{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.66);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:5vh 16px;box-sizing:border-box}
+body.busca-aberta .busca-sobre{display:flex}
+.busca-caixa{--k:var(--define);background:var(--fundo);color:var(--texto);width:min(780px,100%);max-height:88vh;overflow:auto;border-radius:14px;padding:16px 20px 22px;
+  border:1px solid var(--grade);border-top:6px solid var(--k);box-shadow:0 20px 60px rgba(0,0,0,.5);box-sizing:border-box;font-family:var(--f-texto);font-size:18px;line-height:1.35;text-align:left}
+.b-topo{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--grade)}
+.b-topo b{font-size:21px;color:var(--k)}
+.b-topo small{display:block;font-size:14px;color:var(--apoio);margin-top:2px}
+.busca-caixa .busca{margin-top:12px}
+.b-fechar{font:inherit;font-size:15px;color:var(--texto);background:transparent;border:1px solid var(--apoio);border-radius:8px;padding:5px 12px;cursor:pointer}
+/* Por cima da página, a janela já é a moldura: a caixa de dentro fica sem a moldura da página de entrada. */
+.busca-caixa .busca.ativa{border:0;border-radius:0;padding:0;background:none;box-shadow:none}
+/* Etiquetas de cada resultado: o material em cinza cheio; o conteúdo com a cor do bloco no tema (definição e teorema,
+   exemplo, sua vez e exercício, atenção, gancho); o nível da questão só contornado. */
+.b-tags{display:flex;flex-wrap:wrap;gap:4px 6px;margin-bottom:4px}
+.b-item .b-tags{display:flex;margin:0 0 4px;font-size:13px;color:inherit}
+.b-tag{--k:var(--neutro);font-style:normal;font-size:13px;font-weight:700;line-height:1.2;padding:2px 8px;border-radius:999px;
+  color:var(--k);background:color-mix(in srgb,var(--k) 14%,transparent);border:1px solid color-mix(in srgb,var(--k) 45%,transparent)}
+.b-tag.b-tipo{--k:var(--apoio);background:var(--apoio);color:var(--fundo);border-color:var(--apoio)}
+.b-tag.b-de{--k:var(--define)}.b-tag.b-ex{--k:var(--exemplo)}.b-tag.b-sv{--k:var(--suavez)}.b-tag.b-at{--k:var(--atencao)}
+.b-tag.b-ga{--k:var(--gancho)}.b-tag.b-re{--k:var(--neutro)}
+.b-tag.b-nv{--k:var(--apoio);background:transparent;font-weight:400}
+.busca:not(.aberta) .b-chips,.busca:not(.aberta) .b-res{display:none}
+/* Celular (11/11/2026): sem a dica das teclas, e cada grupo de filtros numa linha só, que rola de lado com o dedo, para os
+   resultados ficarem à vista mesmo com o teclado aberto. */
+@media (hover:none),(max-width:560px){.b-topo .b-teclas,.b-fechar .b-teclas{display:none}}
+@media(max-width:560px){
+  .b-linha{grid-template-columns:5.2em 1fr;gap:6px;align-items:center}
+  .b-op{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;
+    mask-image:linear-gradient(to right,#000 88%,transparent);-webkit-mask-image:linear-gradient(to right,#000 88%,transparent)}
+  .b-op::-webkit-scrollbar{display:none}
+  .b-op button{flex:none}
+  .busca-sobre{padding:2vh 8px}
+  .busca-caixa{max-height:94vh;padding:12px 14px 16px}
+}

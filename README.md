@@ -15,6 +15,7 @@ Câmpus Pelotas), publicada pelo GitHub Pages em https://cpazinatto.github.io/di
   `cpazinatto.github.io/...`, e vice-versa. A página usa `../recursos/`.
 - Tela de Início do celular: `disciplinas/manifest.webmanifest` e os ícones em `icones/` (∫∑ e "Disciplinas" sobre o azul do tema; fonte em `icones/icone.html`, com o modo de gerar no comentário do topo). Aberta pelo ícone, a página abre sem as barras do navegador, e as disciplinas abertas a partir dela também.
 - Cartão do Cálculo I: dois botões, Elétrica e Química, que levam a `calculo-i/?curso=EE` ou `?curso=EQ`; o Cálculo guarda o curso e mostra só as aulas dele.
+- Busca em todas as disciplinas: a caixa da página das disciplinas (`data-fontes`) busca no índice de cada disciplina (`recursos/busca-indice-*.js` de cada site); hoje só o Cálculo I. Para uma disciplina nova, acrescentar `{"nome":...,"raiz":...}` à lista. `recursos/busca.js` e `busca.css` são cópias das do Cálculo.
 - Aba do navegador: `favicon.ico` na raiz (16, 32 e 48 px), só com ∫∑ sobre o azul, porque em 16 px o texto vira borrão; fonte em `icones/icone-aba.html`. Na raiz, vale também de reserva para as páginas do domínio que não declaram ícone.
 - `recursos/`: cópia de `tema.css`, `preferencias.js` e `fontes/` do material de Cálculo I
   (`calculo-i-ifsul-2027`, `saida/recursos/` e `tema/preferencias.js`). Quando o tema mudar lá, copiar de novo para cá.
