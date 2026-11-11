@@ -132,8 +132,10 @@
 
   function marcar(texto,m){return esc(texto).replace(/[\p{L}\p{N}]+/gu,function(w){return m[norm(w)]?'<mark>'+w+'</mark>':w})}
   function mostrar(alvo,q,tags){
+    // Só com texto (pedido do professor, 11/11/2026): as tags filtram a busca, mas sozinhas não listam nada; com tag e sem
+    // texto, só um lembrete.
     var ts=palavrasDe(q),algum=Object.keys(tags).some(function(k){return tags[k]});
-    if(!ts.length&&!algum){alvo.innerHTML='';return}
+    if(!ts.length){alvo.innerHTML=algum?'<p class="b-nada">Digite o que buscar: os filtros escolhidos valem para a busca.</p>':'';return}
     var b=buscar(q,tags),grupos=[],por={},n=0;
     for(var k=0;k<b.r.length&&n<MAXIMO;k++){var e=E[b.r[k].i];
       if(!por[e.p]){por[e.p]={p:e.p,c:e.c,l:[]};grupos.push(por[e.p])}
@@ -160,7 +162,7 @@
     var sobreposta=!!onde.closest('.busca-caixa');
     function abrirCaixa(){if(!cx.classList.contains('aberta')){cx.classList.add('aberta');agora()}}
     function agora(){
-      cx.classList.toggle('ativa',cx.classList.contains('aberta')&&!!(palavrasDe(campo.value).length||Object.keys(tags).some(function(k){return tags[k]})));
+      cx.classList.toggle('ativa',cx.classList.contains('aberta')&&!!palavrasDe(campo.value).length);
       carregar(function(){mostrar(res,campo.value,tags)})}
     // Apagar o campo (à mão, no × ou com Esc) fecha os resultados na hora, sem esperar.
     campo.addEventListener('input',function(){clearTimeout(t);cx.classList.add('aberta');if(!campo.value.trim())agora();else t=setTimeout(agora,120)});
