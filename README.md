@@ -14,6 +14,7 @@ Câmpus Pelotas), publicada pelo GitHub Pages em https://cpazinatto.github.io/di
   `leitura-`, comum a todas as páginas deste site: a escolha feita aqui vale nas disciplinas publicadas em
   `cpazinatto.github.io/...`, e vice-versa. A página usa `../recursos/`.
 - Tela de Início do celular: `disciplinas/manifest.webmanifest` e os ícones em `icones/` (∫∑ e "Disciplinas" sobre o azul do tema; fonte em `icones/icone.html`, com o modo de gerar no comentário do topo). Aberta pelo ícone, a página abre sem as barras do navegador, e as disciplinas abertas a partir dela também.
+- Aba do navegador: `favicon.ico` na raiz (16, 32 e 48 px), só com ∫∑ sobre o azul, porque em 16 px o texto vira borrão; fonte em `icones/icone-aba.html`. Na raiz, vale também de reserva para as páginas do domínio que não declaram ícone.
 - `recursos/`: cópia de `tema.css`, `preferencias.js` e `fontes/` do material de Cálculo I
   (`calculo-i-ifsul-2027`, `saida/recursos/` e `tema/preferencias.js`). Quando o tema mudar lá, copiar de novo para cá.
   As licenças das letras estão em `recursos/fontes/` (Luciole: CC BY 4.0; as demais: SIL Open Font License).
