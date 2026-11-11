@@ -49,7 +49,9 @@
     [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){e.setAttribute('aria-pressed',e.dataset.cursoOpcao===c?'true':'false')});
   }
   (function(){var c=par.get('curso'),g=null;
-    if(c==='todos'||CURSOS.indexOf(c)>=0)curso(c,true);
+    if(c==='todos'||CURSOS.indexOf(c)>=0){curso(c,true);
+      // Guardado o curso, ele sai do endereço: recarregar depois de trocar nos botões não volta ao curso do link.
+      try{par.delete('curso');history.replaceState(null,'',location.pathname+(par.toString()?'?'+par:'')+location.hash)}catch(e){}}
     else{try{g=localStorage.getItem('calculo-curso')}catch(e){}curso(g,false)}})();
   function ligar(){
     [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){
