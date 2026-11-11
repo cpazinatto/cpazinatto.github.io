@@ -39,7 +39,22 @@
   function trocar(k){var l=OPCOES[k],n=l.findIndex(function(o){return o[0]===raiz.dataset[k]});definir(k,l[(n+1)%l.length][0],true)}
   Object.keys(OPCOES).forEach(function(k){var v=par.get(k);if(!valido(k,v||''))v=ler(k);raiz.dataset[k]=valido(k,v||'')?v:PADRAO[k]});
   carregar();
+  // Curso (11/11/2026, pedido do professor): o cartão do Cálculo I na página das disciplinas leva a ?curso=EE ou ?curso=EQ, que fica
+  // guardado (a mesma chave que as aulas e as listas gravam no tema.js); ?curso=todos apaga. Com curso guardado, raiz.dataset.curso
+  // faz "Aulas e exercícios" mostrar só as linhas dele. Vem aqui, no <head>, para a página não aparecer com os dois cursos antes.
+  var CURSOS=['EE','EQ'];
+  function curso(c,guardar){
+    if(CURSOS.indexOf(c)>=0)raiz.dataset.curso=c;else{c='';delete raiz.dataset.curso}
+    if(guardar){try{if(c)localStorage.setItem('calculo-curso',c);else localStorage.removeItem('calculo-curso')}catch(e){}}
+    [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){e.setAttribute('aria-pressed',e.dataset.cursoOpcao===c?'true':'false')});
+  }
+  (function(){var c=par.get('curso'),g=null;
+    if(c==='todos'||CURSOS.indexOf(c)>=0)curso(c,true);
+    else{try{g=localStorage.getItem('calculo-curso')}catch(e){}curso(g,false)}})();
   function ligar(){
+    [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){
+      if(e.dataset.ligado)return;e.dataset.ligado=1;e.addEventListener('click',function(){curso(e.dataset.cursoOpcao,true)})});
+    curso(raiz.dataset.curso||'',false);
     [].forEach.call(document.querySelectorAll('[data-pref]'),function(e){
       if(e.dataset.ligado)return;e.dataset.ligado=1;
       if(e.tagName==='SELECT'){e.innerHTML=OPCOES[e.dataset.pref].map(function(o){return '<option value="'+o[0]+'">'+o[1]+'</option>'}).join('');
