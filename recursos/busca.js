@@ -14,7 +14,7 @@
   var POR_PAGINA=5,MAXIMO=40,GRUPOS_VISTOS=GRUPOS;
   // Etiquetas de cada resultado (11/11/2026, pedido do professor): de onde ele é e o que ele é, na ordem e na cor do tema.
   // A primeira diz o material (Aula, Seção da aula, Lista, Revisão da base, Demonstração); as outras, o conteúdo e o nível.
-  var ETIQUETAS=[['secao','Seção da aula','tipo'],['aula','Aula','tipo'],['lista','Lista','tipo'],['revisao','Revisão da base','tipo'],
+  var ETIQUETAS=[['em breve','Em breve','tipo'],['secao','Seção da aula','tipo'],['aula','Aula','tipo'],['lista','Lista','tipo'],['revisao','Revisão da base','tipo'],
     ['demonstracao','Demonstração','tipo'],['definicao','Definição','de'],['teorema','Teorema','de'],['exemplo','Exemplo','ex'],
     ['sua vez','Sua vez','sv'],['exercicio','Exercício','sv'],['desafio','Desafio','sv'],['onde esta o erro','Onde está o erro','at'],
     ['atencao','Atenção','at'],['retomada','Retomada','re'],['gancho','Gancho','ga'],
@@ -23,7 +23,7 @@
     return '<span class="b-tags">'+ETIQUETAS.filter(function(t){
       if(k.indexOf(t[0])<0)return false;
       if(t[2]==='tipo'){if(tipo)return false;tipo=true}   // "Seção da aula" no lugar de "Aula"
-      return ++vistas<=5}).map(function(t){return '<i class="b-tag b-'+t[2]+'">'+t[1]+'</i>'}).join('')+'</span>'}
+      return ++vistas<=5}).map(function(t){return '<i class="b-tag b-'+t[2]+(t[0]==='em breve'?' b-breve':'')+'">'+t[1]+'</i>'}).join('')+'</span>'}
   var LUPA='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>';
 
   function norm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\/∞]+/g,' ').trim()}
@@ -107,8 +107,10 @@
     // Por palavra buscada: a melhor nota nos campos da própria entrada, mais 40% da nota nas tags de conceito do tópico.
     // As de conceito valem para o tópico inteiro: somadas, desempatam a favor do tópico; sozinhas, ficam abaixo de
     // qualquer quadro que traga a palavra no texto ("conjugado" leva antes aos quadros do conjugado que ao "Nesta seção").
-    ts.forEach(function(t){var proprio=new Map(),topico=new Map(),por=new Map();
-      VOC.forEach(function(l,w){var n=nota(t,w);if(!n)return;achadas[w]=1;
+    // Palavra curta que existe tal como foi digitada ("int", "lim", "mmc") vale só igual, não como começo de outra
+    // ("int" não acha "interpretação").
+    ts.forEach(function(t){var proprio=new Map(),topico=new Map(),por=new Map(),exata=t.length<=3&&VOC.has(t);
+      VOC.forEach(function(l,w){if(exata&&w!==t)return;var n=nota(t,w);if(!n)return;achadas[w]=1;
         for(var k=0;k<l.length;k++){var i=l[k]>>3,p=l[k]&7,m=p===PESO_O?topico:proprio,v=n*(m===topico?2:p);if(!(m.get(i)>=v))m.set(i,v)}});
       proprio.forEach(function(v,i){por.set(i,v+.4*(topico.get(i)||0))});
       topico.forEach(function(v,i){if(!proprio.has(i))por.set(i,.4*v)});

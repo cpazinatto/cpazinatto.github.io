@@ -61,3 +61,5 @@ body.busca-aberta .busca-sobre{display:flex}
   .busca-sobre{padding:2vh 8px}
   .busca-caixa{max-height:94vh;padding:12px 14px 16px}
 }
+/* Tópico ainda não liberado (Em breve): etiqueta contornada, sem o cinza cheio dos liberados. */
+.b-tag.b-tipo.b-breve{background:transparent;color:var(--apoio);border-style:dashed}
