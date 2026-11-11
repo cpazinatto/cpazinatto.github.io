@@ -37,7 +37,10 @@
   // window.BUSCA_PARTES com o nome da parte, que é o mesmo em todas as disciplinas.
   // O vocabulário liga cada palavra às entradas (número da entrada × 8 + peso do campo).
   var FONTES=[{nome:'',raiz:RAIZ}],DADOS=[{}],E=null,VOC=null,PRONTAS='',espera=[],fila=[],baixando=false;
-  function partes(){var c=raiz.dataset.curso||'';return c==='EE'||c==='EQ'?[c,'comum']:['EE','EQ','comum']}
+  // Na página das disciplinas, o curso vem dos botões do grupo Curso, e não do curso guardado: carregam-se os dois.
+  var CURSO_LIVRE=false;
+  function cursoAtual(){return CURSO_LIVRE?'':raiz.dataset.curso||''}
+  function partes(){var c=cursoAtual();return c==='EE'||c==='EQ'?[c,'comum']:['EE','EQ','comum']}
   function faltam(){var l=[];FONTES.forEach(function(f,i){partes().forEach(function(n){if(!DADOS[i][n])l.push([i,n])})});return l}
   function soPalavras(t){var vistas={};return norm(t).split(' ').filter(function(w){if(!w||PARADAS[w]||vistas[w])return false;return vistas[w]=1}).join(' ')}
   function absorver(i){var P=window.BUSCA_PARTES||{};Object.keys(P).forEach(function(n){DADOS[i][n]=P[n];delete P[n]})}
@@ -96,11 +99,13 @@
   function palavrasDe(q){var ts=norm(simbolos(q)).split(' ').filter(Boolean),sem=ts.filter(function(t){return !PARADAS[t]&&!/^[a-z]$/.test(t)});return sem.length?sem:ts}
 
   function buscar(q,tags){
-    var ts=palavrasDe(q),curso=raiz.dataset.curso||'',achadas={};
-    // A tag "@N" é a do grupo Disciplina: a entrada é da fonte N.
+    var ts=palavrasDe(q),curso=cursoAtual(),achadas={};
+    // A tag "@N" é a do grupo Disciplina (a entrada é da fonte N); "%EE" e "%EQ", a do grupo Curso (o material comum aos
+    // dois cursos, como a revisão da base, vale para qualquer um).
     function passa(e){if(curso&&e.c&&e.c!==curso)return false;
       return GRUPOS_VISTOS.every(function(g){var sel=g[1].filter(function(o){return tags[o[0]]});
-        return !sel.length||sel.some(function(o){return o[0][0]==='@'?e.fi===+o[0].slice(1):e.k&&e.k.indexOf(o[0])>=0})})}
+        return !sel.length||sel.some(function(o){var t=o[0];
+          return t[0]==='@'?e.fi===+t.slice(1):t[0]==='%'?!e.c||e.c===t.slice(1):e.k&&e.k.indexOf(t)>=0})})}
     var res=[];
     if(!ts.length){E.forEach(function(e,i){if(passa(e))res.push({i:i,n:0})});return {r:res,m:achadas}}
     var total=null;
@@ -133,7 +138,7 @@
     for(var k=0;k<b.r.length&&n<MAXIMO;k++){var e=E[b.r[k].i];
       if(!por[e.p]){por[e.p]={p:e.p,c:e.c,l:[]};grupos.push(por[e.p])}
       if(por[e.p].l.length<POR_PAGINA){por[e.p].l.push(e);n++}}
-    if(!grupos.length){alvo.innerHTML='<p class="b-nada">Nada encontrado'+(raiz.dataset.curso?' neste curso':'')+'. Tente outra palavra ou tire uma tag.</p>';return}
+    if(!grupos.length){alvo.innerHTML='<p class="b-nada">Nada encontrado'+(cursoAtual()?' neste curso':'')+'. Tente outra palavra ou tire uma tag.</p>';return}
     alvo.innerHTML='<p class="b-conta">'+(b.r.length>n?'Os '+n+' primeiros de '+b.r.length+' resultados':b.r.length+' resultado'+(b.r.length>1?'s':''))+'</p>'+
       grupos.map(function(g){return '<section class="b-grupo'+(g.c?' c-'+g.c:'')+'"><h4>'+esc(g.p)+'</h4>'+g.l.map(function(e){
         return '<a class="b-item" href="'+esc(e.href)+'">'+etiquetas(e)+'<b>'+marcar(e.t,b.m)+'</b>'+(e.x?'<span>'+marcar(e.x,b.m)+'</span>':'')+'</a>'}).join('')+'</section>'}).join('');
@@ -216,7 +221,9 @@
         DADOS=FONTES.map(function(){return {}})}catch(e){}}
       if(entrada.dataset.grupos){var gs=entrada.dataset.grupos.split(',');GRUPOS_VISTOS=GRUPOS.filter(function(g){return gs.indexOf(g[0])>=0})}
       // Grupo Disciplina (pedido do professor, 11/11/2026), o primeiro, com uma opção por fonte.
-      if(entrada.dataset.fontes)GRUPOS_VISTOS=[['Disciplina',FONTES.map(function(f,i){return ['@'+i,f.nome]})]].concat(GRUPOS_VISTOS);
+      if(entrada.dataset.fontes){CURSO_LIVRE=true;
+        GRUPOS_VISTOS=[['Disciplina',FONTES.map(function(f,i){return ['@'+i,f.nome]})],
+          ['Curso',[['%EE','Engenharia Elétrica'],['%EQ','Engenharia Química']]]].concat(GRUPOS_VISTOS)}
       var cx=criar(entrada);
       // A tecla / também nas páginas de entrada: leva ao campo da busca.
       document.addEventListener('keydown',function(e){
