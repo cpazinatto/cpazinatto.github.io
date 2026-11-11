@@ -130,10 +130,15 @@ html:not(.js) .quadro{display:block;margin:0 auto 12px}
   margin:-3.15cqw 0 0 -1cqw}
 .de,.te,.con{--k:var(--define)}.ex{--k:var(--exemplo)}.at{--k:var(--atencao)}
 .ga{--k:var(--gancho)}.re,.inf{--k:var(--neutro)}
-/* Etiqueta "Base: B03" no canto direito da retomada, sobre a borda, como a etiqueta da esquerda. */
+/* Etiqueta "Base: B03" no canto direito da retomada, sobre a borda, na mesma faixa da etiqueta da esquerda. Fica dentro do h3 e quebra
+   para a linha de baixo quando as duas não cabem lado a lado (antes ficava absoluta e se sobrepunha ao título, 11/11/2026). */
 .bloco:has(>.base-etq){position:relative;margin-top:1.95cqw}
+.bloco>h3.rotulado:has(.base-etq){flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:.5cqw 1cqw;margin-top:-3.15cqw}
+.bloco>h3.rotulado:has(.base-etq)>.rot{margin:0 0 0 -1cqw}
+.bloco>h3.rotulado:has(.base-etq)>.tt{flex-basis:100%}
 .base-etq{position:absolute;top:-1.55cqw;right:1.4cqw;background:var(--fundo);color:var(--k);border:.2cqw solid var(--k);
   font-size:calc(2.2cqw*var(--tam));line-height:1;padding:.45cqw .8cqw;font-weight:700}
+.bloco>h3.rotulado>.base-etq{position:static;margin:0 -.4cqw 0 auto}
 .base-etq a{color:inherit;text-decoration:none}
 .base-etq a:hover{text-decoration:underline}
 
