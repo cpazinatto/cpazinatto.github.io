@@ -311,14 +311,17 @@
     if(!muda||direto||semMovimento.matches||raiz.classList.contains('geral'))return mostrar();
     if(!fade){raiz.classList.add('trocando');fade=setTimeout(revelar,FADE)}
   }
-  // Na lista e nos módulos (etapa 2, 12/11/2026): no fim de uma resolução ou parte, › segue para a seguinte; depois da última, fecha.
-  function prox(){if(passo<maxPasso(qs[i])){passo++;mostrar()}else if(i<qs.length-1&&mesma(i+1))ir(i+1);else if(lista&&i<qs.length-1)abrirLista(qs[i+1].dataset.q,null,true);else if(lista)fecharLista()}
+  // Na lista e nos módulos (etapa 2, 12/11/2026): no fim de uma parte do módulo, › segue para a parte seguinte; depois da última, fecha.
+  // A resolução de uma questão não leva à de outra (pedido do professor, 13/11/2026): no fim dela, › fecha e volta à página.
+  function seguinte(){if(i>=qs.length-1)return null;var a=grupoDe(qs[i].dataset.q),b=grupoDe(qs[i+1].dataset.q);
+    return a&&b&&!a.art&&!b.art?b:null}
+  function prox(){if(passo<maxPasso(qs[i])){passo++;mostrar()}else if(i<qs.length-1&&mesma(i+1))ir(i+1);else if(lista&&seguinte())abrirLista(qs[i+1].dataset.q,null,true);else if(lista)fecharLista()}
   function ant(){if(passo>1){passo--;mostrar()}else if(i>0&&mesma(i-1))ir(i-1,maxPasso(qs[i-1]))}
   // Na lista: o passo conta todos os passos da questão; no último, o aviso diz para onde › leva.
   function barraLista(){var grupo=qs.filter(function(q){return q.dataset.q===qs[i].dataset.q}),feitos=0,total=0;
     grupo.forEach(function(q){var m=maxPasso(q);if(qs.indexOf(q)<i)feitos+=m;total+=m});
     var g=grupoDe(qs[i].dataset.q),s=document.getElementById('vpasso');if(s)s.textContent=(g?g.nome+' · ':'')+'passo '+(feitos+passo)+' de '+total;
-    var ult=feitos+passo>=total,seg=ult&&i<qs.length-1?grupoDe(qs[i+1].dataset.q):null,b=document.querySelector('.barra [data-v=prox]');
+    var ult=feitos+passo>=total,seg=ult?seguinte():null,b=document.querySelector('.barra [data-v=prox]');
     if(b)b.setAttribute('aria-label',!ult?'Próximo passo':seg?'Seguir para '+seg.nome:'Fechar');
     var f=document.querySelector('.fim-q');if(f){f.classList.toggle('ver',ult);f.textContent=ult&&g?'Fim de '+g.nome+'. '+(seg?'› segue para '+seg.nome+'; Esc volta à página.':'› ou Esc volta à página.'):''}
     marcarGL()}
@@ -494,12 +497,15 @@
     var t=h?h.cloneNode(true):null;if(t)[].forEach.call(t.querySelectorAll('.rot,.base-etq'),function(x){x.remove()});
     var tt=t?t.textContent.replace(/\s+/g,' ').trim():'';
     return (f&&!/Resolução|Questão|Exercício|Desafio|Revisão|Demonstração|Por que vale/.test(f.textContent)?f.textContent+' · ':'')+(r?r.textContent.trim()+(tt?' · ':''):'')+(tt||(r?'':'Passo '+(k+1)))}
-  function montarGL(){var f=lerFeitas(),h='';
-    grupos.forEach(function(g){var ok=g.art&&f[g.art.id];h+='<div class="g'+(ok?' ok':'')+'">'+g.nome+'</div>';
+  // No índice do visor, a resolução de uma questão mostra só os passos dela (13/11/2026); as partes do módulo, todas as partes.
+  function montarGL(){var f=lerFeitas(),h='',at=grupoDe(qs[i].dataset.q);
+    grupos.filter(function(g){return at&&at.art?g===at:!g.art}).forEach(function(g){var ok=g.art&&f[g.art.id];h+='<div class="g'+(ok?' ok':'')+'">'+g.nome+'</div>';
       g.ks.forEach(function(k,j){h+='<button class="item" data-k="'+k+'"><span class="n">'+(j+1)+'/'+g.ks.length+'</span><span class="t"></span></button>'})});
     var r=gl.querySelector('.rolar');r.innerHTML=h;
     [].forEach.call(r.querySelectorAll('.item'),function(b){var k=+b.dataset.k;b.querySelector('.t').textContent=tituloQuadro(qs[k],k);
       b.onclick=function(){var q=qs[k].dataset.q;if(qs[i].dataset.q!==q)abrirLista(q,null,true);ir(k,1,true);if(!document.body.classList.contains('fixo'))fecharGL()}});
+    var vis=grupos.filter(function(g){return at&&at.art?g===at:!g.art}),nq=vis.reduce(function(n,g){return n+g.ks.length},0);
+    gl.querySelector('footer').textContent=(at&&at.art?at.nome:vis.length+' parte'+(vis.length>1?'s':''))+' · '+nq+' quadro'+(nq>1?'s':'');
     marcarGL()}
   if(lista&&qs.length&&!par.has('conferir')){
     var cab=document.querySelector('.cab-lista'),cabTxt=cab&&cab.querySelector('div>p');
@@ -513,7 +519,6 @@
       '<button class="ib fixar" aria-pressed="false" title="Fixar ao lado do quadro" aria-label="Fixar ao lado do quadro"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>'+
       '<button class="ib fechar" title="Fechar (Esc)" aria-label="Fechar o índice">✕</button></div></header><div class="rolar"></div><footer></footer>';
     gl.querySelector('.cod').textContent=codP.split(' · ')[0];gl.querySelector('.tt').textContent=titP;
-    gl.querySelector('footer').textContent=grupos.length+(document.body.classList.contains('pag-base')?' partes e exercícios':' resoluções')+' · '+qs.length+' quadros';
     document.body.appendChild(gl);var veuG=document.createElement('div');veuG.className='veu-i';document.body.appendChild(veuG);veuG.onclick=fecharGL;
     gl.querySelector('.fechar').onclick=fecharGL;
     (function(){var x0=null,y0=0;gl.addEventListener('touchstart',function(e){if(e.touches.length===1){x0=e.touches[0].clientX;y0=e.touches[0].clientY}},{passive:true});
