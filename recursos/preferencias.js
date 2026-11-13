@@ -1,6 +1,30 @@
 // Preferências de quem assiste: modo (claro/escuro), cores, letra e tamanho da letra. Valem para o índice, as aulas e as listas,
 // e ficam guardadas no navegador. ?modo=, ?cores=, ?letra= e ?tamanho= na URL valem só para aquela abertura (sem guardar).
 // Botões e seletores com data-pref="modo|cores|letra|tamanho" são ligados aqui; quem precisa refazer medidas ouve o evento "preferencias".
+// O que fica guardado no navegador (12/11/2026): um lugar só para ler e gravar. Nada sai do aparelho. Chaves:
+//   leitura-modo, -cores, -letra, -tamanho  preferências de leitura (o prefixo antigo calculo- ainda é lido)
+//   calculo-curso            EE ou EQ, o curso escolhido
+//   calculo-quadros          {"T14-EE":"1-7,9"}: quadros vistos de cada aula, pelo número do rodapé
+//   calculo-ultima           {u, h, cod, tit, n, tot, sec}: a última aula aberta ("Continuar de onde parou")
+//   calculo-feita:<página>   {"q3":true}: questões marcadas como feitas numa lista ou num módulo
+window.Memoria=(function(){
+  function ler(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function gravar(k,v){try{if(v===null||v===undefined)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
+  function lerJSON(k,padrao){var v=null;try{v=JSON.parse(ler(k)||'null')}catch(e){}return v||padrao}
+  function gravarJSON(k,v){gravar(k,JSON.stringify(v))}
+  // Faixas de quadros: "1-7,9" <-> {1:1,...,7:1,9:1}.
+  function faixas(t){var o={};(t||'').split(',').forEach(function(p){var m=p.match(/^(\d+)(?:-(\d+))?$/);if(m)for(var a=+m[1],b=+(m[2]||m[1]);a<=b;a++)o[a]=1});return o}
+  function escreverFaixas(o){var ns=Object.keys(o).map(Number).sort(function(a,b){return a-b}),r=[],k=0;
+    while(k<ns.length){var j=k;while(j+1<ns.length&&ns[j+1]===ns[j]+1)j++;r.push(ns[k]===ns[j]?ns[k]:ns[k]+'-'+ns[j]);k=j+1}return r.join(',')}
+  function contar(o,a,b){var n=0;for(var k=a;k<=b;k++)if(o[k])n++;return n}
+  // Quadros vistos: todos ({aula: "faixas"}), os de uma aula, gravar os de uma aula, zerar uma aula ou todas.
+  function quadros(){return lerJSON('calculo-quadros',{})}
+  function vistos(aula){return faixas(quadros()[aula])}
+  function gravarVistos(aula,o){var v=quadros();v[aula]=escreverFaixas(o);gravarJSON('calculo-quadros',v)}
+  function zerarVistos(aula){if(aula===undefined){gravarJSON('calculo-quadros',{});return}var v=quadros();delete v[aula];gravarJSON('calculo-quadros',v)}
+  return {ler:ler,gravar:gravar,lerJSON:lerJSON,gravarJSON:gravarJSON,faixas:faixas,escreverFaixas:escreverFaixas,contar:contar,
+    quadros:quadros,vistos:vistos,gravarVistos:gravarVistos,zerarVistos:zerarVistos};
+})();
 (function(){
   var raiz=document.documentElement,par=new URLSearchParams(location.search);
   var OPCOES={
@@ -15,7 +39,7 @@
   var ROTULO={modo:'Modo',cores:'Cores',letra:'Letra',tamanho:'Tamanho'},TECLA={modo:'M',cores:'T',letra:'L',tamanho:'A'};
   // Prefixo comum a todas as disciplinas e à página principal (cpazinatto.github.io, 10/11/2026): a escolha feita numa página vale
   // em todas as do mesmo site. O prefixo antigo, 'calculo-', ainda é lido, para ninguém perder o que já escolheu.
-  function ler(k){try{return localStorage.getItem('leitura-'+k)||localStorage.getItem('calculo-'+k)}catch(e){return null}}
+  function ler(k){return Memoria.ler('leitura-'+k)||Memoria.ler('calculo-'+k)}
   function valido(k,v){return OPCOES[k].some(function(o){return o[0]===v})}
   function nome(k,v){return OPCOES[k].filter(function(o){return o[0]===v})[0][1]}
   function atualizar(){
@@ -35,7 +59,7 @@
       document.fonts.load(e+f).catch(function(){})})})}
   function definir(k,v,guardar){
     if(!valido(k,v))return;raiz.dataset[k]=v;carregar();
-    if(guardar){try{localStorage.setItem('leitura-'+k,v)}catch(e){}}
+    if(guardar)Memoria.gravar('leitura-'+k,v);
     atualizar();document.dispatchEvent(new CustomEvent('preferencias',{detail:k}));
   }
   function trocar(k){var l=OPCOES[k],n=l.findIndex(function(o){return o[0]===raiz.dataset[k]});definir(k,l[(n+1)%l.length][0],true)}
@@ -47,14 +71,14 @@
   var CURSOS=['EE','EQ'];
   function curso(c,guardar){
     if(CURSOS.indexOf(c)>=0)raiz.dataset.curso=c;else{c='';delete raiz.dataset.curso}
-    if(guardar){try{if(c)localStorage.setItem('calculo-curso',c);else localStorage.removeItem('calculo-curso')}catch(e){}}
+    if(guardar)Memoria.gravar('calculo-curso',c||null);
     [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){e.setAttribute('aria-pressed',e.dataset.cursoOpcao===c?'true':'false')});
   }
   (function(){var c=par.get('curso'),g=null;
     if(c==='todos'||CURSOS.indexOf(c)>=0){curso(c,true);
       // Guardado o curso, ele sai do endereço: recarregar depois de trocar nos botões não volta ao curso do link.
       try{par.delete('curso');history.replaceState(null,'',location.pathname+(par.toString()?'?'+par:'')+location.hash)}catch(e){}}
-    else{try{g=localStorage.getItem('calculo-curso')}catch(e){}curso(g,false)}})();
+    else{g=Memoria.ler('calculo-curso');curso(g,false)}})();
   function ligar(){
     [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){
       if(e.dataset.ligado)return;e.dataset.ligado=1;e.addEventListener('click',function(){curso(e.dataset.cursoOpcao,true)})});

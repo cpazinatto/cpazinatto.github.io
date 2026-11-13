@@ -1,16 +1,15 @@
 /* Tema das aulas de Cálculo I, IFSul Pelotas, 2027/1.
    Cores por função: nenhum quadro usa cor fixa. O modo troca só os valores.
    Unidades em cqw (% da largura do quadro): 3,09cqw equivale a 14 pt em 160 mm. */
+/* Camadas (12/11/2026): tema (os quadros, este arquivo) < base < componentes (com a busca) < paginas (tema/paginas/). A camada que vem
+   depois vence, qualquer que seja a especificidade: as páginas ajustam o tema e os componentes sem !important. */
+@layer tema, base, componentes, paginas;
 @font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Regular.ttf) format("truetype");font-weight:400}
 @font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Bold.ttf) format("truetype");font-weight:700}
 @font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Regular-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
 @font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Bold-Italic.ttf) format("truetype");font-weight:700;font-style:italic}
-/* A Luciole declara ascendente de 0,791 em, mas os acentos sobem até 1,09 em, e o Chrome chega a cortar o excesso
-   no alto de títulos grandes até redesenhar. Esta cópia da Bold declara a altura real. Ascendente e descendente
-   crescem juntos (a diferença segue 0,567 em) para a linha de base não sair do lugar com line-height explícito. */
 @font-face{font-display:block;font-family:"Luciole Titulo";src:url(fontes/Luciole-Bold.ttf) format("truetype");ascent-override:112%;descent-override:55.3%;line-gap-override:0%;font-weight:700}
 @font-face{font-display:block;font-family:"Luciole Math";src:url(fontes/Luciole-Math-Raiz.otf) format("opentype")}
-/* Outras letras, cada uma com a sua fonte de matemática. Só são carregadas se escolhidas (tema/preferencias.js). */
 @font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Regular.ttf) format("truetype");font-weight:400}
 @font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Bold.ttf) format("truetype");font-weight:700}
 @font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
@@ -21,10 +20,15 @@
 @font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
 @font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-BoldItalic.ttf) format("truetype");font-weight:700;font-style:italic}
 @font-face{font-display:block;font-family:"STIX Two Math";src:url(fontes/STIXTwoMath-Regular.ttf) format("truetype")}
-/* Fira Code: monoespaçada da família Fira, sem ligaduras (recortadas fora) e sem itálico próprio (o Chrome inclina a regular).
-   Monoespaçada ocupa uns 27% a mais de linha que a Luciole; size-adjust a traz para a largura para a qual os quadros foram escritos. */
 @font-face{font-display:block;font-family:"Fira Code";src:url(fontes/FiraCode-Regular.ttf) format("truetype");font-weight:400;size-adjust:79%}
 @font-face{font-display:block;font-family:"Fira Code";src:url(fontes/FiraCode-Bold.ttf) format("truetype");font-weight:700;size-adjust:79%}
+@layer tema{
+/* A Luciole declara ascendente de 0,791 em, mas os acentos sobem até 1,09 em, e o Chrome chega a cortar o excesso
+   no alto de títulos grandes até redesenhar. Esta cópia da Bold declara a altura real. Ascendente e descendente
+   crescem juntos (a diferença segue 0,567 em) para a linha de base não sair do lugar com line-height explícito. */
+/* Outras letras, cada uma com a sua fonte de matemática. Só são carregadas se escolhidas (tema/preferencias.js). */
+/* Fira Code: monoespaçada da família Fira, sem ligaduras (recortadas fora) e sem itálico próprio (o Chrome inclina a regular).
+   Monoespaçada ocupa uns 27% a mais de linha que a Luciole; size-adjust a traz para a largura para a qual os quadros foram escritos. */
 
 :root{
   --f-texto:Luciole,Verdana,sans-serif;--f-titulo:"Luciole Titulo",Luciole,Verdana,sans-serif;--f-math:"Luciole Math",Luciole,serif;
@@ -102,6 +106,10 @@ msqrt>:first-child,mroot>:first-child{margin-inline-start:.08em}
 .quadro{display:none;position:relative;width:min(100vw,177.778vh);width:min(100vw,177.778dvh);aspect-ratio:16/9;
   background:var(--fundo);container-type:inline-size;overflow:hidden;touch-action:pan-y pinch-zoom}
 .quadro.ativo{display:block}
+/* Gestos no celular (12/11/2026): na aula e no visor das listas, o arrasto vertical é do tema (puxar para baixo fecha), e não do
+   navegador; a página não rola ali, e "puxar para atualizar" não recarrega. As miniaturas do índice seguem rolando. */
+main.aula>.quadro,.resol>.quadro{touch-action:pinch-zoom}
+html:has(main.aula),html:has(body.visor-aberto){overscroll-behavior:none}
 /* Troca de quadro: um véu da cor de fundo cobre o atual e sai de cima do seguinte (tempo em tema.js).
    O quadro em si nunca fica transparente. */
 .veu{position:fixed;inset:0;z-index:8;background:var(--fundo);opacity:0;pointer-events:none;transition:opacity var(--fade,0s) ease}
@@ -417,3 +425,4 @@ body.fixo .prog{left:var(--larg-ind)}
 .geral .anima.solido .cena{pointer-events:none}
 .graf .cpt{stroke:none}.graf .cpt.a{fill:var(--curva-a)}.graf .cpt.b{fill:var(--curva-b)}
 .nb{white-space:nowrap}
+}

@@ -1,4 +1,5 @@
 /* Busca (decisão 28, 11/11/2026): caixa nas páginas de entrada e, por cima da página, nas aulas, listas e módulos (tema/busca.js). */
+@layer componentes{
 .busca{--k:var(--define);margin-top:16px;font-family:var(--f-texto)}
 /* Busca em uso na página de entrada (11/11/2026, pedido do professor: distinguir mais): moldura na cor da busca, fundo
    tingido e a lupa no campo, para os resultados não se confundirem com a lista de tópicos logo abaixo. */
@@ -63,3 +64,4 @@ body.busca-aberta .busca-sobre{display:flex}
 }
 /* Tópico ainda não liberado (Em breve): etiqueta contornada, sem o cinza cheio dos liberados. */
 .b-tag.b-tipo.b-breve{background:transparent;color:var(--apoio);border-style:dashed}
+}
