@@ -7,6 +7,7 @@
 //   <disc>-quadros           {"T14-EE":"1-7,9"}: quadros vistos de cada aula, pelo número do rodapé
 //   <disc>-ultima            {u, h, cod, tit, n, tot, sec}: a última aula aberta ("Continuar de onde parou")
 //   <disc>-feita:<página>    {"q3":true}: questões marcadas como feitas numa lista ou num módulo
+//   <disc>-recolhida:<página> ["q1","q3"]: questões recolhidas numa lista ou num módulo
 //   <disc>-aulas-recolhidas, <disc>-aulas-fixadas   partes recolhidas e tópicos fixados em "Aulas e exercícios"
 //   <disc>-base-recolhidos, -base-fixados, <disc>-comp-recolhidos, -comp-fixados   o mesmo na Revisão da base e nas Demonstrações
 //   disciplinas-ordem        [{nome, discs}]: a ordem dos níveis e das disciplinas que o aluno arrumou na página das disciplinas

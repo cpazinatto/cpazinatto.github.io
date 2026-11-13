@@ -546,6 +546,25 @@
       function pinta(){var ok=!!lerFeitas()[a.id];a.classList.toggle('ok',ok);b.textContent=ok?'✓ Feita':'Marcar feita';b.setAttribute('aria-pressed',ok)}
       pinta();b.onclick=function(){var f=lerFeitas();f[a.id]=!f[a.id];if(!f[a.id])delete f[a.id];gravarFeitas(f);pinta();progresso();montarIP()}});
     progresso();
+    // Questões que recolhem (13/11/2026, pedido do professor: "quero ter a opção de colapsar qualquer questão", do mock
+    // mock-layout/lista-recolher.html): a seta antes de "Questão N" ou a linha do título recolhem e abrem; recolhida, fica só o título,
+    // com o "Marcar feita". "Recolher todas" fica acima da primeira. Ir a uma questão (índice da página, #q3) a abre. Guardado por página,
+    // à parte das feitas (<disc>-recolhida:<página>).
+    (function(){if(!qsP.length)return;var chaveRec=Memoria.chave('recolhida')+chaveFeitas.slice(chaveFeitas.indexOf(':')),rec=Memoria.lerJSON(chaveRec,[]),bt;
+      if(!Array.isArray(rec))rec=[];
+      function nomeQ(a){return a.querySelector('h2').firstChild.textContent.trim()}
+      function recolher(a,v,quieto){a.classList.toggle('rq-fechada',v);var b=a.querySelector('.rq-seta');b.setAttribute('aria-expanded',!v);b.setAttribute('aria-label',(v?'Abrir a ':'Recolher a ')+nomeQ(a));
+        if(quieto)return;rec=qsP.filter(function(x){return x.classList.contains('rq-fechada')}).map(function(x){return x.id});Memoria.gravarJSON(chaveRec,rec.length?rec:null);botao()}
+      qsP.forEach(function(a){var h=a.querySelector('h2'),b=document.createElement('button');b.type='button';b.className='rq-seta';
+        b.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>';
+        h.insertBefore(b,h.firstChild);h.addEventListener('click',function(e){if(e.target.closest('.feita,a'))return;recolher(a,!a.classList.contains('rq-fechada'))});
+        recolher(a,rec.indexOf(a.id)>=0,true)});
+      bt=document.createElement('button');bt.type='button';bt.className='rq-tudo';var ln=document.createElement('div');ln.className='rq-linha';ln.appendChild(bt);qsP[0].before(ln);
+      function botao(){var todas=qsP.every(function(a){return a.classList.contains('rq-fechada')});bt.textContent=todas?'Abrir todas':'Recolher todas';bt.dataset.abrir=todas?'1':''}
+      bt.onclick=function(){var abrir=!!bt.dataset.abrir;qsP.forEach(function(a){recolher(a,!abrir,true)});recolher(qsP[0],!abrir)};botao();
+      function abrirPara(id){var a=id&&document.getElementById(id);if(a&&a.classList.contains('rq-fechada'))recolher(a,false)}
+      document.addEventListener('click',function(e){var x=e.target.closest('a[href^="#"]');if(x)abrirPara(x.getAttribute('href').slice(1))},true);
+      addEventListener('hashchange',function(){abrirPara(location.hash.slice(1))});abrirPara(location.hash.slice(1))})();
     // "Você veio do quadro 7 da T14": ?de=T14-EE.7, posto pelos links dos quadros da aula.
     var de=(par.get('de')||'').match(/^(T\d\d[a-z]?)-([A-Z]{2,3})\.(\d+)$/);
     if(de&&cab){var v=document.createElement('div');v.className='vindo';v.innerHTML='<span></span><a></a>';

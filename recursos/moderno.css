@@ -107,3 +107,20 @@ body.visor-aberto .fim-q.ver{display:block}
 .pag-lista .indice .g.ok::after{content:"✓";color:var(--define);margin-left:auto}
 .pag-lista .indice .item{grid-template-columns:44px 1fr}
 }
+
+/* Questões que recolhem (13/11/2026, do mock mock-layout/lista-recolher.html; o script está em tema/js/06-listas.js). */
+@layer paginas{
+.questao>h2{cursor:pointer;user-select:none;-webkit-user-select:none}
+.rq-seta{flex:none;display:grid;place-items:center;width:30px;height:30px;padding:0;margin-right:-4px;border-radius:9px;border:1px solid var(--grade);
+  background:var(--sup);color:var(--apoio);cursor:pointer}
+.rq-seta svg{transition:transform .18s}
+.rq-fechada .rq-seta svg{transform:rotate(-90deg)}
+.questao>h2:hover .rq-seta{color:var(--texto);border-color:var(--apoio)}
+.questao.rq-fechada>:not(h2){display:none!important}
+.questao.rq-fechada{padding-top:12px;padding-bottom:12px}
+.rq-tudo{font:700 13px var(--f-texto);color:var(--apoio);background:none;border:1px solid var(--grade);border-radius:999px;padding:5px 12px;cursor:pointer}
+.rq-linha{display:flex;justify-content:flex-end;margin:6px 0 -6px}
+.rq-tudo:hover{color:var(--texto);border-color:var(--apoio)}
+@media (pointer:coarse){.rq-seta{width:38px;height:38px;border-radius:10px}}
+@media (prefers-reduced-motion:reduce){.rq-seta svg{transition:none}}
+}
