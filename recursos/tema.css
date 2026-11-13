@@ -198,6 +198,12 @@ main.aula{display:contents}
 /* Colunas e tabelas */
 .col{display:grid;grid-template-columns:var(--a,1fr) var(--b,1fr);gap:2.6cqw;align-items:center;min-width:0}
 .col.topo{align-items:start}
+/* Colunas separadas por um traço vertical suave, na cor do bloco: dois conceitos lado a lado que não devem parecer empilhados
+   (13/11/2026, T20, máximo global e local). Com mais de dois filhos, a grade forma linhas alinhadas (um par por linha), e o
+   traço fica à esquerda de cada filho da segunda coluna. */
+.col.sep{align-items:stretch}
+.col.sep{row-gap:0}.col.sep>*{margin:0;padding-block:.5cqw}
+.col.sep>:nth-child(even){border-left:.25cqw solid color-mix(in srgb,var(--k,var(--texto)) 45%,transparent);padding-left:2.6cqw}
 /* Conjuntos um dentro do outro (diagrama de Euler), como "extremo local ⊂ ponto crítico" (T20). */
 .conjunto{border:.4cqw solid var(--neutro);border-radius:2.4cqw;padding:1cqw 1.8cqw 1.4cqw;display:flex;flex-direction:column;gap:.8cqw;align-items:flex-start}
 .conjunto>.nome{font-weight:700;color:var(--neutro);white-space:nowrap}
