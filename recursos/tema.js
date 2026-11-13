@@ -479,6 +479,9 @@
       a.setAttribute('href',h.slice(0,k)+(h.slice(0,k).indexOf('?')<0?'?':'&')+'de='+cod+'-'+curso+'.'+q.dataset.n+h.slice(k))})})}
 
   // Listas e módulos (etapa 2, 12/11/2026, do mock em ../mock-layout/doc.html).
+  // O nome da questão ("Questão 3"): só o texto do título, sem a seta de recolher, o nível e o "Marcar feita" (13/11/2026: o índice
+  // lia o primeiro nó do título e, com a seta na frente, ficou em branco).
+  function tituloQ(h){var s='';[].forEach.call(h.childNodes,function(n){if(n.nodeType===3)s+=n.textContent});return s.trim()}
   var gl=null,grupos=[];
   function grupoDe(q){for(var k=0;k<grupos.length;k++)if(grupos[k].q===q)return grupos[k];return null}
   function marcarGL(){if(!gl)return;var r=gl.querySelector('.rolar');
@@ -511,7 +514,7 @@
     var cab=document.querySelector('.cab-lista'),cabTxt=cab&&cab.querySelector('div>p');
     // Grupos do visor: cada botão "abrir" (questão, parte da revisão, "Por que vale?").
     [].forEach.call(document.querySelectorAll('.resol'),function(r){var q=r.dataset.q,bt=document.querySelector('[data-abre="'+q+'"]'),art=bt&&bt.closest('.questao'),car=bt&&bt.closest('.cartao');
-      var nome=art?art.querySelector('h2').firstChild.textContent.trim():car?car.querySelector('b').textContent.replace(/^Parte (\d+) · .*/,'Parte $1'):'Parte '+q,ks=[];
+      var nome=art?tituloQ(art.querySelector('h2')):car?car.querySelector('b').textContent.replace(/^Parte (\d+) · .*/,'Parte $1'):'Parte '+q,ks=[];
       qs.forEach(function(s,k){if(s.dataset.q===q)ks.push(k)});grupos.push({q:q,nome:nome,art:art,bt:bt,ks:ks})});
     var codP=((cab&&cab.querySelector('.cod'))||{}).textContent||'',titP=((cab&&cab.querySelector('h1'))||{}).textContent||document.title;
     gl=document.createElement('aside');gl.className='indice';gl.setAttribute('aria-label','Índice dos quadros');gl.setAttribute('aria-hidden','true');gl.setAttribute('inert','');
@@ -537,7 +540,7 @@
       [].forEach.call(q.querySelectorAll('.oculto'),function(x){x.classList.remove('oculto')});[].forEach.call(q.querySelectorAll('[id]'),function(x){x.removeAttribute('id')});
       m.appendChild(q);c.insertBefore(m,c.firstChild);m.onclick=function(){b.click()}});
     // "Marcar feita" em cada questão, guardado no navegador, com o progresso no cabeçalho e no índice da página.
-    var qsP=[].slice.call(document.querySelectorAll('main .questao')),item=qsP.length?qsP[0].querySelector('h2').firstChild.textContent.trim().split(' ')[0].toLowerCase():'';
+    var qsP=[].slice.call(document.querySelectorAll('main .questao')),item=qsP.length?tituloQ(qsP[0].querySelector('h2')).split(' ')[0].toLowerCase():'';
     var prog=null;
     if(qsP.length&&cabTxt){prog=document.createElement('div');prog.className='progresso';prog.innerHTML='<div class="barra-p"><i style="width:0"></i></div><span></span>';cabTxt.after(prog)}
     function progresso(){if(!prog)return;var f=lerFeitas(),n=qsP.filter(function(q){return f[q.id]}).length,fr=(item==='questão'?'feitas':'feitos');
@@ -552,7 +555,7 @@
     // à parte das feitas (<disc>-recolhida:<página>).
     (function(){if(!qsP.length)return;var chaveRec=Memoria.chave('recolhida')+chaveFeitas.slice(chaveFeitas.indexOf(':')),rec=Memoria.lerJSON(chaveRec,[]),bt;
       if(!Array.isArray(rec))rec=[];
-      function nomeQ(a){return a.querySelector('h2').firstChild.textContent.trim()}
+      function nomeQ(a){return tituloQ(a.querySelector('h2'))}
       function recolher(a,v,quieto){a.classList.toggle('rq-fechada',v);var b=a.querySelector('.rq-seta');b.setAttribute('aria-expanded',!v);b.setAttribute('aria-label',(v?'Abrir a ':'Recolher a ')+nomeQ(a));
         if(quieto)return;rec=qsP.filter(function(x){return x.classList.contains('rq-fechada')}).map(function(x){return x.id});Memoria.gravarJSON(chaveRec,rec.length?rec:null);botao()}
       qsP.forEach(function(a){var h=a.querySelector('h2'),b=document.createElement('button');b.type='button';b.className='rq-seta';
@@ -575,7 +578,7 @@
     var bi=document.createElement('button');bi.type='button';bi.className='b-rail';bi.setAttribute('aria-expanded','false');
     bi.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Índice';
     document.body.appendChild(ip);document.body.appendChild(bi);
-    function itemQ(q,f){var a=document.createElement('a');a.className='q'+(f[q.id]?' ok':'');a.href='#'+q.id;a.dataset.id=q.id;a.textContent=q.querySelector('h2').firstChild.textContent.trim();return a}
+    function itemQ(q,f){var a=document.createElement('a');a.className='q'+(f[q.id]?' ok':'');a.href='#'+q.id;a.dataset.id=q.id;a.textContent=tituloQ(q.querySelector('h2'));return a}
     function montarIP(){var f=lerFeitas(),n=qsP.filter(function(q){return f[q.id]}).length;ip.innerHTML='<h2>Nesta página</h2>';
       if(qsP.length){var pl=document.createElement('div');pl.className='prog-l';pl.innerHTML='<span></span><div class="barra-p"><i></i></div>';
         pl.firstChild.textContent=n+' de '+qsP.length+(item==='questão'?' feitas':' feitos');pl.querySelector('i').style.width=(100*n/qsP.length)+'%';ip.appendChild(pl)}
@@ -588,8 +591,16 @@
     montarIP();
     if(window.IntersectionObserver&&cab){
       new IntersectionObserver(function(es){var fora=!es[0].isIntersecting;ip.classList.toggle('ver',fora);bi.classList.toggle('ver',fora);if(!fora){ip.classList.remove('aberta');bi.setAttribute('aria-expanded','false')}}).observe(cab);
-      var ob=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){atualIP=e.target.id;marcarIP()}})},{rootMargin:'-35% 0px -60% 0px'});
-      [].forEach.call(document.querySelectorAll('main .parte-base,main .questao'),function(s){if(s.id)ob.observe(s)})}
+      // Item atual (13/11/2026, professor: o índice "parece que não está indo para o local correto"): o último que já passou do alto
+      // da tela, não o que cruza o meio, que marcava a questão de baixo logo depois do salto. Clicar no índice marca o item clicado
+      // até a pessoa rolar de novo (no fim da página o item clicado pode não chegar ao alto).
+      var alvosIP=[].filter.call(document.querySelectorAll('main .parte-base,main .questao'),function(s){return s.id}),travaIP=false;
+      function atualizarIP(){if(travaIP)return;var a='';for(var k=0;k<alvosIP.length;k++){var r=alvosIP[k].getBoundingClientRect();if(!r.height)continue;if(r.top>120)break;a=alvosIP[k].id}
+        if(a!==atualIP){atualIP=a;marcarIP()}}
+      addEventListener('scroll',atualizarIP,{passive:true});addEventListener('resize',atualizarIP);
+      ['wheel','touchstart','keydown'].forEach(function(n){addEventListener(n,function(){travaIP=false},{passive:true})});
+      ip.addEventListener('click',function(e){var x=e.target.closest('a[data-id]');if(!x)return;travaIP=true;atualIP=x.dataset.id;marcarIP()});
+      atualizarIP()}
     bi.onclick=function(){bi.setAttribute('aria-expanded',ip.classList.toggle('aberta'))};
     ip.addEventListener('click',function(e){if(e.target.closest('a')){ip.classList.remove('aberta');bi.setAttribute('aria-expanded','false')}});
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ip.classList.contains('aberta')){ip.classList.remove('aberta');bi.setAttribute('aria-expanded','false')}});

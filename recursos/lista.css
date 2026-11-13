@@ -3,8 +3,10 @@
 footer.versao,.volta-base .versao{font-size:15px;color:var(--apoio)}
 footer.versao{border-top:1px solid var(--grade);margin-top:24px;padding:14px 0 8px}
 .volta-base .versao{margin-left:auto}
-html,body{overflow:auto;height:auto;display:block}
-body.visor-aberto{overflow:hidden}
+/* Só o html rola (13/11/2026): com overflow:auto também no body, ele vira o contêiner de rolagem e a barra do topo e a do curso
+   deixam de ficar presas no alto (sticky). */
+html,body{height:auto;display:block}html{overflow:auto}body{overflow:visible}
+body.visor-aberto,html:has(body.visor-aberto){overflow:hidden}
 main{max-width:980px;margin:0 auto;padding:28px 16px 64px;font-size:calc(19px*var(--tam));line-height:1.4}
 .cab-lista{display:flex;justify-content:space-between;align-items:flex-start;gap:12px 20px;flex-wrap:wrap;border-bottom:3px solid var(--suavez);padding-bottom:14px}
 .cab-lista .cod{color:var(--suavez);font-weight:700}

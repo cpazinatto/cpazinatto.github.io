@@ -4,7 +4,9 @@
 .entrada a{color:var(--exemplo)}
 }
 @layer componentes{
-html,body{overflow:auto;height:auto;display:block}
+/* Só o html rola (13/11/2026): com overflow:auto também no body, ele vira o contêiner de rolagem e a barra do topo e a do curso
+   deixam de ficar presas no alto (sticky). */
+html,body{height:auto;display:block}html{overflow:auto}body{overflow:visible}
 html{scroll-padding-top:76px}
 body.entrada{background:var(--pagina);font-family:var(--f-texto);font-size:calc(17px*var(--tam));line-height:1.5}
 .entrada h1,.entrada h2,.entrada h3{line-height:1.2;margin:0}

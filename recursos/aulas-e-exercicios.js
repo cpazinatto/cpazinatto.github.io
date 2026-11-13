@@ -37,10 +37,18 @@
   if(!window.IntersectionObserver)return;
   new IntersectionObserver(function(es){var fora=!es[0].isIntersecting;r.classList.toggle('ver',fora);b.classList.toggle('ver',fora);
     if(!fora){r.classList.remove('aberta');b.setAttribute('aria-expanded','false')}}).observe(document.getElementById('heroi'));
-  var o=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var p=e.target.closest('.parte').id;
+  // Tópico atual (13/11/2026): o último que já passou da barra do curso no alto, não o do meio da tela, que marcava outro tópico logo
+  // depois do salto; clicar no índice marca o tópico clicado até a pessoa rolar de novo. Tópico de parte recolhida não conta.
+  var lis=[].slice.call(document.querySelectorAll('.parte:not(.rc-fixados) .linhas>li[id], .corpo-lista>.parte .linhas>li[id]')),trava=false,atual=null;
+  function marcar(id){if(id===atual)return;atual=id;var li=id&&document.getElementById(id),p=li?li.closest('.parte').id:'';
     [].forEach.call(r.querySelectorAll('.grupo'),function(g){g.classList.toggle('aberto',g.dataset.p===p)});
-    [].forEach.call(r.querySelectorAll('a.t'),function(a){a.classList.toggle('atual',a.dataset.t===e.target.id)})})},{rootMargin:'-45% 0px -50% 0px'});
-  [].forEach.call(document.querySelectorAll('.linhas>li'),function(l){o.observe(l)});
+    [].forEach.call(r.querySelectorAll('a.t'),function(a){a.classList.toggle('atual',a.dataset.t===id)})}
+  function atualizar(){if(trava)return;var a='';for(var k=0;k<lis.length;k++){var q=lis[k].getBoundingClientRect();if(!q.height)continue;if(q.top>140)break;a=lis[k].id}
+    marcar(a||(lis[0]&&lis[0].id))}
+  addEventListener('scroll',atualizar,{passive:true});addEventListener('resize',atualizar);
+  ['wheel','touchstart','keydown'].forEach(function(n){addEventListener(n,function(){trava=false},{passive:true})});
+  r.addEventListener('click',function(e){var x=e.target.closest('a.t');if(!x)return;trava=true;atual=null;marcar(x.dataset.t)});
+  atualizar();
 })();
 
 // Partes que recolhem e tópicos fixados no alto (13/11/2026, pedido do professor, a partir do mock mock-layout/aulas-recolher.html).
