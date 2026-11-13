@@ -31,6 +31,8 @@ window.Memoria=(function(){
 })();
 (function(){
   var raiz=document.documentElement,par=new URLSearchParams(location.search);
+  // ?captura=1 (tema/capturas.py, 13/11/2026): sem transições nem animações, para a captura não pegar nada no meio do caminho.
+  if(par.has('captura'))raiz.classList.add('captura');
   var OPCOES={
     modo:[['claro','Claro'],['escuro','Escuro']],
     cores:[['padrao','Padrão'],['contraste','Alto contraste'],['papel','Papel'],['vibrante','Vibrante']],

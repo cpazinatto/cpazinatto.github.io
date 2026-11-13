@@ -426,3 +426,5 @@ body.fixo .prog{left:var(--larg-ind)}
 .graf .cpt{stroke:none}.graf .cpt.a{fill:var(--curva-a)}.graf .cpt.b{fill:var(--curva-b)}
 .nb{white-space:nowrap}
 }
+/* Capturas de tela (tema/capturas.py, ?captura=1, 13/11/2026): nada se move, para duas capturas da mesma página saírem iguais. */
+.captura *,.captura *::before,.captura *::after{transition:none!important;animation:none!important}
