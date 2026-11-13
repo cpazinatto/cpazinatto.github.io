@@ -17,9 +17,9 @@
 .teste-largo .en .graf{max-width:min(100%,460px);margin:0}
 .respostas p{margin:0 0 6px}
 .cartoes{display:flex;flex-direction:column;gap:10px}
-.cartao{display:flex;justify-content:space-between;align-items:center;gap:10px 18px;flex-wrap:wrap;border:1px solid var(--grade);border-left:6px solid var(--define);border-radius:6px;padding:10px 14px}
-.cartao>div>b{color:var(--define)}
-.cartao>div>span{color:var(--apoio);font-size:16px}
+.pag-base .cartao{display:flex;justify-content:space-between;align-items:center;gap:10px 18px;flex-wrap:wrap;border:1px solid var(--grade);border-left:6px solid var(--define);border-radius:6px;padding:10px 14px}
+.pag-base .cartao>div>b{color:var(--define)}
+.pag-base .cartao>div>span{color:var(--apoio);font-size:16px}
 .erro{border-top:1px solid var(--grade);padding:16px 0 12px;display:flex;flex-direction:column;gap:10px}
 /* "erro-conta", e não "conta": .conta é a grade das contas em cadeia (tema.css). */
 .erro .erro-conta{border-left:6px solid var(--atencao);padding:4px 0 4px 14px}
