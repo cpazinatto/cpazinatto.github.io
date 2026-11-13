@@ -139,7 +139,8 @@ html:not(.js) .quadro{display:block;margin:0 auto 12px}
 .de,.te,.con{--k:var(--define)}.ex{--k:var(--exemplo)}.at{--k:var(--atencao)}
 .ga{--k:var(--gancho)}.re,.inf{--k:var(--neutro)}
 /* Etiqueta "Base: B03" no canto direito da retomada, sobre a borda, na mesma faixa da etiqueta da esquerda. Fica dentro do h3 e quebra
-   para a linha de baixo quando as duas não cabem lado a lado (antes ficava absoluta e se sobrepunha ao título, 11/11/2026). */
+   para a linha de baixo quando as duas não cabem lado a lado (antes ficava absoluta e se sobrepunha ao título, 11/11/2026). Bloco
+   com título e sem rótulo usa o mesmo h3, só com a etiqueta na faixa (13/11/2026: no T13, o título passava por baixo dela). */
 .bloco:has(>.base-etq){position:relative;margin-top:1.95cqw}
 .bloco>h3.rotulado:has(.base-etq){flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:.5cqw 1cqw;margin-top:-3.15cqw}
 .bloco>h3.rotulado:has(.base-etq)>.rot{margin:0 0 0 -1cqw}
