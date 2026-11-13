@@ -8,7 +8,11 @@
 .disc h3 a{color:var(--texto)!important;text-decoration:none}
 .disc h3 a::after{content:"";position:absolute;inset:0;border-radius:var(--raio)}
 .disc .meta{font-size:15px;color:var(--apoio);font-weight:700}
-.disc .etq{align-self:flex-start;font-size:13px;font-weight:700;color:var(--k);background:color-mix(in srgb,var(--k) 12%,var(--sup));border-radius:999px;padding:2px 10px}
+/* Estado da disciplina (13/11/2026): ponto e texto, sem pílula, para não ficar apertado se quebrar linha; em preparação, só o contorno. */
+.disc .etq{align-self:flex-start;display:inline-flex;align-items:flex-start;gap:7px;font-size:13px;font-weight:700;color:var(--k);line-height:1.35}
+.disc .etq::before{content:"";flex:none;width:8px;height:8px;margin-top:.32em;border-radius:50%;background:currentColor}
+.disc.breve .etq{color:var(--apoio)}
+.disc.breve .etq::before{background:none;border:1.5px solid currentColor;width:7px;height:7px}
 .disc .acoes{margin-top:auto;display:flex;flex-wrap:wrap;gap:10px;padding-top:4px}
 .disc .acoes a{position:relative;z-index:1;display:inline-flex;align-items:center;border-radius:999px;padding:7px 18px;font-weight:700;text-decoration:none;color:var(--fundo)!important}
 .disc .acoes .c-EE{background:var(--exemplo)}.disc .acoes .c-EQ{background:var(--gancho)}
