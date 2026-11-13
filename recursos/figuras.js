@@ -77,7 +77,7 @@
     C31:'<path d="M20 40h120" class="ex"/><path d="M28 40C50 10 90 10 132 22" class="cv"/><path d="M28 40C50 70 90 70 132 58" class="dash"/><ellipse cx="80" cy="40" rx="6" ry="22" class="cx"/><ellipse cx="132" cy="40" rx="6" ry="18" class="cx"/>',
     C32:graf(-0.3,4.2,-0.3,3,[{f:function(x){return 0.4+0.5*x+0.6*Math.sin(x*1.6)}}],{lin:[[0,0.4,1,0.4+0.5+0.6*Math.sin(1.6),'tr2'],[1,0.4+0.5+0.6*Math.sin(1.6),2,0.4+1+0.6*Math.sin(3.2),'tr2'],[2,0.4+1+0.6*Math.sin(3.2),3,0.4+1.5+0.6*Math.sin(4.8),'tr2'],[3,0.4+1.5+0.6*Math.sin(4.8),4,0.4+2+0.6*Math.sin(6.4),'tr2']]}),
     'D-CALC1':graf(-0.5,4.5,-0.4,3,[{f:function(x){return 0.6+0.9*Math.sin(x*0.9)+0.35*x}},{f:function(x){return 0.6+0.9*Math.sin(2.7)+1.05+(0.81*Math.cos(2.7)+0.35)*(x-3)},a:1.9,b:4.2,c:'cv2'}],{area:[0.4,2.2],pts:[[3,0.6+0.9*Math.sin(2.7)+1.05]]}),
-    'D-EDO':(function(){var l=[];for(var i=0;i<6;i++)for(var j=0;j<4;j++){var x=0.4+i*0.75,y=0.3+j*0.75,m=-0.8*(y-1.4),h=0.22/Math.sqrt(1+m*m);l.push([x-h,y-m*h,x+h,y+m*h,'tr'])}
+    'D-ED':(function(){var l=[];for(var i=0;i<6;i++)for(var j=0;j<4;j++){var x=0.4+i*0.75,y=0.3+j*0.75,m=-0.8*(y-1.4),h=0.22/Math.sqrt(1+m*m);l.push([x-h,y-m*h,x+h,y+m*h,'tr'])}
       return graf(0,4.6,0,2.8,[{f:function(x){return 1.4+1.2*Math.exp(-0.8*x)}},{f:function(x){return 1.4-1.1*Math.exp(-0.8*x)},c:'cv2'}],{lin:l})})(),
     'D-CALC2':graf(-3.4,3.4,-1.6,1.6,[{f:Math.sin},{f:function(x){return x-x*x*x/6},c:'cv2'},{f:function(x){return x},c:'dash'}]),
     // Estatística (página das disciplinas): histograma com a curva normal por cima.

@@ -11,6 +11,8 @@
   var GRUPOS=[['Material',[['aula','Aula'],['lista','Lista'],['revisao','Revisão da base'],['demonstracao','Demonstração']]],
     ['Conteúdo',[['secao','Seção'],['definicao','Definição'],['teorema','Teorema'],['exemplo','Exemplo'],['sua vez','Sua vez'],['exercicio','Exercício'],['atencao','Atenção']]],
     ['Parte',[['base','Base'],['limites','Limites'],['derivadas','Derivadas'],['integrais','Integrais']]]];
+  // As partes vêm da disciplina da página (13/11/2026): <html data-partes="Base|Limites|...">, os blocos do disciplina.json.
+  if(raiz.dataset.partes)GRUPOS[2]=['Parte',raiz.dataset.partes.split('|').map(function(p){return [norm(p),p]})];
   var POR_PAGINA=5,MAXIMO=40,GRUPOS_VISTOS=GRUPOS;
   // Etiquetas de cada resultado (11/11/2026, pedido do professor): de onde ele é e o que ele é, na ordem e na cor do tema.
   // A primeira diz o material (Aula, Seção da aula, Lista, Revisão da base, Demonstração); as outras, o conteúdo e o nível.
