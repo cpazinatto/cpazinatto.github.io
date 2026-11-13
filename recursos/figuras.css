@@ -1,0 +1,17 @@
+/* Figuras pequenas dos catálogos e dos cartões das partes (tema/figuras.js e figuras-partes.js). */
+@layer componentes{
+.fig{width:150px;height:76px;overflow:visible}
+.fig .ex{stroke:var(--apoio);stroke-opacity:.45;stroke-width:1.2}
+.fig .cv{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.fig .cv2{fill:none;stroke:var(--curva-a);stroke-width:2.2;stroke-linecap:round}
+.fig .fino{fill:none;stroke:currentColor;stroke-opacity:.45;stroke-width:1.4}
+.fig .dash{fill:none;stroke:var(--apoio);stroke-width:1.4;stroke-dasharray:4 3}
+.fig .tr{fill:none;stroke:var(--apoio);stroke-width:1.6;stroke-linecap:round}
+.fig .tr2{fill:none;stroke:var(--curva-a);stroke-width:2;stroke-linecap:round}
+.fig .grosso{stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-opacity:.6}
+.fig .cx{fill:color-mix(in srgb,currentColor 10%,transparent);stroke:currentColor;stroke-width:2.2;stroke-linejoin:round}
+.fig .ar{fill:currentColor;fill-opacity:.2;stroke:none}
+.fig .pt{fill:currentColor}.fig .ab{fill:var(--sup);stroke:currentColor;stroke-width:2}
+.fig .rt{fill:var(--texto);font-size:13px;font-family:var(--f-texto)}
+.fig .fm{fill:currentColor;font-family:var(--f-texto);font-weight:700}
+}

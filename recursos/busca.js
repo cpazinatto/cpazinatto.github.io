@@ -36,7 +36,9 @@
   // Sem data-fontes, a fonte é o próprio site, onde está este busca.js. Os arquivos vêm um de cada vez: cada um se grava em
   // window.BUSCA_PARTES com o nome da parte, que é o mesmo em todas as disciplinas.
   // O vocabulário liga cada palavra às entradas (número da entrada × 8 + peso do campo).
-  var FONTES=[{nome:'',raiz:RAIZ}],DADOS=[{}],E=null,VOC=null,PRONTAS='',espera=[],fila=[],baixando=false;
+  // O busca.js fica em recursos/ do site, comum a todas as disciplinas (13/11/2026); o índice e as páginas são da disciplina
+  // da página, em <site>/<pasta>/ (<html data-pasta>).
+  var FONTES=[{nome:'',raiz:RAIZ+(raiz.dataset.pasta?raiz.dataset.pasta+'/':'')}],DADOS=[{}],E=null,VOC=null,PRONTAS='',espera=[],fila=[],baixando=false;
   // Na página das disciplinas, o curso vem dos botões do grupo Curso, e não do curso guardado: carregam-se os dois.
   var CURSO_LIVRE=false;
   function cursoAtual(){return CURSO_LIVRE?'':raiz.dataset.curso||''}

@@ -1,0 +1,7 @@
+/* Superfícies do layout novo (página, cartões, sombra, raio), derivadas do fundo e do texto de cada esquema de cores. */
+@layer base{
+:root{--pagina:color-mix(in srgb,var(--fundo) 95%,var(--texto));--sup:var(--fundo);--sup2:color-mix(in srgb,var(--fundo) 90%,var(--texto));
+  --sombra:0 1px 2px rgba(18,22,28,.06),0 4px 16px rgba(18,22,28,.06);--raio:14px;--tipo:var(--suavez)}
+[data-modo="escuro"]{--pagina:var(--fundo);--sup:color-mix(in srgb,var(--fundo) 93%,var(--texto));--sup2:color-mix(in srgb,var(--fundo) 86%,var(--texto));
+  --sombra:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25)}
+}

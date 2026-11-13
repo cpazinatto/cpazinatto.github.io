@@ -1,0 +1,61 @@
+/* Aulas e exercícios: partes, linhas, filtro, percentual visto e índice ao lado. */
+@layer paginas{
+.filtro{position:sticky;top:59px;z-index:5;background:color-mix(in srgb,var(--pagina) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding:8px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--grade);margin-bottom:24px}
+.filtro .cursosel{margin:0}
+.filtro .esp{flex:1}
+.filtro label{font-size:15px;color:var(--apoio);display:flex;gap:6px;align-items:center;cursor:pointer}
+.corpo-lista{display:flex;flex-direction:column;gap:30px}
+.parte{scroll-margin-top:120px}
+.parte-cab{display:flex;align-items:baseline;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.parte-cab h2{font:700 26px var(--f-titulo)}
+.parte-cab p{margin:0;color:var(--apoio)}
+.linhas{list-style:none;margin:0;padding:0;border:1px solid var(--grade);border-radius:var(--raio);background:var(--sup);overflow:hidden;box-shadow:var(--sombra)}
+.linhas>li{display:grid;grid-template-columns:64px 1fr;gap:6px 14px;align-items:baseline;padding:14px 18px;border-top:1px solid var(--grade);scroll-margin-top:120px}
+.linhas>li:first-child{border-top:0}
+.linhas>li:target{background:color-mix(in srgb,var(--define) 8%,var(--sup))}
+.linhas .cod{font-weight:700;font-size:18px;color:var(--define)}
+.linhas .tit{font-weight:700}
+.links .pct{font-size:14px;color:var(--apoio);display:inline-flex;gap:6px;align-items:center}
+.links .pct[hidden]{display:none}
+.links .pct b{color:var(--texto)}
+.entrada .zerar{font:12px var(--f-texto);color:var(--apoio);background:none;border:1px solid var(--grade);border-radius:999px;padding:1px 8px;cursor:pointer}
+.entrada .zerar:hover{border-color:var(--atencao);color:var(--atencao)}
+/* Seção já vista em parte: uma barra clara no pé do botão, do tamanho da parte vista. */
+.links .aula.com-vis{background:linear-gradient(color-mix(in srgb,var(--fundo) 80%,transparent),color-mix(in srgb,var(--fundo) 80%,transparent)) no-repeat 12px calc(100% - 3px)/calc((100% - 24px)*var(--f)) 3px,var(--k2)}
+#global{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin-top:14px}
+#global .progresso{margin:0}
+.linhas li.breve .cod,.linhas li.breve .tit{color:var(--apoio)}
+.links{grid-column:2;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.links .curso{min-width:6.4em;font-size:14px;color:var(--apoio)}
+.c-EE{--k:var(--exemplo)}.c-EQ{--k:var(--gancho)}
+.c-EE .curso,.c-EQ .curso{color:var(--k);font-weight:700}
+.links a{text-decoration:none}
+.links .aula{--k2:var(--k,var(--exemplo));background:var(--k2);color:var(--fundo);border-radius:999px;padding:4px 12px;font-size:15px}
+.links .aula b{margin-right:.35em}
+.links a.aula[href*="listas/"]{background:transparent;color:var(--k2);border:1.5px solid var(--k2);padding:3px 12px}
+.links>a:not(.aula){font-size:15px;border:1.5px solid var(--gancho);color:var(--gancho);border-radius:999px;padding:3px 12px}
+.links .aula.breve{background:transparent;color:var(--apoio);border:1px dashed var(--apoio)}
+.links .ver{font-size:13px;color:var(--apoio);flex-basis:100%;padding-left:calc(6.4em + 8px)}
+.falta{font-size:15px;color:var(--apoio)}
+html[data-curso=EE] .links.c-EQ,html[data-curso=EQ] .links.c-EE{display:none}
+.so-lib .linhas>li.breve{display:none}
+@media(max-width:640px){.linhas>li{grid-template-columns:1fr}.links{grid-column:1}.links .ver{padding-left:0}}
+/* Índice ao lado: aparece quando o cabeçalho sai de vista; em tela estreita, pelo botão "Índice". */
+}
+/* Índice dos tópicos (componente .rail, em componentes.css): à esquerda da lista, ou à direita em tela média; no celular, pelo botão. */
+@layer componentes{
+.rail-aulas{top:76px;left:max(16px,calc((100vw - 1180px)/2 - 236px));width:220px;max-height:calc(100vh - 96px);transform:translateX(-12px);z-index:10;font-size:14px}
+.rail-aulas a{display:block}
+.rail-aulas .p{font-weight:700;margin-top:6px}
+.rail-aulas .t{padding-left:16px;color:var(--apoio);display:none}
+.rail-aulas .t b{color:var(--define);margin-right:6px}
+.rail-aulas .grupo.aberto .t{display:block}
+.entrada .b-rail{z-index:11;color:var(--fundo)}
+@media (max-width:1659px){.rail-aulas{left:auto;right:16px}}
+@media (max-width:1479px){
+  .rail-aulas{top:auto;bottom:76px;right:16px;left:16px;width:auto;max-width:420px;margin-left:auto;max-height:60vh;transform:translateY(16px)}
+  .rail-aulas.ver:not(.aberta){opacity:0;pointer-events:none}
+  .rail-aulas.aberta{opacity:1;transform:none;pointer-events:auto}
+  .entrada .b-rail.ver{display:inline-flex}}
+}

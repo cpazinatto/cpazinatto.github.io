@@ -1,0 +1,21 @@
+/* B00 Autoavaliação: a lista de itens com "acertei". */
+@layer paginas{
+.auto-item{display:grid;grid-template-columns:2.2em 1fr auto;gap:8px 12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--grade)}
+.auto-item p{margin:0}
+.auto-item .en{display:flex;flex-direction:column;gap:8px;container-type:inline-size}
+.auto-item .en .graf{max-width:min(100%,460px);margin:0}
+.auto-item .n{font-weight:700;color:var(--define)}
+.auto-item label{font-size:15px;color:var(--apoio);white-space:nowrap;cursor:pointer}
+.auto-item input{width:18px;height:18px;vertical-align:middle;accent-color:var(--define)}
+.respostas .r{margin:0 0 10px}
+.respostas .estude{color:var(--apoio);font-size:16px}
+.respostas .estude a{color:var(--exemplo);font-weight:700}
+#estudar ol{margin:8px 0 0;padding-left:1.4em}
+#estudar li{margin:4px 0}
+#estudar a{color:var(--exemplo);font-weight:700}
+.ordem{border-collapse:collapse;margin-top:8px;font-size:inherit}
+.ordem td,.ordem th{border-bottom:1px solid var(--grade);padding:6px 24px 6px 0;text-align:left}
+.ordem th{font-weight:700;color:var(--apoio);font-size:16px;border-bottom:2px solid var(--eixo)}
+.ordem a{color:var(--exemplo);font-weight:700}
+@media(max-width:620px){.auto-item{grid-template-columns:2em 1fr}.auto-item label{grid-column:2}}
+}

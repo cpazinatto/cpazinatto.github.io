@@ -1,0 +1,8 @@
+/* Créditos e licenças. */
+@layer paginas{
+.cred-s ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.cred-s li{background:var(--sup);border:1px solid var(--grade);border-radius:var(--raio);padding:14px 18px;display:flex;flex-direction:column;gap:4px}
+.cred-s .tit b{display:block;font-size:17px}
+.cred-s .ses{color:var(--apoio);font-size:14px}
+.cred-s .links{grid-column:auto;display:block;color:var(--texto)}
+}

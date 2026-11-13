@@ -1,0 +1,21 @@
+/* Catálogos da Revisão da base e das Demonstrações: cartões com a figura de cada módulo e o filtro. */
+@layer paginas{
+.cat .grade{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.mod{--k:var(--cor,var(--neutro));padding:0;overflow:hidden;gap:0}
+.mod.inicio{--k:var(--define)}
+.mod .capa{height:92px;display:grid;place-items:center;background:color-mix(in srgb,var(--k) 8%,var(--sup));border-bottom:1px solid color-mix(in srgb,var(--k) 18%,var(--grade));color:var(--k)}
+a.mod:hover .capa{background:color-mix(in srgb,var(--k) 14%,var(--sup))}
+.mod .corpo{padding:12px 16px 16px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.mod .cod{font-weight:700;font-size:14px;color:var(--k);background:color-mix(in srgb,var(--k) 13%,var(--sup));border-radius:999px;padding:2px 10px}
+.mod h3{font-size:17px}
+.mod .nota{font-size:14px}
+.mod .tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.mod .tags span{font-size:12px;border:1px solid var(--grade);border-radius:999px;padding:1px 8px;color:var(--apoio)}
+.mod .tags .t0{border:0;padding:0}
+.mod.breve{box-shadow:none;background:var(--sup2)}
+.mod.breve .capa{filter:grayscale(1);opacity:.6}
+.mod .em-breve{font-size:13px;color:var(--apoio)}
+.filtro-l{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.filtro-l input{font:inherit;font-size:15px;padding:8px 14px;border-radius:999px;border:1px solid var(--grade);background:var(--sup);color:var(--texto);width:min(360px,100%)}
+.filtro-l .vazio{color:var(--apoio);font-size:14px}
+}

@@ -1,0 +1,47 @@
+/* Listas de exercícios e páginas dos módulos: cabeçalho, questões, gabarito e o visor das resoluções. */
+@layer paginas{
+footer.versao,.volta-base .versao{font-size:15px;color:var(--apoio)}
+footer.versao{border-top:1px solid var(--grade);margin-top:24px;padding:14px 0 8px}
+.volta-base .versao{margin-left:auto}
+html,body{overflow:auto;height:auto;display:block}
+body.visor-aberto{overflow:hidden}
+main{max-width:980px;margin:0 auto;padding:28px 16px 64px;font-size:calc(19px*var(--tam));line-height:1.4}
+.cab-lista{display:flex;justify-content:space-between;align-items:flex-start;gap:12px 20px;flex-wrap:wrap;border-bottom:3px solid var(--suavez);padding-bottom:14px}
+.cab-lista .cod{color:var(--suavez);font-weight:700}
+.lg-cab{width:190px;height:auto;margin:0 0 12px}
+.cab-lista h1{margin:2px 0 6px;font:700 30px/1.15 var(--f-titulo)}
+.cab-lista p{margin:0;color:var(--apoio);font-size:16px}
+.cab-lista nav{display:flex;gap:8px;flex-wrap:wrap}
+.botao{font:inherit;font-size:16px;color:var(--texto);background:transparent;border:1px solid var(--apoio);border-radius:8px;padding:8px 14px;cursor:pointer;text-decoration:none}
+.botao:hover:not(:disabled){background:var(--grade)}
+.botao:disabled{opacity:.38;cursor:default}
+.botao:focus-visible,summary:focus-visible{outline:3px solid var(--suavez);outline-offset:2px}
+.dica{margin:16px 0 0;color:var(--apoio);font-size:16px}
+.questao{border-top:1px solid var(--grade);padding:22px 0 18px;display:flex;flex-direction:column;gap:12px}
+.questao>h2{margin:0;display:flex;align-items:center;gap:12px;font:700 22px/1.2 var(--f-titulo)}
+.nivel{font:700 14px/1 var(--f-texto);color:var(--k);border:2px solid var(--k);padding:5px 8px}
+.nivel.m,.nivel.i{--k:var(--suavez)}.nivel.a{--k:var(--gancho)}.nivel.e{--k:var(--atencao)}.nivel.d{--k:var(--neutro)}
+.enun{container-type:inline-size;display:flex;flex-direction:column;gap:12px}
+.enun p,.gab p{margin:0}
+.enun .graf{max-width:min(100%,420px)}
+.enun .bloco,.gab .bloco{font-size:calc(19px*var(--tam))}
+.enun .qs,.gab .qs{font-size:calc(19px*var(--tam))}
+.acoes{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center}
+details.gab{border-left:6px solid var(--suavez);padding:4px 0 4px 14px}
+details.gab[open]{flex:1 1 100%;min-width:0}
+details.gab summary{cursor:pointer;color:var(--suavez);font-weight:700;font-size:16px}
+details.gab[open] summary{margin-bottom:8px}
+.gab-corpo{container-type:inline-size}
+.resol{display:none}
+.resol .quadro{display:none}
+body.visor-aberto .resol.aberta{display:flex;position:fixed;inset:0;z-index:7;background:var(--fundo);flex-direction:column;align-items:center;justify-content:center}
+body.visor-aberto .resol.aberta .quadro{width:min(100vw,calc((100vh - 64px)*1.7778))}
+body.visor-aberto .resol.aberta .quadro.ativo{display:block}
+.barra{display:none}
+body.visor-aberto .barra{display:flex;position:fixed;left:0;right:0;bottom:0;height:56px;z-index:9;justify-content:center;align-items:center;gap:10px;background:var(--fundo);border-top:1px solid var(--grade)}
+.barra span{color:var(--apoio);font-size:15px;min-width:7em;text-align:center;font-variant-numeric:tabular-nums}
+.pag-lista .ctl:not(.atalhos){display:none}
+body.pag-lista:not(.visor-aberto) .atalhos{display:none!important}
+@media(max-width:620px){main{font-size:17px}.enun .col{grid-template-columns:1fr}.enun .graf{width:100%!important}.questao h2{font-size:19px}}
+@media(orientation:portrait) and (max-width:620px){body.visor-aberto .resol.aberta::before{content:"Gire o celular para ver maior.";color:var(--apoio);font-size:14px;margin-bottom:8px}}
+}

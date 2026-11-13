@@ -2,12 +2,16 @@
 // e ficam guardadas no navegador. ?modo=, ?cores=, ?letra= e ?tamanho= na URL valem só para aquela abertura (sem guardar).
 // Botões e seletores com data-pref="modo|cores|letra|tamanho" são ligados aqui; quem precisa refazer medidas ouve o evento "preferencias".
 // O que fica guardado no navegador (12/11/2026): um lugar só para ler e gravar. Nada sai do aparelho. Chaves:
-//   leitura-modo, -cores, -letra, -tamanho  preferências de leitura (o prefixo antigo calculo- ainda é lido)
-//   calculo-curso            EE ou EQ, o curso escolhido
-//   calculo-quadros          {"T14-EE":"1-7,9"}: quadros vistos de cada aula, pelo número do rodapé
-//   calculo-ultima           {u, h, cod, tit, n, tot, sec}: a última aula aberta ("Continuar de onde parou")
-//   calculo-feita:<página>   {"q3":true}: questões marcadas como feitas numa lista ou num módulo
+//   leitura-modo, -cores, -letra, -tamanho  preferências de leitura, comuns a todas as disciplinas (o prefixo antigo calculo- ainda é lido)
+//   <disc>-curso             o curso escolhido (EE, EQ...)
+//   <disc>-quadros           {"T14-EE":"1-7,9"}: quadros vistos de cada aula, pelo número do rodapé
+//   <disc>-ultima            {u, h, cod, tit, n, tot, sec}: a última aula aberta ("Continuar de onde parou")
+//   <disc>-feita:<página>    {"q3":true}: questões marcadas como feitas numa lista ou num módulo
+// <disc> é o prefixo da disciplina (13/11/2026), no <html data-disc>, e os cursos dela vêm em <html data-cursos>, os dois do
+// disciplina.json. O Cálculo I usa "calculo", o mesmo de antes; a página sem data-disc (a das disciplinas) fica com ele.
 window.Memoria=(function(){
+  var raiz=document.documentElement,PREFIXO=raiz.dataset.disc||'calculo',CURSOS=(raiz.dataset.cursos||'EE EQ').split(' ');
+  function chave(nome){return PREFIXO+'-'+nome}
   function ler(k){try{return localStorage.getItem(k)}catch(e){return null}}
   function gravar(k,v){try{if(v===null||v===undefined)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
   function lerJSON(k,padrao){var v=null;try{v=JSON.parse(ler(k)||'null')}catch(e){}return v||padrao}
@@ -18,11 +22,11 @@ window.Memoria=(function(){
     while(k<ns.length){var j=k;while(j+1<ns.length&&ns[j+1]===ns[j]+1)j++;r.push(ns[k]===ns[j]?ns[k]:ns[k]+'-'+ns[j]);k=j+1}return r.join(',')}
   function contar(o,a,b){var n=0;for(var k=a;k<=b;k++)if(o[k])n++;return n}
   // Quadros vistos: todos ({aula: "faixas"}), os de uma aula, gravar os de uma aula, zerar uma aula ou todas.
-  function quadros(){return lerJSON('calculo-quadros',{})}
+  function quadros(){return lerJSON(chave('quadros'),{})}
   function vistos(aula){return faixas(quadros()[aula])}
-  function gravarVistos(aula,o){var v=quadros();v[aula]=escreverFaixas(o);gravarJSON('calculo-quadros',v)}
-  function zerarVistos(aula){if(aula===undefined){gravarJSON('calculo-quadros',{});return}var v=quadros();delete v[aula];gravarJSON('calculo-quadros',v)}
-  return {ler:ler,gravar:gravar,lerJSON:lerJSON,gravarJSON:gravarJSON,faixas:faixas,escreverFaixas:escreverFaixas,contar:contar,
+  function gravarVistos(aula,o){var v=quadros();v[aula]=escreverFaixas(o);gravarJSON(chave('quadros'),v)}
+  function zerarVistos(aula){if(aula===undefined){gravarJSON(chave('quadros'),{});return}var v=quadros();delete v[aula];gravarJSON(chave('quadros'),v)}
+  return {chave:chave,cursos:CURSOS,ler:ler,gravar:gravar,lerJSON:lerJSON,gravarJSON:gravarJSON,faixas:faixas,escreverFaixas:escreverFaixas,contar:contar,
     quadros:quadros,vistos:vistos,gravarVistos:gravarVistos,zerarVistos:zerarVistos};
 })();
 (function(){
@@ -68,17 +72,17 @@ window.Memoria=(function(){
   // Curso (11/11/2026, pedido do professor): o cartão do Cálculo I na página das disciplinas leva a ?curso=EE ou ?curso=EQ, que fica
   // guardado (a mesma chave que as aulas e as listas gravam no tema.js); ?curso=todos apaga. Com curso guardado, raiz.dataset.curso
   // faz "Aulas e exercícios" mostrar só as linhas dele. Vem aqui, no <head>, para a página não aparecer com os dois cursos antes.
-  var CURSOS=['EE','EQ'];
+  var CURSOS=Memoria.cursos;
   function curso(c,guardar){
     if(CURSOS.indexOf(c)>=0)raiz.dataset.curso=c;else{c='';delete raiz.dataset.curso}
-    if(guardar)Memoria.gravar('calculo-curso',c||null);
+    if(guardar)Memoria.gravar(Memoria.chave('curso'),c||null);
     [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){e.setAttribute('aria-pressed',e.dataset.cursoOpcao===c?'true':'false')});
   }
   (function(){var c=par.get('curso'),g=null;
     if(c==='todos'||CURSOS.indexOf(c)>=0){curso(c,true);
       // Guardado o curso, ele sai do endereço: recarregar depois de trocar nos botões não volta ao curso do link.
       try{par.delete('curso');history.replaceState(null,'',location.pathname+(par.toString()?'?'+par:'')+location.hash)}catch(e){}}
-    else{g=Memoria.ler('calculo-curso');curso(g,false)}})();
+    else{g=Memoria.ler(Memoria.chave('curso'));curso(g,false)}})();
   function ligar(){
     [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){
       if(e.dataset.ligado)return;e.dataset.ligado=1;e.addEventListener('click',function(){curso(e.dataset.cursoOpcao,true)})});

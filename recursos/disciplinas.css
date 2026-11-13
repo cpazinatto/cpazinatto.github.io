@@ -1,0 +1,18 @@
+/* Página das disciplinas (cpazinatto.github.io/disciplinas/), montada por construir.py disciplinas: o que é só dela. */
+@layer paginas{
+.marca .sel{background:linear-gradient(135deg,#0E6CC2,#0A5CA8);font-size:15px;letter-spacing:-1px}
+.heroi .sobre{color:var(--exemplo)}
+.disc{padding:0;overflow:hidden;gap:0}
+.disc .capa{height:104px;display:grid;place-items:center;color:var(--k);background:color-mix(in srgb,var(--k) 8%,var(--sup));border-bottom:1px solid color-mix(in srgb,var(--k) 18%,var(--grade))}
+.disc .corpo{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.disc h3 a{color:var(--texto)!important;text-decoration:none}
+.disc h3 a::after{content:"";position:absolute;inset:0;border-radius:var(--raio)}
+.disc .meta{font-size:15px;color:var(--apoio);font-weight:700}
+.disc .etq{align-self:flex-start;font-size:13px;font-weight:700;color:var(--k);background:color-mix(in srgb,var(--k) 12%,var(--sup));border-radius:999px;padding:2px 10px}
+.disc .acoes{margin-top:auto;display:flex;flex-wrap:wrap;gap:10px;padding-top:4px}
+.disc .acoes a{position:relative;z-index:1;display:inline-flex;align-items:center;border-radius:999px;padding:7px 18px;font-weight:700;text-decoration:none;color:var(--fundo)!important}
+.disc .acoes .c-EE{background:var(--exemplo)}.disc .acoes .c-EQ{background:var(--gancho)}
+.disc.breve{--k:var(--neutro);box-shadow:none;background:var(--sup2)}
+.disc.breve .capa{filter:grayscale(1);opacity:.6}
+.disc .fig{width:170px;height:86px}
+}

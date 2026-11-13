@@ -1,0 +1,38 @@
+/* Módulos de base e de demonstrações: partes, teste rápido, cartões das partes, erros comuns, selos. */
+@layer paginas{
+.volta-base{border-top:1px solid var(--grade);margin-top:24px;padding:18px 0 8px;display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--apoio)}
+.volta-base a{color:var(--define);font-weight:700}
+.usos a{color:inherit}
+.parte-base{border-top:1px solid var(--grade);padding:24px 0 8px}
+.parte-base>h2{margin:0 0 10px;font:700 24px/1.2 var(--f-titulo);color:var(--define)}
+.parte-base>p{margin:0 0 12px}
+.usos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.usos li{display:grid;grid-template-columns:3em 1fr;gap:12px}
+.usos b{color:var(--exemplo)}
+.teste{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px;margin:4px 0 14px}
+.teste p{margin:0}
+.teste-largo{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;gap:6px 8px}
+.teste-largo .en{display:flex;flex-direction:column;gap:8px;container-type:inline-size}
+.teste-largo .en p{margin:0}
+.teste-largo .en .graf{max-width:min(100%,460px);margin:0}
+.respostas p{margin:0 0 6px}
+.cartoes{display:flex;flex-direction:column;gap:10px}
+.cartao{display:flex;justify-content:space-between;align-items:center;gap:10px 18px;flex-wrap:wrap;border:1px solid var(--grade);border-left:6px solid var(--define);border-radius:6px;padding:10px 14px}
+.cartao>div>b{color:var(--define)}
+.cartao>div>span{color:var(--apoio);font-size:16px}
+.erro{border-top:1px solid var(--grade);padding:16px 0 12px;display:flex;flex-direction:column;gap:10px}
+/* "erro-conta", e não "conta": .conta é a grade das contas em cadeia (tema.css). */
+.erro .erro-conta{border-left:6px solid var(--atencao);padding:4px 0 4px 14px}
+.erro .erro-conta .et{display:block;color:var(--atencao);font-weight:700;font-size:15px;margin-bottom:4px}
+.erro details summary{color:var(--atencao)}
+.erro details{border-left-color:var(--atencao)}
+.erro dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
+.erro dt{font-weight:700;color:var(--apoio)}
+.erro dd{margin:0}
+.erro dd{min-width:0}
+.aviso-comp{margin:14px 0 4px;padding:10px 14px;border-left:6px solid var(--define);border-radius:6px;background:color-mix(in srgb,var(--define) 8%,var(--fundo))}
+.selo{display:inline-block;font:700 14px/1 var(--f-texto);color:var(--k);border:2px solid var(--k);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.selo.d{--k:var(--define)}.selo.i{--k:var(--suavez)}.selo.a{--k:var(--apoio)}
+.quadro .selo{font-size:1.15cqw;border-width:.15cqw;padding:.35cqw .8cqw;vertical-align:middle;margin-left:.6cqw}
+@media(max-width:620px){.teste{grid-template-columns:1fr}.erro dl{grid-template-columns:1fr;gap:2px}.erro dd{margin-bottom:8px}}
+}

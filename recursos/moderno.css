@@ -1,0 +1,109 @@
+/* Layout novo das listas e dos módulos (etapa 2, 12/11/2026): cartões, "Marcar feita", índice da página, visor em pílula. */
+@layer paginas{
+.pag-base{--tipo:var(--neutro)}.pag-comp{--tipo:var(--gancho)}
+html,body.pag-lista{background:var(--pagina)}
+.pag-lista main{max-width:900px}
+.cab-lista{border-bottom:0;padding:4px 0 6px;scroll-margin-top:0}
+.cab-lista .cod{color:var(--tipo)}
+.cab-lista h1{font-size:calc(34px*var(--tam))}
+.cab-lista nav .botao{border-radius:999px;border-color:var(--grade);background:var(--sup);font-size:15px;padding:6px 14px}
+.cab-lista nav .botao:hover{background:var(--sup2)}
+.vindo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 0;padding:10px 14px;border-radius:12px;font-size:15px;
+  background:color-mix(in srgb,var(--exemplo) 10%,var(--sup));border:1px solid color-mix(in srgb,var(--exemplo) 30%,var(--grade))}
+.vindo a{font-weight:700;color:var(--exemplo)}
+.pag-lista .dica{font-size:15px}
+/* Seções e questões em cartões. */
+.parte-base{border:1px solid var(--grade);border-radius:var(--raio);background:var(--sup);padding:22px 24px 18px;margin:18px 0 0;box-shadow:var(--sombra);scroll-margin-top:16px}
+.parte-base>h2{font:700 calc(24px*var(--tam))/1.2 var(--f-titulo);color:var(--texto);display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.parte-base>h2::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--k,var(--define));flex:none}
+#onde{--k:var(--exemplo)}#teste{--k:var(--suavez)}#erros{--k:var(--atencao)}#exercicios{--k:var(--suavez)}#leitura{--k:var(--neutro)}#porquevale{--k:var(--gancho)}
+.usos{gap:4px}
+.usos li{grid-template-columns:auto 1fr;align-items:baseline;padding:6px 8px;border-radius:9px}
+.usos li:hover{background:var(--sup2)}
+.usos b a{display:inline-block;min-width:3.2em;text-align:center;text-decoration:none;border-radius:999px;padding:1px 9px;font-size:15px;
+  background:color-mix(in srgb,var(--exemplo) 13%,var(--sup));color:var(--exemplo)}
+.teste{background:var(--sup2);border-radius:12px;padding:14px 16px}
+.cartoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.cartoes .cartao{border:1px solid var(--grade);border-radius:12px;padding:14px 16px;flex-direction:column;align-items:stretch;gap:10px;background:var(--fundo)}
+.cartoes .cartao:hover{border-color:var(--define)}
+.cartoes .cartao>div>b{color:var(--texto);font-family:var(--f-titulo)}
+.cartoes .cartao .botao{align-self:flex-start}
+/* A moldura tem a proporção do quadro pelo padding (16:9): o quadro mede pela largura (container-type) e não dá altura à moldura, e o aspect-ratio é ignorado no cartão em coluna. */
+.cartoes .cartao .mini-p{position:relative;height:0;padding-top:56.25%;flex:none;border:1px solid var(--grade);border-radius:8px;overflow:hidden;cursor:pointer;background:var(--fundo)}
+.cartoes .cartao .mini-p .quadro{display:block;position:absolute;inset:0;width:100%;pointer-events:none}
+.cartoes .cartao:hover .mini-p{border-color:var(--define)}
+/* Figura da parte (tema/figuras-partes.js), no lugar da miniatura quando existe. */
+.parte-revisao .cartao{--k:var(--define)}#porquevale .cartao{--k:var(--gancho)}
+.cartoes .cartao .capa-p{height:92px;display:grid;place-items:center;border-radius:8px;cursor:pointer;color:var(--k);
+  background:color-mix(in srgb,var(--k) 8%,var(--sup));border:1px solid color-mix(in srgb,var(--k) 18%,var(--grade))}
+.cartoes .cartao:hover .capa-p{background:color-mix(in srgb,var(--k) 14%,var(--sup))}
+.aviso-comp{border-left:0;border-radius:12px;padding:12px 16px;margin-top:18px}
+.selo{border-width:1.5px;font-size:13px;padding:3px 9px}
+.questao{border:1px solid var(--grade);border-radius:var(--raio);background:var(--sup);padding:18px 22px;margin:14px 0 0;box-shadow:var(--sombra);scroll-margin-top:16px}
+.parte-base .questao{box-shadow:none;background:var(--fundo)}
+.questao>h2{font-size:calc(21px*var(--tam));flex-wrap:wrap;row-gap:8px}
+.questao>h2 .feita{margin-left:auto;font:700 14px/1 var(--f-texto);border:1.5px solid var(--grade);background:none;color:var(--apoio);border-radius:999px;padding:6px 12px;cursor:pointer}
+.questao>h2 .feita:hover{border-color:var(--define);color:var(--texto)}
+.questao.ok>h2 .feita{border-color:var(--define);background:var(--define);color:var(--fundo)}
+.questao.ok{border-color:color-mix(in srgb,var(--define) 45%,var(--grade))}
+.nivel{border-radius:999px;border-width:1.5px;font-size:13px;padding:4px 10px}
+details.gab{border-left:0;border-radius:12px;padding:0;background:color-mix(in srgb,var(--suavez) 9%,var(--sup))}
+details.gab summary{list-style:none;padding:8px 14px;border-radius:12px}
+details.gab summary::-webkit-details-marker{display:none}
+details.gab summary::before{content:"▸ "}
+details.gab[open] summary::before{content:"▾ "}
+details.gab[open]{padding-bottom:12px}
+details.gab[open] summary{margin-bottom:4px}
+details.gab .gab-corpo{padding:0 14px}
+.erro{border:1px solid color-mix(in srgb,var(--atencao) 30%,var(--grade));border-radius:12px;padding:14px 16px;margin-top:12px;background:var(--fundo)}
+.erro .erro-conta{border-left:0;padding:0}
+.erro details.gab{background:color-mix(in srgb,var(--atencao) 8%,var(--sup))}
+.volta-base{border-top:0}
+footer.versao{border-top:0}
+main .botao{border-radius:999px}
+main .acoes .botao,.cartoes .botao{--k:var(--suavez);color:var(--k);border:1.5px solid var(--k);font-weight:700;font-size:16px;padding:6px 14px}
+.parte-revisao .cartoes .botao{--k:var(--define)}
+main .acoes .botao:hover,.cartoes .botao:hover{background:color-mix(in srgb,var(--k) 10%,transparent)}
+@media(max-width:620px){.questao,.parte-base{padding:14px 16px}.cartoes{grid-template-columns:1fr}}
+/* Índice da página: aparece só quando o cabeçalho sai de vista; em tela estreita, pelo botão "Índice". */
+}
+/* Índice da página (componente .rail, em componentes.css): à direita do texto; em tela estreita, pelo botão "Índice". */
+@layer componentes{
+.rail-pag{top:20px;right:max(16px,calc((100vw - 900px)/2 - 300px));width:270px;max-height:calc(100vh - 40px);font-size:15px;z-index:6;transform:translateY(-6px)}
+.rail-pag .prog-l{margin:0 6px 10px;font-size:13px;color:var(--apoio)}
+.rail-pag .prog-l .barra-p{max-width:none;margin-top:5px;height:6px}
+.rail-pag a{display:flex;gap:8px}
+.rail-pag a.s{font-weight:700;margin-top:4px}
+.rail-pag a.q{padding-left:18px;color:var(--apoio)}
+.rail-pag a.q.ok::after{content:"✓";margin-left:auto;color:var(--define);font-weight:700}
+.rail-pag a.atual{color:var(--texto)}
+.pag-lista .b-rail{z-index:6;font:700 15px var(--f-texto)}
+@media (max-width:1499px){
+  .rail-pag{top:auto;bottom:72px;left:16px;right:16px;width:auto;max-width:420px;margin-left:auto;max-height:60vh;transform:translateY(16px)}
+  .rail-pag.ver:not(.aberta){opacity:0;pointer-events:none}
+  .rail-pag.aberta{opacity:1;transform:none;pointer-events:auto}
+  .pag-lista .b-rail.ver{display:inline-flex}}
+body.visor-aberto .rail-pag,body.visor-aberto .b-rail{display:none}
+}
+@layer paginas{
+/* Visor: menu em pílula, como nas aulas; no fim de um grupo, o aviso de que › segue ao próximo. */
+body.visor-aberto .barra{left:50%;right:auto;bottom:12px;height:auto;transform:translateX(-50%);gap:2px;padding:5px;border:1px solid var(--grade);border-radius:999px;
+  background:color-mix(in srgb,var(--fundo) 94%,var(--texto));box-shadow:0 6px 24px rgba(0,0,0,.18);max-width:calc(100vw - 16px);flex-wrap:nowrap}
+.barra .botao{border:0;border-radius:999px;height:38px;padding:0 12px;font-size:15px;white-space:nowrap;background:none}
+.barra .botao:hover:not(:disabled){background:var(--grade)}
+.barra .sep{width:1px;height:22px;background:var(--grade);min-width:0;padding:0;margin:0 4px}
+.barra kbd{font:12px var(--f-texto);border:1px solid var(--grade);border-radius:4px;padding:0 4px;color:var(--apoio)}
+.barra #vpasso{min-width:6em}
+@media (max-width:700px){.barra .tx{display:none}}
+/* O quadro tem o mesmo tamanho de antes (o --conferir mede nele) e fica no meio da área acima da pílula, que é dona da faixa de baixo. */
+body.visor-aberto .resol.aberta{padding:0 0 64px}
+body.fixo.visor-aberto .resol.aberta{padding-left:var(--larg-ind)}
+body.fixo.visor-aberto .resol.aberta .quadro{width:min(calc(100vw - var(--larg-ind)),calc((100vh - 64px)*1.7778))}
+.fim-q{position:fixed;left:50%;bottom:66px;transform:translateX(-50%);z-index:9;background:var(--texto);color:var(--fundo);border-radius:10px;padding:8px 14px;
+  font:14px var(--f-texto);display:none;max-width:calc(100vw - 32px);text-align:center}
+body.visor-aberto .fim-q.ver{display:block}
+.pag-lista .indice{z-index:12}
+.pag-lista .indice .g{margin:12px 6px 4px;font-size:13px;font-weight:700;display:flex;gap:8px;align-items:center}
+.pag-lista .indice .g.ok::after{content:"✓";color:var(--define);margin-left:auto}
+.pag-lista .indice .item{grid-template-columns:44px 1fr}
+}

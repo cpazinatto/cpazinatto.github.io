@@ -1,0 +1,18 @@
+/* Componentes comuns às listas, aos módulos e às páginas de entrada (12/11/2026): barra de progresso, índice lateral e botão "Índice".
+   Cada página põe só o que é dela (posição, largura, letra, os itens): .rail-pag nas listas e módulos, .rail-aulas em Aulas e exercícios. */
+@layer componentes{
+.progresso{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--apoio);margin-top:14px}
+.progresso[hidden]{display:none}
+.barra-p{flex:1;max-width:280px;height:8px;border-radius:99px;background:var(--grade);overflow:hidden}
+.barra-p i{display:block;height:100%;background:var(--define);border-radius:99px;transition:width .2s}
+/* Índice lateral: aparece (.ver) quando o cabeçalho sai de vista; em tela estreita, abre (.aberta) pelo botão "Índice". */
+.rail{position:fixed;overflow:auto;padding:12px;border-radius:var(--raio);background:var(--sup);border:1px solid var(--grade);box-shadow:var(--sombra);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.rail.ver{opacity:1;transform:none;pointer-events:auto}
+.rail h2{font:700 12px var(--f-texto);color:var(--apoio);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px 6px}
+.rail a{text-decoration:none;color:var(--texto);padding:5px 8px;border-radius:7px;line-height:1.3}
+.rail a:hover{background:var(--sup2)}
+.rail a.atual{background:color-mix(in srgb,var(--define) 14%,var(--sup))}
+.b-rail{position:fixed;right:16px;bottom:16px;display:none;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+  border:0;background:var(--texto);color:var(--fundo);font-weight:700;box-shadow:var(--sombra);cursor:pointer}
+}
