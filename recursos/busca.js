@@ -201,7 +201,7 @@
   function abrir(){
     if(!sobre){sobre=document.createElement('div');sobre.className='busca-sobre';sobre.setAttribute('role','dialog');
       sobre.setAttribute('aria-modal','true');sobre.setAttribute('aria-label','Buscar no material');
-      sobre.innerHTML='<div class="busca-caixa"><div class="b-topo"><div><b>Buscar no material</b><small class="b-teclas">Enter abre o primeiro · ↑ ↓ escolhem · Esc volta ao quadro</small></div>'+
+      sobre.innerHTML='<div class="busca-caixa"><div class="b-topo"><div><b>Buscar no material</b><small class="b-teclas">Enter abre o primeiro · ↑ ↓ escolhem · Esc '+(document.querySelector('[data-busca-topo]')?'fecha':'volta ao quadro')+'</small></div>'+
         '<button type="button" class="b-fechar">Fechar<span class="b-teclas"> (Esc)</span></button></div></div>';
       document.body.appendChild(sobre);caixa=criar(sobre.querySelector('.busca-caixa'));
       sobre.querySelector('.b-fechar').addEventListener('click',fechar);
@@ -216,16 +216,20 @@
   function fechar(){document.body.classList.remove('busca-aberta');if(document.activeElement)document.activeElement.blur()}
 
   function iniciar(){
-    var entrada=document.querySelector('.busca-entrada');
-    if(entrada){
-      // Página das disciplinas: as fontes e os grupos de filtro vêm da própria caixa (data-fontes, data-grupos).
-      if(entrada.dataset.fontes){try{FONTES=JSON.parse(entrada.dataset.fontes).map(function(f){return {nome:f.nome,raiz:new URL(f.raiz,location.href).href}});
+    // Páginas de entrada do layout novo (12/11/2026): só o botão da barra do topo (data-busca-topo), que abre a busca por cima
+    // da página, como nas aulas; a configuração (data-fontes, data-grupos) vem dele ou, como antes, da caixa .busca-entrada.
+    var entrada=document.querySelector('.busca-entrada'),topo=document.querySelector('[data-busca-topo]'),cfg=entrada||topo;
+    if(cfg){
+      // Página das disciplinas: as fontes e os grupos de filtro vêm da caixa ou do botão (data-fontes, data-grupos).
+      if(cfg.dataset.fontes){try{FONTES=JSON.parse(cfg.dataset.fontes).map(function(f){return {nome:f.nome,raiz:new URL(f.raiz,location.href).href}});
         DADOS=FONTES.map(function(){return {}})}catch(e){}}
-      if(entrada.dataset.grupos){var gs=entrada.dataset.grupos.split(',');GRUPOS_VISTOS=GRUPOS.filter(function(g){return gs.indexOf(g[0])>=0})}
+      if(cfg.dataset.grupos){var gs=cfg.dataset.grupos.split(',');GRUPOS_VISTOS=GRUPOS.filter(function(g){return gs.indexOf(g[0])>=0})}
       // Grupo Disciplina (pedido do professor, 11/11/2026), o primeiro, com uma opção por fonte.
-      if(entrada.dataset.fontes){CURSO_LIVRE=true;
+      if(cfg.dataset.fontes){CURSO_LIVRE=true;
         GRUPOS_VISTOS=[['Disciplina',FONTES.map(function(f,i){return ['@'+i,f.nome]})],
           ['Curso',[['%EE','Engenharia Elétrica'],['%EQ','Engenharia Química']]]].concat(GRUPOS_VISTOS)}
+    }
+    if(entrada){
       var cx=criar(entrada);
       // A tecla / também nas páginas de entrada: leva ao campo da busca.
       document.addEventListener('keydown',function(e){
@@ -235,9 +239,11 @@
     document.addEventListener('keydown',function(e){
       if(e.key!=='/'||e.metaKey||e.ctrlKey||e.altKey||/^(INPUT|SELECT|TEXTAREA)$/.test((e.target||{}).tagName||''))return;
       e.preventDefault();e.stopPropagation();abrir()},true);
+    if(topo){topo.addEventListener('click',abrir);if(new URLSearchParams(location.search).get('busca'))abrir();return}
     // Botão "Buscar (/)": no menu dos quadros (aulas) e na barra de cima das listas e dos módulos.
     var ctl=document.querySelector('.ctl:not(.atalhos)'),nav=document.querySelector('header nav, main > nav, nav:not(.barra)');
-    [ctl,nav].forEach(function(lugar){if(!lugar)return;var b=document.createElement('button');b.type='button';
+    // Desde que o menu dos quadros virou <nav> (11/11/2026), nav e ctl podiam ser o mesmo, e o botão saía duas vezes.
+    [ctl,nav===ctl?null:nav].forEach(function(lugar){if(!lugar)return;var b=document.createElement('button');b.type='button';
       if(lugar===nav)b.className='botao';b.textContent='Buscar (/)';b.addEventListener('click',abrir);lugar.appendChild(b)});
     if(new URLSearchParams(location.search).get('busca'))abrir();
   }

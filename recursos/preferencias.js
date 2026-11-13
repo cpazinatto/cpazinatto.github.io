@@ -19,6 +19,8 @@
   function valido(k,v){return OPCOES[k].some(function(o){return o[0]===v})}
   function nome(k,v){return OPCOES[k].filter(function(o){return o[0]===v})[0][1]}
   function atualizar(){
+    // Painel de aparência das páginas de entrada (12/11/2026): um botão por valor, data-pref-opcao="modo:escuro".
+    [].forEach.call(document.querySelectorAll('[data-pref-opcao]'),function(e){var p=e.dataset.prefOpcao.split(':');e.setAttribute('aria-pressed',raiz.dataset[p[0]]===p[1]?'true':'false')});
     [].forEach.call(document.querySelectorAll('[data-pref]'),function(e){var k=e.dataset.pref,v=raiz.dataset[k];
       if(e.tagName==='SELECT'){e.value=v;return}
       // No menu dos quadros, só o valor, para o menu caber numa linha; o nome completo fica na dica do mouse.
@@ -57,6 +59,8 @@
     [].forEach.call(document.querySelectorAll('[data-curso-opcao]'),function(e){
       if(e.dataset.ligado)return;e.dataset.ligado=1;e.addEventListener('click',function(){curso(e.dataset.cursoOpcao,true)})});
     curso(raiz.dataset.curso||'',false);
+    [].forEach.call(document.querySelectorAll('[data-pref-opcao]'),function(e){
+      if(e.dataset.ligado)return;e.dataset.ligado=1;e.addEventListener('click',function(){var p=e.dataset.prefOpcao.split(':');definir(p[0],p[1],true)})});
     [].forEach.call(document.querySelectorAll('[data-pref]'),function(e){
       if(e.dataset.ligado)return;e.dataset.ligado=1;
       if(e.tagName==='SELECT'){e.innerHTML=OPCOES[e.dataset.pref].map(function(o){return '<option value="'+o[0]+'">'+o[1]+'</option>'}).join('');

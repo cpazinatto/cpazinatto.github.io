@@ -149,10 +149,30 @@ html:not(.js) .quadro{display:block;margin:0 auto 12px}
 .gabarito .faixa{color:var(--suavez);border-bottom:.45cqw solid var(--suavez)}
 .suavez .in,.gabarito .in{padding-top:9.2cqw}
 
+/* Quadro moderno (etapa 5 do layout novo, 12/11/2026; mock em ../mock-layout/aula.html, tecla Q): cantos arredondados e contorno
+   suave nos blocos, sem a borda grossa à esquerda (o contorno é sombra interna e não ocupa espaço; o enchimento compensa a borda
+   que saiu); etiqueta em pílula cheia; a seção no pé, ao lado do tópico (data-sec, posto pelo tema.js; acima do título, como no mock, passava da altura em uns 215 quadros);
+   faixas do "Sua vez" e do gabarito arredondadas; pé mais discreto; traço da abertura de seção arredondado, com um círculo de fundo.
+   As cores por função não mudam. */
+.bloco{border:0;border-radius:1.4cqw;box-shadow:inset 0 0 0 .14cqw color-mix(in srgb,var(--k) 35%,transparent);padding:1.15cqw 2cqw 1.35cqw}
+.rot{border:0;background:var(--k);color:var(--fundo);border-radius:99cqw;padding:.5cqw 1.3cqw;margin:-3.15cqw 0 0 -.6cqw}
+.bloco>h3.rotulado:has(.base-etq)>.rot{margin:0 0 0 -.6cqw}
+.base-etq{border-radius:99cqw}
+.pe>span[data-sec]::after{content:" · " attr(data-sec)}
+/* Com a seção, o pé fica numa linha só (cortado com "…" se não couber): em duas linhas, ele subia sobre o conteúdo (T28, quadro 27). */
+.pe{gap:2cqw}.pe>span[data-sec]{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.suavez .faixa{border-radius:0 0 1.4cqw 1.4cqw;margin:0 3cqw}
+.gabarito .faixa{border-bottom-width:.3cqw;margin:0 3cqw}
+.pe{opacity:.7}
+.divisor .tra{border-radius:99cqw;width:10cqw}
+.divisor{background:radial-gradient(circle at 92% 12%,color-mix(in srgb,var(--define) 14%,transparent) 0 26%,transparent 26.5%),var(--fundo)}
+
+/* <main> das aulas (11/11/2026): só marca o conteúdo; a arrumação dos quadros segue com o body. */
+main.aula{display:contents}
 /* Divisor de sessão */
 .divisor .in{justify-content:center;padding-left:7cqw;gap:1.2cqw}
 .divisor .cod{color:var(--define);font-weight:700;font-size:calc(3.5cqw*var(--tam))}
-.divisor .tit{font-weight:700;font-size:calc(4.9cqw*var(--tam));line-height:1.16}
+.divisor .tit{margin:0;font-weight:700;font-size:calc(4.9cqw*var(--tam));line-height:1.16}
 .divisor .tra{width:15cqw;height:.6cqw;background:var(--define);margin:.8cqw 0}
 .divisor .ses{color:var(--apoio)}
 /* Versão da aula (10/11/2026): discreta, no canto oposto ao logo. */
@@ -300,6 +320,75 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .atalhos .varios b{font-weight:400;margin-right:6px}
 .atalhos .varios b.esc{font-weight:700;color:var(--curva-a)}
 .geral .atalhos{display:none!important}
+
+/* Índice retrátil da aula (12/11/2026, do mock em ../mock-layout/aula.html). Só aparece quando chamado; fixado, o quadro
+   encolhe para o lado em vez de ficar por baixo. As medidas são em px: o índice é da tela, não do quadro. */
+:root{--painel:color-mix(in srgb,var(--fundo) 94%,var(--texto));--painel2:color-mix(in srgb,var(--fundo) 86%,var(--texto));--larg-ind:340px}
+body.fixo{padding-left:var(--larg-ind)}
+body.fixo .quadro{width:min(calc(100vw - var(--larg-ind)),177.778vh);width:min(calc(100vw - var(--larg-ind)),177.778dvh)}
+.indice{position:fixed;left:0;top:0;bottom:0;width:min(var(--larg-ind),92vw);background:var(--painel);color:var(--texto);border-right:1px solid var(--grade);
+  z-index:12;transform:translateX(-102%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:6px 0 28px rgba(0,0,0,.18);
+  font-family:var(--f-texto);font-size:15px;line-height:1.3}
+.indice.ver{transform:none}
+body.fixo .indice{box-shadow:none}
+@media (prefers-reduced-motion:reduce){.indice{transition:none}}
+.indice header{padding:14px 14px 10px;border-bottom:1px solid var(--grade)}
+.indice .l1{display:flex;align-items:center;gap:8px}
+.indice .cod{font-weight:700;color:var(--define)}
+.indice .tt{font-weight:700;flex:1;font-family:var(--f-titulo);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.indice button{font:inherit;color:inherit}
+.indice .ib{border:0;background:none;color:var(--apoio);width:32px;height:32px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+.indice .ib:hover{background:var(--painel2);color:var(--texto)}
+.indice .ib[aria-pressed="true"]{color:var(--define);background:var(--painel2)}
+@media (max-width:900px){.indice .fixar{display:none}}
+.indice .abas{display:flex;gap:4px;margin-top:10px;background:var(--painel2);border-radius:10px;padding:3px}
+.indice .abas button{flex:1;border:0;background:none;color:var(--apoio);font-size:14px;padding:6px 4px;border-radius:7px;cursor:pointer}
+.indice .abas button[aria-selected="true"]{background:var(--fundo);color:var(--texto);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.indice .filtros{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.indice .filtros button{font-size:12px;border:1px solid var(--grade);background:none;color:var(--apoio);border-radius:999px;padding:2px 9px;cursor:pointer}
+.indice .filtros button[aria-pressed="true"]{border-color:var(--texto);color:var(--texto);font-weight:700}
+.indice .rolar{overflow:auto;flex:1;padding:8px 8px 20px;overscroll-behavior:contain}
+.indice .vazio{color:var(--apoio);padding:8px}
+.indice .secao-i{margin:12px 6px 4px;font-size:12px;color:var(--apoio);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.indice .item,.indice .item-a>*{display:grid;grid-template-columns:30px 1fr;gap:8px;align-items:start;width:100%;text-align:left;border:0;background:none;color:var(--texto);
+  padding:6px 8px;border-radius:8px;cursor:pointer;text-decoration:none}
+.indice .item:hover,.indice .item-a>a:hover{background:var(--painel2)}
+.indice .item:focus-visible,.indice .item-a>a:focus-visible,.indice .mini:focus-visible{outline:3px solid var(--define);outline-offset:-1px}
+.indice .item .n{color:var(--apoio);font-variant-numeric:tabular-nums;font-size:13px;padding-top:1px}
+.indice .item .k{display:block;font-size:12px;font-weight:700;color:var(--k,var(--apoio))}
+.indice .item .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.indice .item.atual,.indice .item-a.atual>*{background:color-mix(in srgb,var(--define) 16%,var(--painel));box-shadow:inset 3px 0 0 var(--define)}
+.indice .item.visto .n::after{content:"·";margin-left:2px}
+.indice .item.sub{padding-top:2px;padding-bottom:2px;opacity:.8}
+.indice .item.sub .t{font-size:13px;color:var(--apoio)}
+.indice .k-te{--k:var(--define)}.indice .k-ex{--k:var(--exemplo)}.indice .k-sv{--k:var(--suavez)}.indice .k-ga{--k:var(--gancho)}.indice .k-at{--k:var(--atencao)}
+.indice .aulas-l .item-a>*{grid-template-columns:44px 1fr}
+.indice .aulas-l .n{color:var(--define);font-weight:700;font-size:14px}
+.indice .aulas-l .desligado{opacity:.5;cursor:default}
+.indice .aulas-l .desligado::after{content:"em breve";grid-column:2;font-size:12px;color:var(--apoio)}
+/* Miniaturas: o próprio quadro, pequeno (as medidas são em cqw, então ele encolhe inteiro). */
+.indice .minis{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 4px}
+.indice .mini{border:1px solid var(--grade);border-radius:6px;overflow:hidden;cursor:pointer;background:var(--fundo);padding:0;position:relative;display:block}
+.indice .mini.atual{outline:3px solid var(--define);outline-offset:1px}
+.indice .mini .quadro{display:block;width:100%;pointer-events:none}
+.indice .mini .rotn{position:absolute;right:3px;bottom:3px;font-size:10px;background:var(--painel);color:var(--apoio);border-radius:3px;padding:0 4px;z-index:1}
+.indice footer{border-top:1px solid var(--grade);padding:10px 14px;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+.indice footer a{color:var(--exemplo)}
+.indice footer .desligado{display:none}
+.alca{position:fixed;left:0;top:50%;transform:translate(-100%,-50%);z-index:11;border:1px solid var(--grade);border-left:0;background:var(--painel);
+  color:var(--apoio);border-radius:0 10px 10px 0;padding:14px 6px;cursor:pointer;transition:transform .2s;font:13px var(--f-texto);writing-mode:vertical-rl}
+.alca.ver{transform:translate(0,-50%)}
+.veu-i{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:11;opacity:0;pointer-events:none;transition:opacity .2s}
+.indice.ver~.veu-i{opacity:1;pointer-events:auto}
+body.fixo .veu-i{display:none}
+.geral .indice,.geral .alca,.geral .prog{display:none}
+/* Linha de progresso no alto: um trecho por seção, o quadro atual marcado. Aparece com o menu. */
+.prog{position:fixed;left:0;right:0;top:0;height:5px;display:flex;gap:3px;z-index:9;opacity:0;transition:opacity .2s;pointer-events:none}
+.prog .tr{position:relative;background:var(--grade);height:100%}
+.prog .tr i{position:absolute;left:0;top:0;bottom:0;background:var(--define)}
+.prog .tr span{position:absolute;top:8px;left:6px;font:12px var(--f-texto);color:var(--apoio);white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:ellipsis}
+.menu-ver .prog{opacity:1}
+body.fixo .prog{left:var(--larg-ind)}
 
 /* Visão geral */
 .geral,.geral body{overflow:auto;height:auto}
