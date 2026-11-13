@@ -7,6 +7,10 @@
 //   <disc>-quadros           {"T14-EE":"1-7,9"}: quadros vistos de cada aula, pelo número do rodapé
 //   <disc>-ultima            {u, h, cod, tit, n, tot, sec}: a última aula aberta ("Continuar de onde parou")
 //   <disc>-feita:<página>    {"q3":true}: questões marcadas como feitas numa lista ou num módulo
+//   <disc>-aulas-recolhidas, <disc>-aulas-fixadas   partes recolhidas e tópicos fixados em "Aulas e exercícios"
+//   <disc>-base-recolhidos, -base-fixados, <disc>-comp-recolhidos, -comp-fixados   o mesmo na Revisão da base e nas Demonstrações
+//   disciplinas-ordem        [{nome, discs}]: a ordem dos níveis e das disciplinas que o aluno arrumou na página das disciplinas
+//   disciplinas-recolhidas   ["Ensino técnico..."]: os níveis recolhidos nela
 // <disc> é o prefixo da disciplina (13/11/2026), no <html data-disc>, e os cursos dela vêm em <html data-cursos>, os dois do
 // disciplina.json. O Cálculo I usa "calculo", o mesmo de antes; a página sem data-disc (a das disciplinas) fica com ele.
 window.Memoria=(function(){
@@ -15,7 +19,7 @@ window.Memoria=(function(){
   function ler(k){try{return localStorage.getItem(k)}catch(e){return null}}
   function gravar(k,v){try{if(v===null||v===undefined)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
   function lerJSON(k,padrao){var v=null;try{v=JSON.parse(ler(k)||'null')}catch(e){}return v||padrao}
-  function gravarJSON(k,v){gravar(k,JSON.stringify(v))}
+  function gravarJSON(k,v){gravar(k,v===null||v===undefined?null:JSON.stringify(v))}
   // Faixas de quadros: "1-7,9" <-> {1:1,...,7:1,9:1}.
   function faixas(t){var o={};(t||'').split(',').forEach(function(p){var m=p.match(/^(\d+)(?:-(\d+))?$/);if(m)for(var a=+m[1],b=+(m[2]||m[1]);a<=b;a++)o[a]=1});return o}
   function escreverFaixas(o){var ns=Object.keys(o).map(Number).sort(function(a,b){return a-b}),r=[],k=0;

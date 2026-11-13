@@ -16,3 +16,78 @@
 .disc.breve .capa{filter:grayscale(1);opacity:.6}
 .disc .fig{width:170px;height:86px}
 }
+
+/* Organizar e recolher (13/11/2026, a partir do mock mock-layout/disciplinas-arrastar.html; o script é disciplinas.js). */
+@layer paginas{
+/* Recolher níveis: a seta antes do título; recolhido, mostra quantas disciplinas tem */
+.secao>h2{cursor:pointer}
+.org-titulo{min-width:0}
+.org-dobra{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;border:1px solid var(--grade);background:var(--sup);
+  color:var(--apoio);cursor:pointer;padding:0}
+.org-dobra svg{transition:transform .18s}
+.secao.dobrada .org-dobra svg{transform:rotate(-90deg)}
+.secao.dobrada>.grade{display:none}
+.org-conta{display:none;flex:none;white-space:nowrap;font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--apoio);
+  background:var(--sup2);border-radius:999px;padding:2px 9px}
+.secao.dobrada .org-conta{display:inline-block}
+.secao.dobrada{margin-bottom:-4px}
+
+/* Entrada do modo, a dica e a barra de baixo (só enquanto se organiza) */
+.org-entrada{display:flex;justify-content:flex-end;margin:28px 0 -22px}
+.org-entrada button{display:inline-flex;align-items:center;gap:7px;font:700 14px var(--f-texto);color:var(--apoio);background:none;
+  border:1px solid transparent;border-radius:999px;padding:6px 12px;cursor:pointer}
+.org-entrada button:hover{color:var(--texto);border-color:var(--grade);background:var(--sup)}
+.org-entrada button:focus-visible{outline:3px solid var(--exemplo);outline-offset:2px}
+.organizar .org-entrada{visibility:hidden}
+.org-dica{display:none;margin:18px 0 0;padding:12px 16px;border:1px dashed var(--exemplo);border-radius:12px;color:var(--apoio);font-size:15px;max-width:900px}
+.organizar .org-dica{display:block}
+.org-dica kbd{font:700 12px var(--f-texto);border:1px solid var(--grade);border-radius:5px;padding:1px 5px;background:var(--sup2)}
+.org-barra{position:fixed;left:50%;width:max-content;bottom:16px;transform:translateX(-50%);z-index:50;display:flex;gap:8px;align-items:center;
+  max-width:calc(100vw - 32px);padding:8px 10px;border:1px solid var(--grade);border-radius:16px;background:var(--sup);box-shadow:var(--sombra)}
+body:not(.organizar) .org-barra{display:none}
+.org-barra button{font:700 14px var(--f-texto);border:1px solid var(--grade);background:var(--sup2);color:var(--texto);border-radius:999px;
+  padding:7px 14px;cursor:pointer;white-space:nowrap}
+.org-barra button:disabled{opacity:.45;cursor:default}
+.org-barra .liga{background:var(--exemplo);border-color:var(--exemplo);color:var(--fundo)}
+.organizar main.pag{padding-bottom:90px}
+.org-aviso{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Modo de organizar */
+.organizar .disc{position:relative;cursor:grab;user-select:none;-webkit-user-select:none}
+.organizar .disc a{pointer-events:none}
+.organizar .disc:hover{outline:2px solid color-mix(in srgb,var(--exemplo) 45%,transparent);outline-offset:2px}
+.organizar .secao>h2{cursor:grab;user-select:none;-webkit-user-select:none}
+.org-pega{display:none;position:absolute;top:8px;right:8px;z-index:2;width:34px;height:34px;border-radius:10px;place-items:center;
+  background:var(--sup);border:1px solid var(--grade);color:var(--apoio);cursor:grab;touch-action:none}
+.organizar .org-pega{display:grid}
+.secao>h2 .org-pega{position:static;width:28px;height:28px;flex:none;order:-1}
+.organizar .grade{border-radius:14px;transition:background .15s}
+.organizar .grade.alvo{background:color-mix(in srgb,var(--exemplo) 7%,transparent)}
+.organizar .disc:focus-visible,.organizar .secao>h2:focus-visible{outline:3px solid var(--exemplo);outline-offset:3px}
+
+/* Durante o arraste; arrastando um nível, todos mostram só o título */
+.org-vaga{border:2px dashed var(--exemplo);border-radius:var(--raio,12px);background:color-mix(in srgb,var(--exemplo) 8%,transparent)}
+.secao.org-vaga{margin-top:34px}
+.org-solto{position:fixed!important;z-index:60;margin:0!important;pointer-events:none;cursor:grabbing;
+  box-shadow:0 18px 40px rgba(0,0,0,.22)!important;transform:rotate(1.2deg) scale(1.02);opacity:.96}
+.secao.org-solto{background:var(--fundo);padding:6px 10px;border-radius:14px}
+.arrastando,.arrastando *{cursor:grabbing!important}
+.org-pegado{outline:3px solid var(--exemplo)!important;outline-offset:3px;box-shadow:0 12px 30px rgba(0,0,0,.18)!important}
+.arrastando-nivel .secao>.grade{display:none}
+.arrastando-nivel .secao>h2{margin-bottom:0}
+.arrastando-nivel .secao{margin-top:14px}
+
+/* Celular */
+@media (max-width:600px){
+  .org-barra{left:8px;right:8px;bottom:8px;transform:none;max-width:none;overflow-x:auto;padding:6px}
+  .org-barra button{font-size:13px;padding:6px 11px}
+  .organizar .secao>h2::after{display:none}
+}
+@media (pointer:coarse){
+  .org-teclado{display:none}
+  .org-pega{width:42px;height:42px;border-radius:12px}
+  .secao>h2 .org-pega{width:36px;height:36px}
+  .org-dobra{width:36px;height:36px;border-radius:10px}
+}
+@media (prefers-reduced-motion:reduce){.org-solto{transform:none}.org-dobra svg{transition:none}}
+}

@@ -19,3 +19,44 @@ a.mod:hover .capa{background:color-mix(in srgb,var(--k) 14%,var(--sup))}
 .filtro-l input{font:inherit;font-size:15px;padding:8px 14px;border-radius:999px;border:1px solid var(--grade);background:var(--sup);color:var(--texto);width:min(360px,100%)}
 .filtro-l .vazio{color:var(--apoio);font-size:14px}
 }
+
+/* Grupos que recolhem e módulos fixados (13/11/2026, a partir dos mocks mock-layout/revisao-recolher.html e demonstracoes-recolher.html). */
+@layer paginas{
+.secao.cat>h2{cursor:pointer;user-select:none;-webkit-user-select:none}
+.rc-seta{flex:none;display:grid;place-items:center;width:28px;height:28px;padding:0;border-radius:8px;border:1px solid var(--grade);
+  background:var(--sup);color:var(--apoio);cursor:pointer}
+.rc-seta svg{transition:transform .18s}
+.rc-fechada .rc-seta svg{transform:rotate(-90deg)}
+.secao.cat>h2:hover .rc-seta{color:var(--texto);border-color:var(--apoio)}
+.rc-resumo,.rc-nota{font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--apoio)}
+.rc-resumo{display:none;background:var(--sup2);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.rc-fechada .rc-resumo{display:inline-block}
+.rc-fechada>.grade{display:none}
+.rc-fechada>h2{margin-bottom:0}
+.rc-filtrando .rc-fechada>.grade{display:grid}
+.rc-filtrando .rc-fechada .rc-resumo,.rc-filtrando .rc-fixados{display:none}
+.rc-tudo{font:700 14px var(--f-texto);color:var(--apoio);background:none;border:1px solid var(--grade);border-radius:999px;padding:6px 12px;cursor:pointer;margin-left:auto}
+.rc-tudo:hover{color:var(--texto);border-color:var(--apoio)}
+
+/* Cartão com o alfinete ao lado (fora do link) */
+.rc-cel{position:relative;display:flex}
+.rc-cel>.mod{flex:1}
+.rc-cel:has(>.mod[style*="none"]){display:none}
+.rc-pino{position:absolute;top:8px;right:8px;z-index:2;display:grid;place-items:center;width:34px;height:34px;padding:0;border-radius:10px;
+  border:1px solid var(--grade);background:var(--sup);color:var(--apoio);cursor:pointer;opacity:0;transition:opacity .12s}
+.rc-cel:hover .rc-pino,.rc-pino:focus-visible,.rc-pino[aria-pressed=true]{opacity:1}
+.rc-pino[aria-pressed=true]{color:var(--define);border-color:color-mix(in srgb,var(--define) 40%,var(--grade))}
+.rc-pino[aria-pressed=true] svg{fill:currentColor}
+.rc-pino:focus-visible{outline:3px solid var(--exemplo);outline-offset:1px}
+.rc-fixados>h2{display:flex;gap:10px;align-items:center}
+.rc-fixados>h2 .rc-nome{display:inline-flex;align-items:center;gap:6px;color:var(--define)}
+.rc-fixados>h2 .rc-nome::before{content:"";width:16px;height:16px;background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 3h6l-1 6 4 3v2h-5v7l-1 1-1-1v-7H6v-2l4-3z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 3h6l-1 6 4 3v2h-5v7l-1 1-1-1v-7H6v-2l4-3z'/%3E%3C/svg%3E") center/contain no-repeat}
+.rc-fixados .grade{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.rc-fixados[hidden]{display:none}
+.rc-aviso{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (pointer:coarse){.rc-pino{opacity:1;width:42px;height:42px;top:6px;right:6px}.rc-seta{width:36px;height:36px;border-radius:10px}}
+@media (max-width:640px){.rc-longo{display:none}.rc-nota{display:none}.secao.cat>h2::after{display:none}.secao.cat>h2 .rc-nome{flex:0 1 auto;min-width:0}}
+@media (prefers-reduced-motion:reduce){.rc-seta svg,.rc-pino{transition:none}}
+}

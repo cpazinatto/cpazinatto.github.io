@@ -59,3 +59,43 @@ html[data-curso=EE] .links.c-EQ,html[data-curso=EQ] .links.c-EE{display:none}
   .rail-aulas.aberta{opacity:1;transform:none;pointer-events:auto}
   .entrada .b-rail.ver{display:inline-flex}}
 }
+
+/* Partes que recolhem e tópicos fixados (13/11/2026, a partir do mock mock-layout/aulas-recolher.html; o script está no fim de aulas-e-exercicios.js). */
+@layer paginas{
+.parte-cab{cursor:pointer;align-items:center;user-select:none;-webkit-user-select:none}
+.rc-seta{flex:none;display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:10px;border:1px solid var(--grade);
+  background:var(--sup);color:var(--apoio);cursor:pointer;align-self:center}
+.rc-seta svg{transition:transform .18s}
+.rc-fechada .rc-seta svg{transform:rotate(-90deg)}
+.parte-cab:hover .rc-seta{color:var(--texto);border-color:var(--apoio)}
+.rc-resumo{display:none;font-size:14px;font-weight:700;color:var(--apoio);background:var(--sup2);border-radius:999px;padding:2px 10px}
+.rc-fechada .rc-resumo{display:inline-block}
+.rc-fechada .parte-cab p{display:none}
+.rc-fechada>.linhas{display:none}
+.rc-fechada .parte-cab{margin-bottom:0}
+.rc-fixados .parte-cab{cursor:default}
+.rc-tudo{font:700 14px var(--f-texto);color:var(--apoio);background:none;border:1px solid var(--grade);border-radius:999px;padding:5px 12px;cursor:pointer}
+.rc-tudo:hover{color:var(--texto);border-color:var(--apoio)}
+
+/* Fixar */
+.linhas>li{position:relative;padding-right:56px}
+.rc-pino{position:absolute;top:10px;right:10px;display:grid;place-items:center;width:36px;height:36px;padding:0;border-radius:10px;
+  border:1px solid transparent;background:none;color:var(--apoio);cursor:pointer;opacity:.55}
+.linhas>li:hover .rc-pino,.rc-pino:focus-visible{opacity:1;border-color:var(--grade);background:var(--sup2)}
+.rc-pino[aria-pressed=true]{opacity:1;color:var(--define)}
+.rc-pino[aria-pressed=true] svg{fill:currentColor}
+.rc-pino:focus-visible{outline:3px solid var(--exemplo);outline-offset:1px}
+.rc-fixados .parte-cab h2{display:flex;align-items:center;gap:8px}
+.rc-fixados .parte-cab h2::before{content:"";width:20px;height:20px;background:var(--define);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 3h6l-1 6 4 3v2h-5v7l-1 1-1-1v-7H6v-2l4-3z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 3h6l-1 6 4 3v2h-5v7l-1 1-1-1v-7H6v-2l4-3z'/%3E%3C/svg%3E") center/contain no-repeat}
+.rc-fixados .linhas{border-color:color-mix(in srgb,var(--define) 35%,var(--grade))}
+.rc-fixados a.cod{text-decoration:none}
+.rc-fixados a.cod:hover{text-decoration:underline}
+.rc-fixados[hidden]{display:none}
+.rc-aviso{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (pointer:coarse){.rc-pino{opacity:1;width:42px;height:42px;top:8px;right:8px}.rc-seta{width:38px;height:38px}}
+@media (max-width:640px){.parte-cab h2{font-size:22px}.rc-tudo{font-size:13px;padding:5px 10px}}
+@media (prefers-reduced-motion:reduce){.rc-seta svg{transition:none}}
+@media (max-width:640px){.rc-longo{display:none}.filtro .esp{display:none}.rc-tudo{margin-left:auto}.rc-fixados .parte-cab p{font-size:14px}}
+}

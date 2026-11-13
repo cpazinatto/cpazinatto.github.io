@@ -42,3 +42,97 @@
     [].forEach.call(r.querySelectorAll('a.t'),function(a){a.classList.toggle('atual',a.dataset.t===e.target.id)})})},{rootMargin:'-45% 0px -50% 0px'});
   [].forEach.call(document.querySelectorAll('.linhas>li'),function(l){o.observe(l)});
 })();
+
+// Partes que recolhem e tópicos fixados no alto (13/11/2026, pedido do professor, a partir do mock mock-layout/aulas-recolher.html).
+// A ordem do curso não muda: recolher só esconde, e os fixados aparecem numa faixa à parte, na ordem dos tópicos. Fica neste
+// navegador (<disc>-aulas-recolhidas e <disc>-aulas-fixadas, ver preferencias.js).
+(function(){
+  var C_REC = Memoria.chave('aulas-recolhidas'), C_FIX = Memoria.chave('aulas-fixadas');
+  function ler(k){ var v = Memoria.lerJSON(k, []); return Array.isArray(v) ? v : []; }
+  function gravar(k, v){ Memoria.gravarJSON(k, v.length ? v : null); }
+  var recolhidas = ler(C_REC), fixados = ler(C_FIX);
+  var corpo = document.querySelector('.corpo-lista'); if (!corpo) return;
+  var partes = [].slice.call(corpo.querySelectorAll('.parte'));
+  var SETA = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>';
+  var PINO = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l-1 6 4 3v2h-5v7l-1 1-1-1v-7H6v-2l4-3z"/></svg>';
+
+  // ---- Recolher partes
+  partes.forEach(function(p){
+    var cab = p.querySelector('.parte-cab'), h = cab.querySelector('h2'), lis = p.querySelectorAll('.linhas>li');
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'rc-seta'; b.innerHTML = SETA;
+    b.setAttribute('aria-controls', p.id + '-l'); p.querySelector('.linhas').id = p.id + '-l';
+    cab.insertBefore(b, h);
+    var r = document.createElement('span'); r.className = 'rc-resumo';
+    r.textContent = lis.length === 1 ? lis[0].id : lis[0].id + ' a ' + lis[lis.length - 1].id + ' · ' + lis.length + ' tópicos';
+    cab.appendChild(r);
+    cab.addEventListener('click', function(e){ if (!e.target.closest('a')) recolher(p, !p.classList.contains('rc-fechada')); });
+    recolher(p, recolhidas.indexOf(h.textContent) >= 0, true);
+  });
+  function recolher(p, v, quieto){
+    p.classList.toggle('rc-fechada', v);
+    var b = p.querySelector('.rc-seta'), nome = p.querySelector('h2').textContent;
+    b.setAttribute('aria-expanded', !v); b.setAttribute('aria-label', (v ? 'Abrir ' : 'Recolher ') + nome);
+    if (quieto) return;
+    recolhidas = partes.filter(function(x){ return x.classList.contains('rc-fechada'); }).map(function(x){ return x.querySelector('h2').textContent; });
+    gravar(C_REC, recolhidas); botaoTudo();
+  }
+  // Recolher tudo e abrir tudo, no filtro fixo do alto
+  var esp = document.querySelector('.filtro .esp'), bt = document.createElement('button');
+  bt.type = 'button'; bt.className = 'rc-tudo'; esp.after(bt);
+  function botaoTudo(){ var todas = partes.every(function(p){ return p.classList.contains('rc-fechada'); }); bt.innerHTML = (todas ? 'Abrir todas' : 'Recolher todas') + '<span class="rc-longo"> as partes</span>'; bt.dataset.abrir = todas ? '1' : ''; }
+  bt.onclick = function(){ var abrir = !!bt.dataset.abrir; partes.forEach(function(p){ recolher(p, !abrir, true); }); recolher(partes[0], !abrir); };
+  botaoTudo();
+  // Ir a um tópico (índice ao lado, busca, link com #T07): a parte dele abre
+  function abrirPara(id){
+    var alvo = id && document.getElementById(id); if (!alvo) return;
+    var p = alvo.closest('.parte'); if (p && p.classList.contains('rc-fechada')) recolher(p, false);
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href^="#"]'); if (!a) return;
+    abrirPara(a.getAttribute('href').slice(1));   // a parte abre antes de o navegador rolar até o tópico
+  }, true);
+  addEventListener('hashchange', function(){ abrirPara(location.hash.slice(1)); });
+  abrirPara(location.hash.slice(1));
+
+  // ---- Fixar tópicos no alto
+  var faixa = document.createElement('section'); faixa.className = 'parte rc-fixados'; faixa.id = 'fixados';
+  faixa.innerHTML = '<div class="parte-cab"><h2>Fixados</h2><p>os tópicos que você fixou, na ordem do curso; a lista completa continua abaixo</p></div><ul class="linhas"></ul>';
+  corpo.insertBefore(faixa, corpo.firstChild);
+  [].forEach.call(corpo.querySelectorAll('.parte:not(.rc-fixados) .linhas>li'), function(li){
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'rc-pino'; b.innerHTML = PINO; b.dataset.t = li.id;
+    li.appendChild(b); rotular(b);
+  });
+  function rotular(b){
+    var f = fixados.indexOf(b.dataset.t) >= 0, tit = document.getElementById(b.dataset.t).querySelector('.tit').textContent;
+    b.setAttribute('aria-pressed', f); b.title = f ? 'Desafixar' : 'Fixar no alto';
+    b.setAttribute('aria-label', (f ? 'Desafixar ' : 'Fixar no alto ') + b.dataset.t + ', ' + tit);
+  }
+  function montarFixados(){
+    var ul = faixa.querySelector('ul'); ul.innerHTML = '';
+    var ordem = [].map.call(corpo.querySelectorAll('.parte:not(.rc-fixados) .linhas>li'), function(li){ return li.id; });
+    fixados = fixados.filter(function(t){ return ordem.indexOf(t) >= 0; });   // tópico que saiu da página some dos fixados
+    ordem.filter(function(t){ return fixados.indexOf(t) >= 0; }).forEach(function(t){
+      var c = document.getElementById(t).cloneNode(true);
+      c.removeAttribute('id'); c.dataset.t = t;
+      c.querySelectorAll('[data-aula]').forEach(function(x){ x.removeAttribute('data-aula'); });
+      c.querySelectorAll('.pct, .ver').forEach(function(x){ x.remove(); });
+      var cod = c.querySelector('.cod'), a = document.createElement('a'); a.href = '#' + t; a.className = 'cod'; a.textContent = t; a.title = 'Ir ao ' + t + ' na lista';
+      cod.replaceWith(a);
+      ul.appendChild(c);
+    });
+    faixa.hidden = !fixados.length;
+    corpo.querySelectorAll('.rc-pino').forEach(function(b){ if (document.getElementById(b.dataset.t)) rotular(b); });
+    corpo.querySelectorAll('.linhas>li[id]').forEach(function(li){ li.classList.toggle('rc-fixo', fixados.indexOf(li.id) >= 0); });
+  }
+  corpo.addEventListener('click', function(e){
+    var b = e.target.closest('.rc-pino'); if (!b) return;
+    var t = b.dataset.t, i = fixados.indexOf(t), dentroFaixa = !!b.closest('.rc-fixados');
+    if (i >= 0) fixados.splice(i, 1); else fixados.push(t);
+    gravar(C_FIX, fixados); montarFixados();
+    var aviso = document.getElementById('rcAviso'); aviso.textContent = t + (i >= 0 ? ' desafixado' : ' fixado no alto');
+    // o foco fica no mesmo botão do tópico na lista (o da faixa pode ter sumido)
+    if (dentroFaixa) { var o = document.querySelector('#' + t + ' .rc-pino'); if (o) o.focus({ preventScroll: true }); }
+  });
+  document.body.insertAdjacentHTML('beforeend', '<div class="rc-aviso" id="rcAviso" aria-live="polite"></div>');
+  montarFixados();
+})();
