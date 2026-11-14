@@ -58,8 +58,11 @@ header.topo.sobre,body.visor-aberto header.topo{position:fixed;left:0;right:0;to
   transition:transform .2s ease,opacity .2s ease;background:color-mix(in srgb,var(--fundo) 90%,transparent)}
 html.menu-ver header.topo.sobre,html.menu-ver body.visor-aberto header.topo,header.topo.sobre:focus-within,body.visor-aberto header.topo:focus-within,html.geral header.topo.sobre{transform:none;opacity:1;pointer-events:auto}
 header.topo.sobre .lin{max-width:none}
-/* Com a barra à vista, a linha de progresso da aula desce para baixo dela e a dica das teclas da animação some. */
-html.menu-ver .prog{top:59px}
+/* Com a barra à vista, a dica das teclas da animação some. */
+/* A linha de progresso vira a borda de baixo da barra, sem os rótulos das seções (14/11/2026, professor: "sobreposição no exemplo 5":
+   descida para baixo da barra, com os rótulos, ela caía sobre o alto do quadro). A seção já está no pé do quadro, e o tópico no caminho. */
+html.menu-ver .prog{top:57px;height:4px;z-index:11}
+html.menu-ver .prog .tr span{display:none}
 html.menu-ver .ctl.atalhos{opacity:0;pointer-events:none}
 }
 @layer paginas{
