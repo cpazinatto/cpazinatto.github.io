@@ -10,9 +10,11 @@
 .ip header h2{flex:1;margin:0;font-family:var(--f-titulo);font-size:1.25em}
 .ip kbd{font-family:var(--f-texto);font-size:.8em;border:1px solid var(--grade);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--apoio)}
 .ip-fechar{border:0;background:color-mix(in srgb,var(--texto) 8%,var(--fundo));color:var(--texto);border-radius:8px;width:32px;height:32px;font:inherit;cursor:pointer}
-/* Colunas que se enchem de cima para baixo: uma coluna baixa (Portas) não deixa buraco embaixo de outra (Nesta aula). */
-.ip-corpo{columns:240px;column-gap:18px;padding:16px}
-.ip-col{display:flex;flex-direction:column;gap:6px;min-width:0;break-inside:avoid;margin-bottom:18px}
+/* Grade de colunas (14/11/2026, no lugar das colunas em fluxo: no Safari, break-inside não valia, e a coluna Portas se partia, com o
+   contorno do último item no alto da coluna seguinte). Cada coluna é inteira; as mais curtas deixam espaço embaixo. */
+.ip-corpo{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:18px;align-items:start;padding:16px}
+.ip-col{display:flex;flex-direction:column;gap:6px;min-width:0;padding:3px}
+.ip-pilha{display:flex;flex-direction:column;gap:18px;min-width:0}
 .ip-col h3{margin:0 0 2px;font-size:.78em;letter-spacing:.06em;text-transform:uppercase;color:var(--apoio);font-family:var(--f-texto)}
 .ip-it,.ip-col>.desligado{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-decoration:none;color:var(--texto);
   border:1px solid var(--grade);border-radius:10px;padding:7px 10px;background:color-mix(in srgb,var(--texto) 2.5%,var(--fundo))}
@@ -42,5 +44,5 @@ a.ip-it:focus-visible,.ip-grade a:focus-visible,.ip-quadro :focus-visible{outlin
 @media (max-width:600px){.ip-veu{padding:0}.ip{border-radius:0;min-height:100%;border:0}.ip-dica{display:none}}
 @media (pointer:coarse){.ip-dica{display:none}}
 }
-/* Roda do mouse (07b-ir-para.js): na aula e com o visor aberto, o gesto de dois dedos para o lado não volta a página do navegador. */
-html:has(main.aula),html:has(body.visor-aberto){overscroll-behavior-x:none}
+/* Roda do mouse (07b-ir-para.js): o gesto de dois dedos para o lado não volta a página na aula e com o visor aberto pelo
+   overscroll-behavior do tema.css, que já vale para os dois eixos. */

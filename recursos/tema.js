@@ -756,7 +756,9 @@
     if(s<0){ant();return}
     // Avança só dentro da aula, da questão ou da parte aberta.
     if(passo<maxPasso(qs[i])||(i<qs.length-1&&mesma(i+1)))prox()}
-  document.addEventListener('wheel',function(e){
+  // O leitor fica só onde a roda troca o quadro: na aula, no body (a página não rola); nas listas e nos módulos, em cada visor
+  // (.resol). Preso ao documento inteiro e sem modo passivo, ele fazia toda rolagem das listas esperar o JavaScript (Safari, 14/11/2026).
+  function aoGirar(e){
     if(raiz.dataset.roda==='desligada'||e.ctrlKey||e.metaKey||!qs.length||!aberto()||irAberto())return;
     if(raiz.classList.contains('geral')||document.body.classList.contains('busca-aberta'))return;
     if(gav&&gav.classList.contains('ver')&&!document.body.classList.contains('fixo'))return;
@@ -774,7 +776,8 @@
     rAcc+=d;
     if(Math.abs(rAcc)>=RODA_PASSO&&agora-rUltimo>=RODA_INTERVALO){rUltimo=agora;var sg=rAcc>0?1:-1;rAcc-=sg*RODA_PASSO;
       if(Math.abs(rAcc)>RODA_PASSO)rAcc=sg*RODA_PASSO;rodaPasso(sg,controle)}
-  },{passive:false});
+  }
+  (lista?[].slice.call(document.querySelectorAll('.resol')):[document.body]).forEach(function(x){x.addEventListener('wheel',aoGirar,{passive:false})});
 // ── tema/js/08-endereco-conferir.js: Endereço (#7, #s2), parâmetros (?abrir, ?inteiro) e a conferência automática (?conferir).
   // Aula: #7 é o quadro de rodapé 7, #s2 a abertura da Seção 2 (12/11/2026); nas listas, a posição, como antes.
   function doEndereco(){var hs=decodeURIComponent(location.hash.slice(1));
