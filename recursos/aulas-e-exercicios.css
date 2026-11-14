@@ -78,7 +78,18 @@ html[data-curso=EE] .links.c-EQ,html[data-curso=EQ] .links.c-EE{display:none}
 .rc-tudo:hover{color:var(--texto);border-color:var(--apoio)}
 
 /* Fixar */
-.linhas>li{position:relative;padding-right:56px}
+.linhas>li{position:relative;padding-right:100px}
+/* Imprimir o tópico (13/11/2026): ao lado do pino, com um menu de aula e lista por curso. */
+.imp-top{position:absolute;top:10px;right:52px}
+.imp-top>summary{list-style:none;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;border:1px solid transparent;color:var(--apoio);cursor:pointer;opacity:.55}
+.imp-top>summary::-webkit-details-marker{display:none}
+.linhas>li:hover .imp-top>summary,.imp-top[open]>summary,.imp-top>summary:focus-visible{opacity:1;border-color:var(--grade);background:var(--sup2)}
+.imp-top>summary:focus-visible{outline:3px solid var(--exemplo);outline-offset:1px}
+.imp-menu{position:absolute;right:0;top:42px;z-index:5;min-width:200px;display:flex;flex-direction:column;gap:2px;padding:8px;background:var(--sup);border:1px solid var(--grade);border-radius:12px;box-shadow:var(--sombra)}
+.imp-menu b{font-size:13px;color:var(--apoio);padding:2px 8px 4px}
+.imp-menu a{padding:6px 8px;border-radius:8px;color:var(--texto);text-decoration:none;white-space:nowrap}
+.imp-menu a:hover{background:var(--sup2)}
+html[data-curso=EE] .imp-menu .c-EQ,html[data-curso=EQ] .imp-menu .c-EE{display:none}
 .rc-pino{position:absolute;top:10px;right:10px;display:grid;place-items:center;width:36px;height:36px;padding:0;border-radius:10px;
   border:1px solid transparent;background:none;color:var(--apoio);cursor:pointer;opacity:.55}
 .linhas>li:hover .rc-pino,.rc-pino:focus-visible{opacity:1;border-color:var(--grade);background:var(--sup2)}

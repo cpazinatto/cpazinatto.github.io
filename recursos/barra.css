@@ -1,0 +1,67 @@
+/* Barra do topo, a mesma em todas as páginas (docs/planejamento-barra.md, aprovado em 13/11/2026): marca, caminho, portas,
+   "Ir para", busca e aparência, e o painel de aparência. Saiu de entrada.css; nas aulas e com o visor aberto, fica por cima do quadro
+   e aparece junto com o menu (html.menu-ver, tema.js), sem tirar altura do quadro. Sempre header.topo: os quadros usam a classe topo
+   nas colunas (<div class="col topo">), e uma regra solta em .topo mudava a letra dentro deles (achado na montagem de 14/11/2026). */
+@layer componentes{
+html:has(body.entrada),html:has(body.pag-lista){scroll-padding-top:76px}
+header.topo{font-family:var(--f-texto);font-size:16px;line-height:1.5;color:var(--texto)}
+header.topo button{font:inherit;color:inherit}
+header.topo :focus-visible,.aparencia :focus-visible{outline:3px solid var(--suavez);outline-offset:2px;border-radius:6px}
+header.topo{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--pagina) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--grade)}
+header.topo .lin{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.marca{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--texto);font-weight:700;white-space:nowrap}
+.marca .sel{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0C7E54,#0A6B47);color:#fff;display:grid;place-items:center;font:20px/1 var(--f-math)}
+.caminho{display:flex;gap:6px;align-items:center;color:var(--apoio);font-size:14px;min-width:0;overflow:hidden;white-space:nowrap}
+.caminho a{color:var(--apoio);text-decoration:none}.caminho a:hover{color:var(--texto);text-decoration:underline}
+.caminho [aria-current]{overflow:hidden;text-overflow:ellipsis}
+header.topo .esp{flex:1}
+.busca-b{display:flex;align-items:center;gap:10px;min-width:0;width:min(340px,36vw);padding:7px 10px 7px 12px;border:1px solid var(--grade);
+  border-radius:999px;background:var(--sup);color:var(--apoio);cursor:text;font-size:14px}
+header.topo .busca-b{color:var(--apoio)}
+.busca-b span{flex:1;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+header.topo kbd,.aparencia kbd{font-family:inherit;font-size:12px;border:1px solid var(--grade);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:var(--sup2);color:var(--apoio)}
+.ic{width:38px;height:38px;border-radius:999px;border:1px solid var(--grade);background:var(--sup);display:grid;place-items:center;cursor:pointer;flex:none;color:var(--texto)}
+.ic:hover,.busca-b:hover{background:var(--sup2)}
+@media (max-width:760px){.caminho,header.topo .esp{display:none}.busca-b{width:auto;flex:1}.busca-b kbd{display:none}.marca span:last-child{display:none}.ir-b span,.ir-b kbd{display:none}}
+/* Painel de aparência: os quatro ajustes num lugar só. */
+.aparencia{position:absolute;right:max(16px,calc((100vw - 1180px)/2 + 16px));top:58px;width:min(360px,calc(100vw - 32px));background:var(--sup);border:1px solid var(--grade);
+  border-radius:var(--raio);box-shadow:var(--sombra);padding:14px;z-index:30}
+.aparencia[hidden]{display:none}
+.aparencia h3{font-size:13px;color:var(--apoio);font-weight:700;margin:12px 0 6px}
+.aparencia h3:first-child{margin-top:0}
+.seg{display:flex;border:1px solid var(--grade);border-radius:10px;padding:3px;gap:3px;background:var(--sup2)}
+.seg button{flex:1;border:0;background:none;padding:6px 6px;border-radius:7px;cursor:pointer;font-size:14px;color:var(--texto)}
+.seg button[aria-pressed="true"]{background:var(--sup);box-shadow:0 1px 3px rgba(0,0,0,.15);font-weight:700}
+.aparencia .dica{font-size:13px;color:var(--apoio);margin:12px 0 0}
+/* Portas da disciplina: a atual marcada; abaixo de 900 px, só no "Ir para". */
+.portas{display:flex;gap:2px;border:1px solid var(--grade);border-radius:999px;padding:2px;background:var(--sup);flex:none}
+.portas a,.portas .desligado{padding:5px 11px;border-radius:999px;color:var(--apoio);text-decoration:none;font-size:13.5px;white-space:nowrap}
+.portas a:hover{color:var(--texto);background:var(--sup2)}
+.portas a[aria-current]{background:var(--define);color:#fff;font-weight:700}
+[data-modo="escuro"] .portas a[aria-current]{color:var(--fundo)}
+.portas .desligado{opacity:.55}
+.ir-b{display:flex;align-items:center;gap:8px;flex:none;padding:7px 12px;border:1px solid var(--grade);border-radius:999px;background:var(--sup);cursor:pointer;font-size:14px}
+.ir-b:hover{background:var(--sup2)}
+header.topo:has(.portas) .busca-b{width:auto;flex:0 1 240px}
+/* Com as portas, "Ir para" e "Imprimir" ficam só com o ícone abaixo de 1200 px, e a busca abaixo de 1100: a barra cabe em 1000 px
+   (14/11/2026: a 1000 px, o botão da Aparência ia a 1077 px e a página rolava para o lado). */
+@media (max-width:1200px){header.topo:has(.portas) .ir-b :is(span,kbd){display:none}header.topo:has(.portas) .ir-b{padding:7px 10px}}
+@media (max-width:1100px){header.topo:has(.portas) .busca-b span{display:none}header.topo:has(.portas) .busca-b{flex:none}}
+@media (max-width:900px){.portas{display:none}header.topo:has(.portas) .busca-b span{display:inline}header.topo:has(.portas) .busca-b{flex:0 1 240px}}
+header.topo .caminho{flex:1 1 auto}
+header.topo .caminho>*{flex:none}header.topo .caminho>[aria-current]{flex:0 1 auto;min-width:0}
+/* Com as portas, abaixo de 1400 px o caminho fica só com onde se está: o nível de cima é a porta marcada, e a marca leva ao início. */
+@media (max-width:1400px){header.topo:has(.portas) .caminho:has(>:nth-child(5))>:not(:last-child){display:none}}
+header.topo .caminho+.esp{display:none}
+/* Aula e visor: por cima do quadro, no alto; aparece com o menu, com o foco dentro dela e na visão geral. */
+header.topo.sobre,body.visor-aberto header.topo{position:fixed;left:0;right:0;top:0;z-index:10;transform:translateY(-105%);opacity:0;pointer-events:none;
+  transition:transform .2s ease,opacity .2s ease;background:color-mix(in srgb,var(--fundo) 90%,transparent)}
+html.menu-ver header.topo.sobre,html.menu-ver body.visor-aberto header.topo,header.topo.sobre:focus-within,body.visor-aberto header.topo:focus-within,html.geral header.topo.sobre{transform:none;opacity:1;pointer-events:auto}
+header.topo.sobre .lin{max-width:none}
+/* Com a barra à vista, a linha de progresso da aula desce para baixo dela e a dica das teclas da animação some. */
+html.menu-ver .prog{top:59px}
+html.menu-ver .ctl.atalhos{opacity:0;pointer-events:none}
+}
+@layer paginas{
+@media (min-width:1500px){.rail-pag{top:80px;max-height:calc(100vh - 100px)}}
+}

@@ -3,6 +3,7 @@
 // Botões e seletores com data-pref="modo|cores|letra|tamanho" são ligados aqui; quem precisa refazer medidas ouve o evento "preferencias".
 // O que fica guardado no navegador (12/11/2026): um lugar só para ler e gravar. Nada sai do aparelho. Chaves:
 //   leitura-modo, -cores, -letra, -tamanho  preferências de leitura, comuns a todas as disciplinas (o prefixo antigo calculo- ainda é lido)
+//   leitura-roda             a roda do mouse na aula e no visor: continua (o padrão, 14/11/2026), giro (um passo por giro) ou desligada
 //   <disc>-curso             o curso escolhido (EE, EQ...)
 //   <disc>-quadros           {"T14-EE":"1-7,9"}: quadros vistos de cada aula, pelo número do rodapé
 //   <disc>-ultima            {u, h, cod, tit, n, tot, sec}: a última aula aberta ("Continuar de onde parou")
@@ -42,12 +43,14 @@ window.Memoria=(function(){
     modo:[['claro','Claro'],['escuro','Escuro']],
     cores:[['padrao','Padrão'],['contraste','Alto contraste'],['papel','Papel'],['vibrante','Vibrante']],
     letra:[['luciole','Luciole'],['fira','Fira Sans'],['stix','STIX'],['mono','Fira Code']],
-    tamanho:[['pequeno','Pequeno'],['medio','Médio'],['grande','Grande']]
+    tamanho:[['pequeno','Pequeno'],['medio','Médio'],['grande','Grande']],
+    // Roda do mouse (13/11/2026, docs/planejamento-navegacao.md): sem tecla; ?roda=0 ou ?roda=desligada na URL; contínua desde 14/11/2026.
+    roda:[['continua','Contínua'],['giro','Um por giro'],['desligada','Desligada']]
   };
   // Sem escolha guardada, o modo segue o do sistema (09/11/2026); a escolha feita com M ou no seletor passa a valer depois.
   var escuro=false;try{escuro=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}
-  var PADRAO={modo:escuro?'escuro':'claro',cores:'padrao',letra:'luciole',tamanho:'grande'};
-  var ROTULO={modo:'Modo',cores:'Cores',letra:'Letra',tamanho:'Tamanho'},TECLA={modo:'M',cores:'T',letra:'L',tamanho:'A'};
+  var PADRAO={modo:escuro?'escuro':'claro',cores:'padrao',letra:'luciole',tamanho:'grande',roda:'continua'};
+  var ROTULO={modo:'Modo',cores:'Cores',letra:'Letra',tamanho:'Tamanho',roda:'Roda do mouse'},TECLA={modo:'M',cores:'T',letra:'L',tamanho:'A'};
   // Prefixo comum a todas as disciplinas e à página principal (cpazinatto.github.io, 10/11/2026): a escolha feita numa página vale
   // em todas as do mesmo site. O prefixo antigo, 'calculo-', ainda é lido, para ninguém perder o que já escolheu.
   function ler(k){return Memoria.ler('leitura-'+k)||Memoria.ler('calculo-'+k)}
@@ -74,6 +77,7 @@ window.Memoria=(function(){
     atualizar();document.dispatchEvent(new CustomEvent('preferencias',{detail:k}));
   }
   function trocar(k){var l=OPCOES[k],n=l.findIndex(function(o){return o[0]===raiz.dataset[k]});definir(k,l[(n+1)%l.length][0],true)}
+  if(par.get('roda')==='0')par.set('roda','desligada');if(par.get('roda')==='1')par.set('roda','continua');
   Object.keys(OPCOES).forEach(function(k){var v=par.get(k);if(!valido(k,v||''))v=ler(k);raiz.dataset[k]=valido(k,v||'')?v:PADRAO[k]});
   carregar();
   // Curso (11/11/2026, pedido do professor): o cartão do Cálculo I na página das disciplinas leva a ?curso=EE ou ?curso=EQ, que fica

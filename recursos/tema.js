@@ -274,7 +274,7 @@
     animacoes.forEach(function(a){
       if(a.segue)return;
       // Fora do quadro atual, na visão geral e na impressão, vale o estado do PDF.
-      if(raiz.classList.contains('geral')||a.q!==qs[i]){if(a.passo){a.passo=0;fixar(a,function(c){return c.geral})}return}
+      if(raiz.classList.contains('geral')||raiz.classList.contains('imprimindo')||a.q!==qs[i]){if(a.passo){a.passo=0;fixar(a,function(c){return c.geral})}return}
       if(!a.passo){medirValores(a);fixar(a,function(c){return alvoDoPasso(c,passo)})}
       else if(a.passo!==passo)mover(a,a.passo,passo);
       a.passo=passo;
@@ -352,16 +352,16 @@
   }
 
 // ── tema/js/04-menu.js: Menu dos quadros e a dica das teclas da animação.
-  function aula(nome,antes,depois,falta){var d=document.body.dataset,c=d[nome];return c?'<a href="'+c+'-'+d.curso+'.html">'+antes+c+depois+'</a>':'<button disabled>'+falta+'</button>'}
   // Índice (botão e tecla I): as aulas e exercícios; os módulos de base dizem o seu em data-indice.
   var indice=document.body.dataset.indice||'../Aulas-e-exercicios.html';
   // Na aula (12/11/2026): "‹ Aulas" sai para o tópico em "Aulas e exercícios", e "Índice (I)" abre o índice retrátil.
   var cod=((document.querySelector('.divisor .cod')||{}).textContent||'').trim(),sair=indice+(cod?'#'+cod:'');
   var ctl=document.createElement('nav');ctl.className='ctl';ctl.setAttribute('aria-label','Navegação');
+  // Pílula da aula (barra comum, 13/11/2026, docs/planejamento-barra.md): só o que é do quadro. "‹ Aulas", Anterior, Próxima, as
+  // preferências, a busca e o "Ir para" passaram à barra do topo (caminho, painel Aparência e "Ir para"); Backspace segue voltando.
   ctl.innerHTML='<button id="bAnt" aria-label="Anterior">‹</button><span id="cont"></span><button id="bPro" aria-label="Próximo">›</button>'+
-    (lista?'<a href="'+indice+'">Índice (I)</a>':'<a href="'+sair+'" id="bSair" title="Aulas e exercícios (Backspace)">‹ Aulas</a><button id="bInd" aria-expanded="false" aria-controls="indice">Índice (I)</button>')+aula('anterior','‹ Anterior: ','','‹ Anterior')+aula('proxima','Próxima: ',' ›','Próxima ›')+
-    '<button id="bTel">Tela cheia (F)</button><button id="bGer">Visão geral (V)</button>'+
-    '<button data-pref="modo"></button><button data-pref="cores"></button><button data-pref="letra"></button><button data-pref="tamanho"></button>';
+    (lista?'<a href="'+indice+'">Índice (I)</a>':'<button id="bInd" aria-expanded="false" aria-controls="indice">Índice (I)</button>')+
+    '<button id="bGer">Visão geral (V)</button><button id="bTel">Tela cheia (F)</button>';
   document.body.appendChild(ctl);
   // Dica das teclas da animação, no canto de cima, onde nunca encontra o menu. Fica sempre visível em quadro com controle.
   var atalhos=document.createElement('div');atalhos.className='ctl atalhos';
@@ -619,7 +619,12 @@
   document.addEventListener('mousedown',function(){teclado=false},true);
   // Com o mouse em cima do menu, ele não some (pedido do professor, 12/11/2026: sumia ao trocar de quadro pelo botão ›). No toque, o
   // :hover fica preso no último botão tocado, por isso a regra vale só fora do toque.
-  function esconderMenu(){if(!raiz.classList.contains('toque')&&ctl.matches(':hover')){clearTimeout(t);t=setTimeout(esconderMenu,1800);return}
+  // A barra do topo (barra comum, 13/11/2026) aparece e some com o menu: o mouse em cima dela, o foco dentro dela ou o painel de
+  // aparência aberto também seguram os dois.
+  var barraTopo=document.querySelector("header.topo");
+  function segura(){var ap=document.getElementById('aparencia');return (barraTopo&&(barraTopo.contains(document.activeElement)||(!raiz.classList.contains("toque")&&barraTopo.matches(":hover"))))||(ap&&!ap.hidden)}
+  function esconderMenu(){if(segura()){clearTimeout(t);t=setTimeout(esconderMenu,1800);return}
+    if(!raiz.classList.contains('toque')&&ctl.matches(':hover')){clearTimeout(t);t=setTimeout(esconderMenu,1800);return}
     clearTimeout(t);ctl.classList.remove('ver');raiz.classList.remove('menu-ver');if(!teclado&&ctl.contains(document.activeElement))document.activeElement.blur()}
   // No toque, o Safari do iOS dispara um mousemove de imitação depois de cada toque: ele não pode reabrir o menu.
   var ultimoToque=0;
@@ -637,7 +642,7 @@
   var tx=null,ty=0,lx=0,ly=0,horiz=false,vert=false,maxdy=0;
   document.addEventListener('touchstart',function(e){
     ultimoToque=Date.now();raiz.classList.add('toque');tx=null;teclado=false;
-    if(ctl.contains(e.target)){verMenu(4000);return}
+    if(ctl.contains(e.target)||(barraTopo&&barraTopo.contains(e.target))){verMenu(4000);return}
     if(e.touches.length!==1||!aberto()||raiz.classList.contains('geral'))return;
     if(e.target.closest&&e.target.closest('input,select,button,a,.cena,.ctl,.barra,.controles,.indice,.alca'))return;
     if(gav&&gav.classList.contains('ver')&&!document.body.classList.contains('fixo'))return;
@@ -673,6 +678,8 @@
 
   document.addEventListener('keydown',function(e){
     if(e.metaKey||e.ctrlKey||e.altKey)return;
+    // Com o painel "Ir para" aberto, as teclas são dele (07b-ir-para.js).
+    if(irAberto())return;
     var k=e.key;
     // Com a resolução fechada, a página rola normalmente: só valem M e I.
     if(Pref.tecla(e))return;
@@ -702,6 +709,72 @@
     if(raiz.classList.contains('geral')){raiz.classList.remove('geral');ir(k,1,true)}
   })});
 
+// ── tema/js/07b-ir-para.js: O "Ir para" na aula, na lista e no módulo, e a roda do mouse na aula e no visor.
+  // Fica depois de 07 e antes de 08 (que fecha o escopo comum): o "b" põe a parte nessa ordem na junção do tema.js.
+  // Planejamento: docs/planejamento-navegacao.md, aprovado pelo professor em 13/11/2026 ("Aprovar tudo").
+  // O painel em si é o da barra do topo (tema/paginas/barra.js, window.IrPara, comum a todas as páginas desde a barra comum,
+  // docs/planejamento-barra.md); aqui ficam só as partes que dependem dos quadros.
+  // Com o "Ir para" ou o painel de impressão abertos, as teclas e a roda são deles.
+  function irAberto(){return (!!window.IrPara&&IrPara.aberto())||(!!window.Impressao&&Impressao.aberto())}
+  // Para a impressão (impressao.js): com html.imprimindo, todas as animações vão ao estado da visão geral (02-animacoes.js).
+  window.Quadros={repintar:function(){pintarAnimacoes()}};
+  if(window.IrPara){
+    // Ao abrir: fecha o índice e a visão geral e marca a seção atual da aula.
+    IrPara.aoAbrir(function(p){
+      if(gav&&gav.classList.contains('ver')&&!document.body.classList.contains('fixo'))fecharIndice();
+      if(raiz.classList.contains('geral'))geral();
+      if(!lista)[].forEach.call(p.querySelectorAll('[data-sec]'),function(a){var at=+a.dataset.sec===secDe[i];a.classList.toggle('atual',at);
+        if(at)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')})});
+    // Link para a própria lista ou módulo (#q3, #revisao) com o visor aberto: fecha o visor.
+    IrPara.aoInterno(function(){if(lista&&document.body.classList.contains('visor-aberto'))fecharLista()});
+    // "Ir ao quadro": o número do rodapé, o mesmo do endereço (T14-EE.html#7).
+    var fq=document.querySelector('.ip-quadro');
+    if(fq)fq.addEventListener('submit',function(e){e.preventDefault();var v=(fq.querySelector('input').value||'').trim();
+      if(!qs.some(function(q){return q.dataset.n===v})){fq.classList.add('erro');return}
+      fq.classList.remove('erro');IrPara.fechar(true);location.hash='#'+v});
+  }
+
+  // Roda do mouse: na aula e no visor aberto, troca o quadro (para baixo ou dois dedos para a esquerda: ›; para cima ou para a
+  // direita: ‹). Três modos, no painel Aparência (leitura-roda, preferencias.js):
+  //   contínua (o padrão, 14/11/2026, pedido do professor: "a roda tem como funcionar de forma contínua? Com inércia?"): a soma do
+  //     deslocamento dá um passo a cada 120 px, com a inércia do trackpad: um giro curto avança um quadro, uma lançada avança vários,
+  //     desacelerando com ela; no máximo um passo a cada 100 ms; trocar de sentido zera a soma;
+  //   um por giro: a soma passa de 50 px, dá um passo e trava até a roda ficar 180 ms parada (a inércia não dá outro passo);
+  //   desligada.
+  // Em todos, a roda com "cliques" (deltaMode de linhas, ou passos inteiros de 100 px ou mais) dá um passo por clique, no máximo um a
+  // cada 100 ms. Sobre um deslizador, muda o valor dele (como + e -). Não mexe: com Ctrl ou Cmd (zoom), sobre um sólido 3D (a roda
+  // aproxima), dentro do índice, da busca, do painel ou de uma caixa que rola, na visão geral. Na aula, para nas pontas; no visor,
+  // nunca fecha a resolução nem passa para a questão ou a parte seguinte (só ›, Esc e o toque fazem isso).
+  var rAcc=0,rTrava=false,rQuieto=0,rUltimo=0,RODA_PASSO=120,RODA_GIRO=50,RODA_INTERVALO=100;
+  function rolavel(el,dx,dy){for(;el&&el!==document.body&&el!==raiz;el=el.parentElement){var cs=getComputedStyle(el);
+      if(dy&&/(auto|scroll)/.test(cs.overflowY)&&el.scrollHeight>el.clientHeight+1&&(dy<0?el.scrollTop>0:el.scrollTop+el.clientHeight<el.scrollHeight-1))return true;
+      if(dx&&/(auto|scroll)/.test(cs.overflowX)&&el.scrollWidth>el.clientWidth+1&&(dx<0?el.scrollLeft>0:el.scrollLeft+el.clientWidth<el.scrollWidth-1))return true}
+    return false}
+  function rodaPasso(s,controle){
+    if(controle){var l=controlesAtivos(),n=l.findIndex(function(o){return o.a.entradas&&o.a.entradas[o.c.nome]===controle});if(n<0)return;
+      if((qs[i].escolhido||0)!==n)escolher(n);ajustar(-s);return}
+    if(s<0){ant();return}
+    // Avança só dentro da aula, da questão ou da parte aberta.
+    if(passo<maxPasso(qs[i])||(i<qs.length-1&&mesma(i+1)))prox()}
+  document.addEventListener('wheel',function(e){
+    if(raiz.dataset.roda==='desligada'||e.ctrlKey||e.metaKey||!qs.length||!aberto()||irAberto())return;
+    if(raiz.classList.contains('geral')||document.body.classList.contains('busca-aberta'))return;
+    if(gav&&gav.classList.contains('ver')&&!document.body.classList.contains('fixo'))return;
+    var t=e.target.closest?e.target:e.target.parentElement;if(!t||t.closest('.cena,.indice,.busca-sobre,.ip-veu,.ctl'))return;
+    var linhas=e.deltaMode===1?16:e.deltaMode===2?innerHeight:1,dx=e.deltaX*linhas,dy=e.deltaY*linhas,d=Math.abs(dy)>=Math.abs(dx)?dy:dx;
+    if(!d||rolavel(t,Math.abs(dx)>Math.abs(dy)?dx:0,Math.abs(dy)>=Math.abs(dx)?dy:0))return;
+    e.preventDefault();
+    var controle=t.closest('input[type=range]'),s=d>0?1:-1;
+    clearTimeout(rQuieto);rQuieto=setTimeout(function(){rTrava=false;rAcc=0},180);
+    var agora=Date.now();
+    if(e.deltaMode===1||e.deltaMode===2||(Math.abs(d)>=100&&Math.round(d)===d)){if(agora-rUltimo<RODA_INTERVALO)return;rUltimo=agora;rodaPasso(s,controle);return}
+    if(raiz.dataset.roda==='giro'){if(rTrava)return;rAcc+=d;if(Math.abs(rAcc)>=RODA_GIRO){rodaPasso(rAcc>0?1:-1,controle);rTrava=true;rAcc=0}return}
+    // Contínua: a inércia segue dando passos; a sobra fica para o passo seguinte, e trocar de sentido recomeça a soma.
+    if(rAcc&&(rAcc>0)!==(d>0))rAcc=0;
+    rAcc+=d;
+    if(Math.abs(rAcc)>=RODA_PASSO&&agora-rUltimo>=RODA_INTERVALO){rUltimo=agora;var sg=rAcc>0?1:-1;rAcc-=sg*RODA_PASSO;
+      if(Math.abs(rAcc)>RODA_PASSO)rAcc=sg*RODA_PASSO;rodaPasso(sg,controle)}
+  },{passive:false});
 // ── tema/js/08-endereco-conferir.js: Endereço (#7, #s2), parâmetros (?abrir, ?inteiro) e a conferência automática (?conferir).
   // Aula: #7 é o quadro de rodapé 7, #s2 a abertura da Seção 2 (12/11/2026); nas listas, a posição, como antes.
   function doEndereco(){var hs=decodeURIComponent(location.hash.slice(1));

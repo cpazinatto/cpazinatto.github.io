@@ -1,0 +1,91 @@
+/* Impressão sob demanda (impressao.js; docs/planejamento-impressao.md, aprovado em 13/11/2026): o painel, na tela, e a folha, no
+   papel. O painel usa o molde do "Ir para" (ir-para.css). A folha só vale com html.imprimindo, posto pelo impressao.js. */
+@layer componentes{
+.imp-veu .ip{width:min(980px,100%)}
+.imp-corpo{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:18px;padding:16px}
+@media (max-width:700px){.imp-corpo{grid-template-columns:1fr}}
+.imp-opc{display:flex;flex-direction:column;gap:14px;margin:0}
+.imp-opc fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.imp-opc legend{font-weight:700;font-size:.9em;margin-bottom:4px;padding:0}
+.imp-opc label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.imp-opc input{margin-top:.25em;accent-color:var(--define)}
+.imp-nota{margin:0;color:var(--apoio);font-size:.82em}
+.imp-prev{background:color-mix(in srgb,var(--texto) 6%,var(--fundo));border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;align-self:start}
+.imp-folhas{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.imp-folha{background:#fff;color:#12161C;width:104px;aspect-ratio:210/297;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:6px;
+  font-size:10px;display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.imp-folha b{color:#4A5361;font-size:9px}
+.imp-folha span{background:#EEF0EA;border-left:2px solid #855000;border-radius:2px;padding:1px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.imp-folha.cinza{filter:grayscale(1)}
+.imp-folha.deitada{width:146px;aspect-ratio:297/210}
+.imp-faixa{display:flex;gap:6px;align-items:center;padding-left:26px;font-size:.92em}
+.imp-faixa input{width:4.5em;font:inherit;color:var(--texto);background:var(--fundo);border:1px solid var(--grade);border-radius:7px;padding:2px 6px}
+.imp-mais{align-self:center;color:var(--apoio);font-size:.9em}
+.imp-pe{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--grade)}
+.imp-pe small{margin-right:auto;color:var(--apoio);max-width:56ch}
+.imp-pe button{font:inherit;border:1px solid var(--grade);background:var(--fundo);color:var(--texto);border-radius:9px;padding:6px 14px;cursor:pointer}
+.imp-pe .imp-ok{background:var(--define);border-color:var(--define);color:#fff;font-weight:700}
+[data-modo="escuro"] .imp-pe .imp-ok{color:var(--fundo)}
+}
+/* A folha. Fora das camadas, para valer sobre o tema e as páginas; !important só contra estilos postos no próprio elemento. */
+@media print{
+  html.imprimindo,html.imprimindo body{height:auto!important;overflow:visible!important;background:#fff!important}
+  html.imprimindo *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html.imprimindo[data-imp-cor="cinza"]{filter:grayscale(1)}
+  html.imprimindo :is(header.topo,.rail-pag,.b-rail,nav.barra,.ctl,.fim-q,.ip-veu,.veu,.veu-i,.busca-sobre,.indice,.alca,.prog,.progresso,.rq-seta,.rq-tudo,.feita){display:none!important}
+  /* Na impressão o Chrome reserva outra folga depois do radical, que o tema.js não mede (regra de antes da decisão 21). */
+  html.imprimindo :is(msqrt,mroot){margin-inline-end:-.75em!important}
+
+  /* Lista e módulo: a própria página */
+  html:is(.imp-lista,.imp-modulo) main{max-width:none;padding:0;margin:0;font-size:12pt}
+  html:is(.imp-lista,.imp-modulo) .cab-lista{padding:0 0 4mm;border-bottom:.4mm solid #855000;margin-bottom:2mm}
+  html:is(.imp-lista,.imp-modulo) .cab-lista h1{font-size:20pt}
+  html:is(.imp-lista,.imp-modulo) .dica,html:is(.imp-lista,.imp-modulo) .acoes .botao,html:is(.imp-lista,.imp-modulo) details.gab summary{display:none}
+  html:is(.imp-lista,.imp-modulo) .questao{box-shadow:none;background:#fff;border:0;border-top:.3mm solid #bbb;border-radius:0;padding:4mm 0 3mm;margin:0;break-inside:avoid}
+  html:is(.imp-lista,.imp-modulo) .questao.imp-fora{display:none}
+  html:is(.imp-lista,.imp-modulo)[data-imp-o="enun"] details.gab{display:none}
+  html:is(.imp-lista,.imp-modulo) details.gab{background:none;border-left:.8mm solid #855000;border-radius:0;padding:0 0 0 3mm}
+  html:is(.imp-lista,.imp-modulo) details.gab .gab-corpo{padding:0}
+  html:is(.imp-lista,.imp-modulo) details.gab .gab-corpo::before{content:"Gabarito";display:block;font-weight:700;color:#855000;font-size:10pt;margin-bottom:1mm}
+  html:is(.imp-lista,.imp-modulo)[data-imp-o="res"] .resol{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:2mm}
+  html:is(.imp-lista,.imp-modulo)[data-imp-o="res"] .resol .quadro{display:block!important;width:100%;height:auto;box-sizing:border-box;border:.2mm solid #bbb;outline:0;break-inside:avoid}
+  html:is(.imp-lista,.imp-modulo) .resol .oculto{visibility:visible!important}
+  html:is(.imp-lista,.imp-modulo)[data-imp-esp="1"] .questao::after{content:"";display:block;height:25mm;margin-top:2mm;background:repeating-linear-gradient(#fff 0 7mm,#ccc 7mm 7.25mm)}
+  html:is(.imp-lista,.imp-modulo)[data-imp-esp="2"] .questao::after{content:"";display:block;height:130mm;margin-top:2mm;border:.3mm dashed #bbb;border-radius:2mm}
+  html:is(.imp-lista,.imp-modulo) footer.versao{margin-top:4mm;font-size:9pt;color:#555}
+  html.imp-modulo :is(.parte-base,#imp-respostas){box-shadow:none;background:#fff;border:0;padding:3mm 0;margin:0}
+  html.imp-modulo .imp-fora{display:none!important}
+  html.imp-modulo .parte-base>h2{font-size:15pt;break-after:avoid}
+  html.imp-modulo :is(.cartoes){display:block}
+  html.imp-modulo .cartao{box-shadow:none;border:0;background:none;padding:2mm 0 1mm;display:block;break-inside:avoid;break-after:avoid}
+  html.imp-modulo .cartao span:not(.selo){display:none}html.imp-modulo .cartao br{display:none}
+  html.imp-modulo .parte-revisao>p{display:none}
+  html.imp-modulo .parte-revisao .resol{break-before:avoid}
+  html.imp-modulo .cartao :is(.botao,.capa-p,.mini-p){display:none!important}
+  html.imp-modulo :is(.parte-revisao) .resol{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:1mm 0 3mm}
+  html.imp-modulo .parte-revisao .resol .quadro{display:block!important;width:100%;height:auto;box-sizing:border-box;border:.2mm solid #bbb;outline:0;break-inside:avoid}
+  html.imp-modulo .resol .oculto{visibility:visible!important}
+  html.imp-modulo .erro{break-inside:avoid;margin:2mm 0}
+  html.imp-modulo[data-imp-resp="sem"] details.gab{display:none}
+  html.imp-modulo[data-imp-res="com"] #exercicios .resol{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:2mm}
+  html.imp-modulo[data-imp-res="com"] #exercicios .resol .quadro{display:block!important;width:100%;height:auto;box-sizing:border-box;border:.2mm solid #bbb;outline:0;break-inside:avoid}
+  html.imp-modulo .imp-resp{break-inside:avoid;margin:2mm 0}
+  html.imp-modulo .imp-resp>b{display:block;font-size:11pt}
+  html.imp-modulo footer.volta-base{display:none}
+
+  /* Aula: só as folhas montadas pelo impressao.js (#imp-folhas), uma .imp-f por página. */
+  html.imp-aula body{display:block!important}
+  html.imp-aula body>:not(#imp-folhas){display:none!important}
+  html.imp-aula .imp-f{display:grid;gap:5mm 6mm;break-after:page;align-content:start;grid-template-columns:repeat(var(--col,1),minmax(0,1fr))}
+  html.imp-aula .imp-f:last-child{break-after:auto}
+  html.imp-aula .imp-f[data-col="2"]{--col:2}html.imp-aula .imp-f[data-col="3"]{--col:3}
+  html.imp-aula .imp-f[data-pais]:not([data-col="1"]){height:182mm;align-content:space-evenly}
+  html.imp-aula .imp-f[data-linhas] .imp-c{display:grid;grid-template-columns:60% 1fr;gap:5mm}
+  html.imp-aula .imp-c{display:flex;flex-direction:column;gap:1mm;break-inside:avoid;min-width:0}
+  html.imp-aula #imp-folhas .quadro{display:block!important;width:100%!important;height:auto;aspect-ratio:16/9;box-sizing:border-box;border:.25mm solid #aaa;outline:0;box-shadow:none}
+  html.imp-aula #imp-folhas .oculto{visibility:visible!important}
+  html.imp-aula #imp-folhas :is(.controles input,.controles .limite){display:none}
+  html.imp-aula .imp-anima{font-size:8pt;color:#555}
+  html.imp-aula .imp-linhas{background:repeating-linear-gradient(#fff 0 8mm,#ccc 8mm 8.25mm);min-height:100%}
+  html.imp-aula .imp-f[data-linhas] .imp-c .imp-anima{grid-column:1}
+}

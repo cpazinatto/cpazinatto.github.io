@@ -7,38 +7,11 @@
 /* Só o html rola (13/11/2026): com overflow:auto também no body, ele vira o contêiner de rolagem e a barra do topo e a do curso
    deixam de ficar presas no alto (sticky). */
 html,body{height:auto;display:block}html{overflow:auto}body{overflow:visible}
-html{scroll-padding-top:76px}
 body.entrada{background:var(--pagina);font-family:var(--f-texto);font-size:calc(17px*var(--tam));line-height:1.5}
 .entrada h1,.entrada h2,.entrada h3{line-height:1.2;margin:0}
 .entrada button{font:inherit;color:inherit}
 .entrada :focus-visible{outline:3px solid var(--suavez);outline-offset:2px;border-radius:6px}
-/* Barra do topo: marca, caminho, busca e aparência. */
-.topo{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--pagina) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--grade)}
-.topo .lin{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
-.marca{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--texto);font-weight:700;white-space:nowrap}
-.marca .sel{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0C7E54,#0A6B47);color:#fff;display:grid;place-items:center;font:20px/1 var(--f-math)}
-.caminho{display:flex;gap:6px;align-items:center;color:var(--apoio);font-size:14px;min-width:0;overflow:hidden;white-space:nowrap}
-.caminho a{color:var(--apoio);text-decoration:none}.caminho a:hover{color:var(--texto);text-decoration:underline}
-.caminho [aria-current]{overflow:hidden;text-overflow:ellipsis}
-.topo .esp{flex:1}
-.busca-b{display:flex;align-items:center;gap:10px;min-width:0;width:min(340px,36vw);padding:7px 10px 7px 12px;border:1px solid var(--grade);
-  border-radius:999px;background:var(--sup);color:var(--apoio);cursor:text;font-size:14px}
-.entrada .busca-b{color:var(--apoio)}
-.busca-b span{flex:1;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.entrada kbd{font-family:inherit;font-size:12px;border:1px solid var(--grade);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:var(--sup2);color:var(--apoio)}
-.ic{width:38px;height:38px;border-radius:999px;border:1px solid var(--grade);background:var(--sup);display:grid;place-items:center;cursor:pointer;flex:none;color:var(--texto)}
-.ic:hover,.busca-b:hover{background:var(--sup2)}
-@media (max-width:760px){.caminho,.topo .esp{display:none}.busca-b{width:auto;flex:1}.busca-b kbd{display:none}.marca span:last-child{display:none}}
-/* Painel de aparência: os quatro ajustes num lugar só. */
-.aparencia{position:absolute;right:max(16px,calc((100vw - 1180px)/2 + 16px));top:58px;width:min(360px,calc(100vw - 32px));background:var(--sup);border:1px solid var(--grade);
-  border-radius:var(--raio);box-shadow:var(--sombra);padding:14px;z-index:30}
-.aparencia[hidden]{display:none}
-.aparencia h3{font-size:13px;color:var(--apoio);font-weight:700;margin:12px 0 6px}
-.aparencia h3:first-child{margin-top:0}
-.seg{display:flex;border:1px solid var(--grade);border-radius:10px;padding:3px;gap:3px;background:var(--sup2)}
-.seg button{flex:1;border:0;background:none;padding:6px 6px;border-radius:7px;cursor:pointer;font-size:14px;color:var(--texto)}
-.seg button[aria-pressed="true"]{background:var(--sup);box-shadow:0 1px 3px rgba(0,0,0,.15);font-weight:700}
-.aparencia .dica{font-size:13px;color:var(--apoio);margin:12px 0 0}
+/* Barra do topo e painel de aparência: em barra.css, comum a todas as páginas (barra comum, 13/11/2026). */
 /* Conteúdo */
 .pag{max-width:1180px;margin:0 auto;padding:0 16px 64px}
 .heroi{padding:20px 0 4px;display:flex;flex-direction:column}

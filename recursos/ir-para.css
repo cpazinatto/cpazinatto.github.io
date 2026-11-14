@@ -1,0 +1,46 @@
+/* Painel "Ir para" (tecla S; 07b-ir-para.js), nas aulas, nas listas e nos módulos. Só as cores do tema (tema.css), porque a aula
+   não carrega tokens.css. docs/planejamento-navegacao.md, aprovado em 13/11/2026. */
+@layer componentes{
+.ip-veu{position:fixed;inset:0;z-index:900;background:color-mix(in srgb,var(--texto) 40%,transparent);display:flex;align-items:flex-start;
+  justify-content:center;padding:min(6vh,48px) 16px 16px;overflow:auto;overscroll-behavior:contain}
+.ip-veu[hidden]{display:none}
+.ip{width:min(1040px,100%);background:var(--fundo);color:var(--texto);border:1px solid var(--grade);border-radius:16px;
+  box-shadow:0 2px 6px rgba(0,0,0,.12),0 18px 48px rgba(0,0,0,.22);font-family:var(--f-texto);font-size:calc(15px * var(--tam,1));line-height:1.4}
+.ip header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--grade)}
+.ip header h2{flex:1;margin:0;font-family:var(--f-titulo);font-size:1.25em}
+.ip kbd{font-family:var(--f-texto);font-size:.8em;border:1px solid var(--grade);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--apoio)}
+.ip-fechar{border:0;background:color-mix(in srgb,var(--texto) 8%,var(--fundo));color:var(--texto);border-radius:8px;width:32px;height:32px;font:inherit;cursor:pointer}
+/* Colunas que se enchem de cima para baixo: uma coluna baixa (Portas) não deixa buraco embaixo de outra (Nesta aula). */
+.ip-corpo{columns:240px;column-gap:18px;padding:16px}
+.ip-col{display:flex;flex-direction:column;gap:6px;min-width:0;break-inside:avoid;margin-bottom:18px}
+.ip-col h3{margin:0 0 2px;font-size:.78em;letter-spacing:.06em;text-transform:uppercase;color:var(--apoio);font-family:var(--f-texto)}
+.ip-it,.ip-col>.desligado{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-decoration:none;color:var(--texto);
+  border:1px solid var(--grade);border-radius:10px;padding:7px 10px;background:color-mix(in srgb,var(--texto) 2.5%,var(--fundo))}
+a.ip-it:hover{border-color:var(--define)}
+a.ip-it:focus-visible,.ip-grade a:focus-visible,.ip-quadro :focus-visible{outline:3px solid var(--exemplo);outline-offset:2px}
+.ip-it.atual{border-color:var(--define);box-shadow:inset 3px 0 0 var(--define)}
+.ip-t{min-width:0;overflow-wrap:anywhere}
+.ip-t small{display:block;color:var(--apoio);font-size:.82em}
+.ip-tag{font-size:.75em;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;text-align:center;min-width:2.6em;
+  background:color-mix(in srgb,var(--texto) 9%,var(--fundo));color:var(--apoio)}
+.ip-tag.b{background:color-mix(in srgb,var(--define) 15%,var(--fundo));color:var(--define)}
+.ip-tag.p{background:color-mix(in srgb,var(--gancho) 15%,var(--fundo));color:var(--gancho)}
+.ip-tag.l{background:color-mix(in srgb,var(--suavez) 15%,var(--fundo));color:var(--suavez)}
+/* No site, desligar() troca por texto o link para página não liberada: o item fica esmaecido, com "em breve". */
+.ip-col>.desligado,.ip-breve{opacity:.6}
+.ip-col>.desligado .ip-t::after{content:"em breve";display:block;color:var(--apoio);font-size:.82em}
+.ip-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}
+.ip-grade a,.ip-grade .desligado{text-align:center;text-decoration:none;color:var(--texto);border:1px solid var(--grade);border-radius:8px;padding:6px 0;font-variant-numeric:tabular-nums}
+.ip-grade a:hover{border-color:var(--define)}
+.ip-grade a.feita{background:color-mix(in srgb,var(--define) 15%,var(--fundo));border-color:var(--define);font-weight:700}
+.ip-nota{margin:2px 0 0;color:var(--apoio);font-size:.82em}
+.ip-quadro{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;font-size:.92em}
+.ip-quadro input{width:6.5em;font:inherit;color:var(--texto);background:var(--fundo);border:1px solid var(--grade);border-radius:8px;padding:4px 8px;margin-left:6px}
+.ip-quadro button{font:inherit;border:1px solid var(--define);background:var(--define);color:var(--fundo);border-radius:8px;padding:4px 12px;cursor:pointer}
+.ip-quadro.erro input{border-color:var(--atencao);box-shadow:0 0 0 2px color-mix(in srgb,var(--atencao) 30%,transparent)}
+.ip-dica{margin:0;padding:10px 16px 14px;border-top:1px solid var(--grade);color:var(--apoio);font-size:.82em}
+@media (max-width:600px){.ip-veu{padding:0}.ip{border-radius:0;min-height:100%;border:0}.ip-dica{display:none}}
+@media (pointer:coarse){.ip-dica{display:none}}
+}
+/* Roda do mouse (07b-ir-para.js): na aula e com o visor aberto, o gesto de dois dedos para o lado não volta a página do navegador. */
+html:has(main.aula),html:has(body.visor-aberto){overscroll-behavior-x:none}

@@ -144,3 +144,10 @@
   document.body.insertAdjacentHTML('beforeend', '<div class="rc-aviso" id="rcAviso" aria-live="polite"></div>');
   montarFixados();
 })();
+// Imprimir o tópico (13/11/2026): o menu fecha com um clique fora, com Esc e quando outro abre.
+(function(){var ms=[].slice.call(document.querySelectorAll('details.imp-top'));if(!ms.length)return;
+  function fechar(exceto){ms.forEach(function(m){if(m!==exceto)m.open=false})}
+  ms.forEach(function(m){m.addEventListener('toggle',function(){if(m.open)fechar(m)})});
+  document.addEventListener('click',function(e){if(!e.target.closest('details.imp-top'))fechar()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){var a=ms.filter(function(m){return m.open})[0];if(a){fechar();a.querySelector('summary').focus()}}});
+})();
