@@ -24,7 +24,8 @@ header.topo kbd,.aparencia kbd{font-family:inherit;font-size:12px;border:1px sol
 .ic:hover,.busca-b:hover{background:var(--sup2)}
 @media (max-width:760px){.caminho,header.topo .esp{display:none}.busca-b{width:auto;flex:1}.busca-b kbd{display:none}.marca span:last-child{display:none}.ir-b span,.ir-b kbd{display:none}}
 /* Painel de aparência: os quatro ajustes num lugar só. */
-.aparencia{position:absolute;right:max(16px,calc((100vw - 1180px)/2 + 16px));top:58px;width:min(360px,calc(100vw - 32px));background:var(--sup);border:1px solid var(--grade);
+/* Alinhado à direita da barra, que usa a largura toda (antes, à borda dos 1180 px do meio). */
+.aparencia{position:absolute;right:16px;top:58px;width:min(360px,calc(100vw - 32px));background:var(--sup);border:1px solid var(--grade);
   border-radius:var(--raio);box-shadow:var(--sombra);padding:14px;z-index:30}
 .aparencia[hidden]{display:none}
 .aparencia h3{font-size:13px;color:var(--apoio);font-weight:700;margin:12px 0 6px}
@@ -54,9 +55,9 @@ header.topo.compacta .ir-b :is(span,kbd),header.topo.compacta .busca-b span{disp
 header.topo.compacta .ir-b{padding:7px 10px}header.topo.compacta .busca-b{flex:none;width:auto}
 header.topo .caminho>.c-fora{display:none}
 header.topo.sem-portas .portas{display:none}
-/* Com as portas, a barra usa a largura toda (antes, 1180 px no meio, como o conteúdo das entradas: em tela larga, o caminho era cortado
-   mesmo com espaço sobrando dos lados). */
-header.topo.com-portas .lin{max-width:none}
+/* A barra usa a largura toda em todas as páginas (antes, 1180 px no meio, como o conteúdo das entradas: em tela larga, o caminho era
+   cortado mesmo com espaço sobrando dos lados; 14/11/2026, professor: "falta essa mudança de largura" na página das disciplinas). */
+header.topo .lin{max-width:none}
 header.topo .caminho{flex:1 1 auto}
 header.topo .caminho>*{flex:none}header.topo .caminho>[aria-current]{flex:0 1 auto;min-width:0}
 header.topo .caminho+.esp{display:none}
