@@ -1,0 +1,14 @@
+/* Componente comum: grupos que recolhem e itens fixados no alto (14/11/2026, o script em recolher.js). Só o que é igual em todas
+   as páginas; tamanho e lugar da seta, do resumo e do pino ficam no CSS de cada página (aulas-e-exercicios.css, catalogo.css). */
+@layer paginas{
+.rc-seta svg{transition:transform .18s}
+.rc-fechada .rc-seta svg{transform:rotate(-90deg)}
+.rc-fechada .rc-resumo{display:inline-block}
+.rc-tudo:hover{color:var(--texto);border-color:var(--apoio)}
+.rc-pino[aria-pressed=true] svg{fill:currentColor}
+.rc-pino:focus-visible{outline:3px solid var(--exemplo);outline-offset:1px}
+.rc-fixados[hidden]{display:none}
+.rc-aviso{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:640px){.rc-longo{display:none}}
+@media (prefers-reduced-motion:reduce){.rc-seta svg{transition:none}}
+}
