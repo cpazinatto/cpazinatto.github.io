@@ -3,6 +3,12 @@
 footer.versao,.volta-base .versao{font-size:15px;color:var(--apoio)}
 footer.versao{border-top:1px solid var(--grade);margin-top:24px;padding:14px 0 8px}
 .volta-base .versao{margin-left:auto}
+/* Autoria e licença (14/11/2026): na lista, ao lado da versão; no módulo, numa linha própria embaixo dos links de volta. */
+footer.versao{display:flex;justify-content:space-between;gap:6px 16px;flex-wrap:wrap}
+.volta-base .autoria{flex-basis:100%;font-size:14px}
+.volta-base .autoria a{color:var(--apoio);font-weight:400;text-decoration:underline}
+/* Com o botão "Índice" flutuando no canto, o fim do rodapé rola até ficar acima dele. */
+body:has(.b-rail.ver) :is(footer.versao,footer.volta-base){padding-bottom:64px}
 /* Só o html rola (13/11/2026): com overflow:auto também no body, ele vira o contêiner de rolagem e a barra do topo e a do curso
    deixam de ficar presas no alto (sticky). */
 html,body{height:auto;display:block}html{overflow:auto}body{overflow:visible}

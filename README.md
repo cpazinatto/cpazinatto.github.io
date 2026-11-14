@@ -18,3 +18,9 @@ editado à mão.
 - As preferências de leitura (modo, cores, letra e tamanho) ficam no navegador e valem para todas as páginas do site.
 - Logos do IFSul Pelotas e da Coordenadoria de Matemática em SVG; no modo escuro ficam monocromáticos. As marcas pertencem
   às instituições.
+
+## Licença
+
+© 2026 Cássio Pazinatto. O material didático está sob a licença Creative Commons Atribuição-NãoComercial-SemDerivações 4.0
+(CC BY-NC-ND 4.0); as letras, o Three.js e os logos seguem com as licenças e marcas deles. Detalhes em `LICENSE.md`; como
+citar, na página "Créditos e licenças" de cada disciplina.

@@ -71,7 +71,10 @@
   html.imp-modulo[data-imp-res="com"] #exercicios .resol .quadro{display:block!important;width:100%;height:auto;box-sizing:border-box;border:.2mm solid #bbb;outline:0;break-inside:avoid}
   html.imp-modulo .imp-resp{break-inside:avoid;margin:2mm 0}
   html.imp-modulo .imp-resp>b{display:block;font-size:11pt}
-  html.imp-modulo footer.volta-base{display:none}
+  /* Na folha do módulo, só a autoria e a licença (14/11/2026): os links de volta não servem no papel. */
+  html.imp-modulo footer.volta-base{border:0;margin-top:4mm;padding:0;font-size:9pt;color:#555}
+  html.imp-modulo footer.volta-base>:not(.autoria){display:none}
+  html.imp-modulo footer.volta-base .autoria{text-align:left;font-size:9pt}
 
   /* Aula: só as folhas montadas pelo impressao.js (#imp-folhas), uma .imp-f por página. */
   html.imp-aula body{display:block!important}

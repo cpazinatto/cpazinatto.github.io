@@ -6,3 +6,7 @@
 .cred-s .ses{color:var(--apoio);font-size:14px}
 .cred-s .links{grid-column:auto;display:block;color:var(--texto)}
 }
+/* Como citar (14/11/2026): a referência em ABNT, selecionável de uma vez. */
+@layer paginas{
+.cred-s .ref{margin:4px 0 0;padding:10px 12px;background:var(--sup2);border-radius:8px;user-select:all;-webkit-user-select:all;overflow-wrap:anywhere}
+}
