@@ -615,6 +615,9 @@
   // Ao sumir, o menu tira a seleção do botão clicado com o mouse ou tocado (antes, ela o mantinha aceso), mas não a de quem
   // chegou ao botão pela tecla Tab: para esse, o menu segue à vista enquanto o botão estiver selecionado.
   var teclado=false;
+  // Aparelho só de toque (15/11/2026): a classe toque vem já ao abrir, e não só depois do primeiro toque; antes, o primeiro toque
+  // acertava os botões do menu ainda escondido (o "Índice" abria direto, sem o menu à vista).
+  if(window.matchMedia&&matchMedia('(hover: none) and (pointer: coarse)').matches)raiz.classList.add('toque');
   document.addEventListener('keydown',function(e){if(e.key==='Tab')teclado=true},true);
   document.addEventListener('mousedown',function(){teclado=false},true);
   // Com o mouse em cima do menu, ele não some (pedido do professor, 12/11/2026: sumia ao trocar de quadro pelo botão ›). No toque, o
@@ -629,9 +632,10 @@
   // No toque, o Safari do iOS dispara um mousemove de imitação depois de cada toque: ele não pode reabrir o menu.
   var ultimoToque=0;
   document.addEventListener('mousemove',function(e){if(Date.now()-ultimoToque>1500){verMenu();bordaEsquerda(e)}});
-  // Celular e tablet (10/11/2026): arrastar para a esquerda avança, para a direita volta. Um toque no quadro, na faixa de baixo
-  // e no meio, mostra o menu; outro toque o esconde (some sozinho em 4 s); arrastar não o mostra. Com o toque, o menu escondido não recebe toques
-  // (classe toque em <html>, ver tema.css) e o foco num botão não o mantém aceso.
+  // Celular e tablet (10/11/2026): arrastar para a esquerda avança, para a direita volta. Um toque em qualquer lugar do quadro
+  // (desde 15/11/2026; antes, só na faixa de baixo, no meio) mostra o menu; outro toque o esconde (some sozinho em 4 s); arrastar
+  // não o mostra. Com o toque, o menu escondido não recebe toques (classe toque em <html>, ver tema.css) e o foco num botão não o
+  // mantém aceso.
   // Não vale sobre controles (deslizador, sólido 3D, botões, links), que têm o seu próprio arrasto.
   // No Safari do iOS, se o navegador toma o arrasto (rolagem, zoom), o toque acaba em touchcancel, sem touchend: por isso
   // o arrasto horizontal é segurado no touchmove (preventDefault) e o fim vale tanto no touchend quanto no touchcancel.
@@ -639,10 +643,13 @@
   // "Aulas e exercícios"; o arrasto vertical é segurado, para o navegador não recarregar a página ("puxar para atualizar").
   // No celular de verdade (12/11/2026), o navegador tomava o arrasto nos primeiros pixels e cortava o toque (touchcancel) antes do
   // puxão longo: o arrasto passa a ser segurado desde o primeiro movimento (a aula e o visor não rolam), e vale o maior puxão visto.
-  var tx=null,ty=0,lx=0,ly=0,horiz=false,vert=false,maxdy=0;
+  var tx=null,ty=0,lx=0,ly=0,horiz=false,vert=false,maxdy=0,engolir=false;
+  [ctl,barraTopo].forEach(function(el){if(el)el.addEventListener('click',function(e){if(engolir){engolir=false;e.preventDefault();e.stopPropagation()}},true)});
   document.addEventListener('touchstart',function(e){
-    ultimoToque=Date.now();raiz.classList.add('toque');tx=null;teclado=false;
-    if(ctl.contains(e.target)||(barraTopo&&barraTopo.contains(e.target))){verMenu(4000);return}
+    ultimoToque=Date.now();raiz.classList.add('toque');tx=null;teclado=false;engolir=false;
+    // Toque no menu ou na barra ainda escondidos só os mostra: o clique que viria depois é descartado (engolir), para não
+    // acionar um botão que a pessoa não via.
+    if(ctl.contains(e.target)||(barraTopo&&barraTopo.contains(e.target))){engolir=!ctl.classList.contains('ver');verMenu(4000);return}
     if(e.touches.length!==1||!aberto()||raiz.classList.contains('geral'))return;
     if(e.target.closest&&e.target.closest('input,select,button,a,.cena,.ctl,.barra,.controles,.indice,.alca'))return;
     if(gav&&gav.classList.contains('ver')&&!document.body.classList.contains('fixo'))return;
@@ -669,9 +676,9 @@
     // mais longo que nas listas, para não sair por engano.
     else if(!lista&&Math.max(dy,maxdy)>100&&Math.max(dy,maxdy)>1.8*Math.abs(dx))location.href=sair;
     else if(e.type==='touchend'&&Math.abs(dx)<12&&Math.abs(dy)<12){
-      // Só o toque na faixa de baixo, no meio da tela, abre o menu; fora dela, o toque só o fecha (professor, 10/11/2026).
-      var zona=ly>innerHeight*0.75&&lx>innerWidth*0.25&&lx<innerWidth*0.75;
-      if(ctl.classList.contains('ver'))esconderMenu();else if(zona)verMenu(4000)}
+      // Um toque em qualquer lugar fora dos controles mostra o menu e a barra; outro toque os esconde (professor, 15/11/2026: "as
+      // barras só tem aparecido em ponto específico da tela"; substitui a faixa de baixo, no meio, de 10/11/2026).
+      if(ctl.classList.contains('ver'))esconderMenu();else verMenu(4000)}
   }
   document.addEventListener('touchend',fimToque,{passive:true});
   document.addEventListener('touchcancel',fimToque,{passive:true});
