@@ -38,8 +38,9 @@ a.cartao:hover,.cartao:has(h3 a:hover){transform:translateY(-2px);border-color:v
 .cartao h3{font:700 20px/1.2 var(--f-titulo)}
 .cartao p{margin:0;color:var(--apoio);font-size:15px}
 .aviso{margin-top:16px;padding:12px 16px;border-radius:12px;background:color-mix(in srgb,var(--gancho) 9%,var(--sup));border:1px solid color-mix(in srgb,var(--gancho) 30%,var(--grade));max-width:720px;font-size:15px}
-.rodape-pag{border-top:1px solid var(--grade);margin-top:56px;padding-top:20px;color:var(--apoio);font-size:14px}
-.rodape-pag .teclas{margin:0 0 12px;max-width:80ch}
-.lin-rodape{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* Rodapé centralizado (15/11/2026, professor: "fica não centralizado?"): o texto, a versão e a autoria, um embaixo do outro. */
+.rodape-pag{border-top:1px solid var(--grade);margin-top:56px;padding-top:20px;color:var(--apoio);font-size:14px;text-align:center}
+.rodape-pag .teclas{margin:0 auto 12px;max-width:80ch}
+.lin-rodape{display:flex;flex-direction:column;align-items:center;gap:4px}
 .aula.breve,.desligado{color:var(--apoio)}
 }
