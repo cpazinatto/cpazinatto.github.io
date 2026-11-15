@@ -437,14 +437,17 @@ body.fixo .prog{left:var(--larg-ind)}
 .captura *,.captura *::before,.captura *::after{transition:none!important;animation:none!important}
 
 /* Carregando (15/11/2026): por cima de tudo enquanto a página e as letras chegam (classe posta e tirada por preferencias.js). Fora das
-   camadas, para vencer qualquer estilo de página; letra do sistema, que já está no aparelho; só aparece se demorar mais de 0,35 s. */
+   camadas, para vencer qualquer estilo de página; letra do sistema, que já está no aparelho. O fundo cobre a página desde o primeiro
+   instante (professor: "vai piscar em internet muito lenta a página incompleta"); o texto e o círculo só aparecem depois de 0,35 s,
+   para não piscarem a cada troca de página quando tudo já está no cache. */
 html.carregando::before{content:"Carregando…";position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;
   padding-top:72px;background:var(--fundo,#FCFCF9);color:var(--apoio,#4A5361);font:600 17px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  animation:car-entra .2s .35s both}
-html.carregando::after{content:"";position:fixed;left:50%;top:50%;z-index:2147483647;width:36px;height:36px;margin:-34px 0 0 -18px;
+  animation:car-texto .2s .35s both}
+html.carregando::after{content:"";position:fixed;left:50%;top:50%;z-index:2147483647;box-sizing:border-box;width:36px;height:36px;margin:-34px 0 0 -18px;
   border-radius:50%;border:4px solid var(--grade,#DDDFDA);border-top-color:var(--define,#0A5CA8);
   animation:car-entra .2s .35s both,car-gira .8s linear infinite}
 @keyframes car-entra{from{opacity:0}to{opacity:1}}
+@keyframes car-texto{from{color:transparent}}
 @keyframes car-gira{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){html.carregando::after{animation:car-entra .2s .35s both}}
 @media print{html.carregando::before,html.carregando::after{display:none}}
