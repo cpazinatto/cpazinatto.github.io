@@ -112,3 +112,18 @@ window.Memoria=(function(){
     var k={m:'modo',t:'cores',l:'letra',a:'tamanho'}[(e.key||'').toLowerCase()];if(!k)return false;trocar(k);return true}
   window.Pref={trocar:trocar,ligar:ligar,tecla:tecla};
 })();
+
+// Carregando (15/11/2026, professor: "Tem como colocar um overlay de carregando nas páginas?"): com font-display:block, o texto fica
+// invisível até a letra chegar, e em internet lenta a página parecia em branco. A classe .carregando no <html> mostra, por cima de
+// tudo, "Carregando…" (desenho em tema.css, que só aparece se demorar mais de 0,35 s); sai quando a página e as letras pedidas por
+// carregar() estão prontas, ou em 8 s, o que vier antes. Fora nas capturas (?captura=1). Sem JavaScript, não aparece.
+(function(){
+  var raiz=document.documentElement;
+  if(/[?&]captura=1\b/.test(location.search))return;
+  raiz.classList.add('carregando');
+  function tirar(){raiz.classList.remove('carregando')}
+  // Sem requestAnimationFrame: numa aba de fundo ele fica parado, e o overlay só sairia no limite de 8 s.
+  function pronto(){var f=document.fonts&&document.fonts.ready;(f||Promise.resolve()).then(tirar,tirar)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pronto);else pronto();
+  setTimeout(tirar,8000);
+})();

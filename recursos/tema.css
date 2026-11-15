@@ -4,24 +4,24 @@
 /* Camadas (12/11/2026): tema (os quadros, este arquivo) < base < componentes (com a busca) < paginas (tema/paginas/). A camada que vem
    depois vence, qualquer que seja a especificidade: as páginas ajustam o tema e os componentes sem !important. */
 @layer tema, base, componentes, paginas;
-@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Regular.ttf) format("truetype");font-weight:400}
-@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Bold.ttf) format("truetype");font-weight:700}
-@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Regular-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
-@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Bold-Italic.ttf) format("truetype");font-weight:700;font-style:italic}
-@font-face{font-display:block;font-family:"Luciole Titulo";src:url(fontes/Luciole-Bold.ttf) format("truetype");ascent-override:112%;descent-override:55.3%;line-gap-override:0%;font-weight:700}
-@font-face{font-display:block;font-family:"Luciole Math";src:url(fontes/Luciole-Math-Raiz.otf) format("opentype")}
-@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Regular.ttf) format("truetype");font-weight:400}
-@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Bold.ttf) format("truetype");font-weight:700}
-@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
-@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-BoldItalic.ttf) format("truetype");font-weight:700;font-style:italic}
-@font-face{font-display:block;font-family:"Fira Math";src:url(fontes/FiraMath-Regular.otf) format("opentype")}
-@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Regular.ttf) format("truetype");font-weight:400}
-@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Bold.ttf) format("truetype");font-weight:700}
-@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Italic.ttf) format("truetype");font-weight:400;font-style:italic}
-@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-BoldItalic.ttf) format("truetype");font-weight:700;font-style:italic}
-@font-face{font-display:block;font-family:"STIX Two Math";src:url(fontes/STIXTwoMath-Regular.ttf) format("truetype")}
-@font-face{font-display:block;font-family:"Fira Code";src:url(fontes/FiraCode-Regular.ttf) format("truetype");font-weight:400;size-adjust:79%}
-@font-face{font-display:block;font-family:"Fira Code";src:url(fontes/FiraCode-Bold.ttf) format("truetype");font-weight:700;size-adjust:79%}
+@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Regular.woff2) format("woff2");font-weight:400}
+@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Bold.woff2) format("woff2");font-weight:700}
+@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Regular-Italic.woff2) format("woff2");font-weight:400;font-style:italic}
+@font-face{font-display:block;font-family:Luciole;src:url(fontes/Luciole-Bold-Italic.woff2) format("woff2");font-weight:700;font-style:italic}
+@font-face{font-display:block;font-family:"Luciole Titulo";src:url(fontes/Luciole-Bold.woff2) format("woff2");ascent-override:112%;descent-override:55.3%;line-gap-override:0%;font-weight:700}
+@font-face{font-display:block;font-family:"Luciole Math";src:url(fontes/Luciole-Math-Raiz.woff2) format("woff2")}
+@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Regular.woff2) format("woff2");font-weight:400}
+@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Bold.woff2) format("woff2");font-weight:700}
+@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-Italic.woff2) format("woff2");font-weight:400;font-style:italic}
+@font-face{font-display:block;font-family:"Fira Sans";src:url(fontes/FiraSans-BoldItalic.woff2) format("woff2");font-weight:700;font-style:italic}
+@font-face{font-display:block;font-family:"Fira Math";src:url(fontes/FiraMath-Regular.woff2) format("woff2")}
+@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Regular.woff2) format("woff2");font-weight:400}
+@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Bold.woff2) format("woff2");font-weight:700}
+@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-Italic.woff2) format("woff2");font-weight:400;font-style:italic}
+@font-face{font-display:block;font-family:"STIX Two Text";src:url(fontes/STIXTwoText-BoldItalic.woff2) format("woff2");font-weight:700;font-style:italic}
+@font-face{font-display:block;font-family:"STIX Two Math";src:url(fontes/STIXTwoMath-Regular.woff2) format("woff2")}
+@font-face{font-display:block;font-family:"Fira Code";src:url(fontes/FiraCode-Regular.woff2) format("woff2");font-weight:400;size-adjust:79%}
+@font-face{font-display:block;font-family:"Fira Code";src:url(fontes/FiraCode-Bold.woff2) format("woff2");font-weight:700;size-adjust:79%}
 @layer tema{
 /* A Luciole declara ascendente de 0,791 em, mas os acentos sobem até 1,09 em, e o Chrome chega a cortar o excesso
    no alto de títulos grandes até redesenhar. Esta cópia da Bold declara a altura real. Ascendente e descendente
@@ -435,3 +435,16 @@ body.fixo .prog{left:var(--larg-ind)}
 }
 /* Capturas de tela (tema/capturas.py, ?captura=1, 13/11/2026): nada se move, para duas capturas da mesma página saírem iguais. */
 .captura *,.captura *::before,.captura *::after{transition:none!important;animation:none!important}
+
+/* Carregando (15/11/2026): por cima de tudo enquanto a página e as letras chegam (classe posta e tirada por preferencias.js). Fora das
+   camadas, para vencer qualquer estilo de página; letra do sistema, que já está no aparelho; só aparece se demorar mais de 0,35 s. */
+html.carregando::before{content:"Carregando…";position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;
+  padding-top:72px;background:var(--fundo,#FCFCF9);color:var(--apoio,#4A5361);font:600 17px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  animation:car-entra .2s .35s both}
+html.carregando::after{content:"";position:fixed;left:50%;top:50%;z-index:2147483647;width:36px;height:36px;margin:-34px 0 0 -18px;
+  border-radius:50%;border:4px solid var(--grade,#DDDFDA);border-top-color:var(--define,#0A5CA8);
+  animation:car-entra .2s .35s both,car-gira .8s linear infinite}
+@keyframes car-entra{from{opacity:0}to{opacity:1}}
+@keyframes car-gira{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){html.carregando::after{animation:car-entra .2s .35s both}}
+@media print{html.carregando::before,html.carregando::after{display:none}}
