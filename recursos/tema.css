@@ -152,6 +152,9 @@ html:not(.js) .quadro{display:block;margin:0 auto 12px}
 .bloco>h3.rotulado>.base-etq{position:static;margin:0 -.4cqw 0 auto}
 .base-etq a{color:inherit;text-decoration:none}
 .base-etq a:hover{text-decoration:underline}
+/* Códigos citados no texto dos módulos (ligar_codigos): a cor do texto, com sublinhado discreto; mais forte ao passar o mouse. */
+a.ref{color:inherit;text-decoration:underline;text-decoration-color:color-mix(in srgb,currentColor 35%,transparent);text-underline-offset:.15em}
+a.ref:hover{text-decoration-color:currentColor}
 
 /* Sua vez e gabarito */
 .faixa{position:absolute;left:0;right:0;top:0;height:7cqw;padding:0 4.6cqw;display:flex;align-items:center;
