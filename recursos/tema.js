@@ -227,12 +227,15 @@
     d.controles.forEach(function(c){a.v[c.nome]=c.geral});
     return a;
   });
+  // O valor ao lado do controle sai com as casas do passo (grade 0,1: uma casa), no máximo as do gráfico: com casas="3" no gráfico, o
+  // passador mostrava "h = 5,137" no meio do movimento, e a coluna crescia (15/11/2026, T18). Os rótulos {…} seguem com as casas do gráfico.
+  function casasDe(c,casas){if(c.pi)return casas;var g=String(c.grade),i=g.indexOf('.');return Math.min(casas,i<0?0:g.length-i-1)}
   function desenhar(a){
     a.derivar.forEach(function(f){f(a.v)});a.acoes.forEach(function(f){f(a.v)});
     if(!a.segue)animacoes.forEach(function(b){if(!b.segue||b.q!==a.q)return;
       b.d.controles.forEach(function(c){if(c.nome in a.v)b.v[c.nome]=a.v[c.nome]});b.derivar.forEach(function(f){f(b.v)});b.acoes.forEach(function(f){f(b.v)})});
     a.d.controles.forEach(function(c){var e=a.entradas[c.nome];if(!e)return;e.value=a.v[c.nome];
-      e.closest('.controle').querySelector('output').textContent=forma(c,a.v[c.nome],a.d.casas)});
+      e.closest('.controle').querySelector('output').textContent=forma(c,a.v[c.nome],casasDe(c,a.d.casas))});
   }
   // A coluna do valor fica com a largura do maior texto possível, a mesma em todos os controles do gráfico: a barra não muda de tamanho nem de lugar.
   function medirValores(a){
@@ -241,7 +244,7 @@
     a.d.controles.forEach(function(c){var e=a.entradas[c.nome];if(!e)return;
       var val=e.closest('.controle').querySelector('.valor'),out=val.querySelector('output'),antes=out.textContent,passo=c.pi?c.grade/2:c.grade;
       val.style.minWidth='0';vals.push(val);
-      var testar=function(v){out.textContent=forma(c,v,a.d.casas);maior=Math.max(maior,val.getBoundingClientRect().width)};
+      var testar=function(v){out.textContent=forma(c,v,casasDe(c,a.d.casas));maior=Math.max(maior,val.getBoundingClientRect().width)};
       for(var k=0,n=Math.round((c.max-c.min)/passo);k<=n;k++)testar(c.min+k*passo);
       c.paradas.forEach(function(s){testar(s[1])});
       out.textContent=antes});
@@ -825,6 +828,9 @@
         [].forEach.call(inn.querySelectorAll('svg.graf'),function(s){var b=s.getBoundingClientRect(),p=s.parentElement.getBoundingClientRect();
           if(b.right>qr.right+1||b.left<qr.left-1)r.push('quadro '+nome+': gráfico fora do quadro');
           var ws=parseFloat(s.style.width);if(ws&&b.width<ws/100*qr.width*0.88)r.push('quadro '+nome+': gráfico encolhido para '+(b.width/qr.width*100).toFixed(0)+' de '+ws+' cqw')});
+        // Controle (deslizador) mais largo que a coluna do gráfico: invade o texto ou a borda do bloco, sem passar do quadro (T18, 15/11/2026).
+        [].forEach.call(inn.querySelectorAll('.anima .controle'),function(c){var an=c.closest('.anima').getBoundingClientRect(),b=c.getBoundingClientRect();
+          if(b.width&&(b.right>an.right+qr.width*0.003||b.left<an.left-qr.width*0.003)){var t='quadro '+nome+': controle passa da coluna do gráfico';if(r.indexOf(t)<0)r.push(t)}});
         [].forEach.call(inn.querySelectorAll('.bloco>h3'),function(h){var alvo=h.querySelector('.tt')||h.querySelector('.rot')||h,rg=document.createRange();rg.selectNodeContents(alvo);
           // Na fonte dos títulos, a caixa do texto é mais alta que a linha: reduz cada caixa à altura da linha, em torno do centro.
           var alt=parseFloat(getComputedStyle(alvo).lineHeight),linhas=0,fim=-1e9;

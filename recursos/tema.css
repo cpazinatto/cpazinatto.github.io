@@ -109,6 +109,8 @@ msqrt>:first-child,mroot>:first-child{margin-inline-start:.08em}
 /* Gestos no celular (12/11/2026): na aula e no visor das listas, o arrasto vertical é do tema (puxar para baixo fecha), e não do
    navegador; a página não rola ali, e "puxar para atualizar" não recarrega. As miniaturas do índice seguem rolando. */
 main.aula>.quadro,.resol>.quadro{touch-action:pinch-zoom}
+/* Na visão geral os quadros ficam empilhados e a página rola: o arrasto vertical volta a ser do navegador (no celular, a visão geral não rolava; 15/11/2026). */
+html.geral main.aula>.quadro{touch-action:pan-y pinch-zoom}
 html:has(main.aula),html:has(body.visor-aberto){overscroll-behavior:none}
 /* Troca de quadro: um véu da cor de fundo cobre o atual e sai de cima do seguinte (tempo em tema.js).
    O quadro em si nunca fica transparente. */
@@ -311,9 +313,10 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .anima.lado .controles{flex:1 1 0;min-width:0;flex-direction:column;flex-wrap:nowrap;gap:1.5cqw}
 .anima.lado .controle{flex:none}
 .controle .valor{text-align:right;white-space:nowrap;color:var(--curva-a);font-weight:700}
+.anima.valor-baixo .controle{flex-wrap:wrap;justify-content:center;row-gap:.3cqw}.anima.valor-baixo .controle .valor{order:9;flex-basis:100%;text-align:center}
 .controle output{font-variant-numeric:tabular-nums}
 .controle .limite{font-size:calc(2.3cqw*var(--tam));color:var(--apoio)}
-.controle input{appearance:none;-webkit-appearance:none;flex:1 1 0;min-width:6cqw;height:3cqw;margin:0;background:transparent;cursor:grab}
+.controle input{appearance:none;-webkit-appearance:none;flex:1 1 0;width:0;min-width:6cqw;height:3cqw;margin:0;background:transparent;cursor:grab}
 .controle input:active{cursor:grabbing}
 .controle input::-webkit-slider-runnable-track{height:.6cqw;border-radius:.3cqw;background:var(--apoio)}
 .controle input::-webkit-slider-thumb{-webkit-appearance:none;width:2.6cqw;height:2.6cqw;margin-top:-1cqw;border-radius:50%;background:var(--curva-a);border:.3cqw solid var(--fundo);box-shadow:0 0 0 .15cqw var(--curva-a)}
