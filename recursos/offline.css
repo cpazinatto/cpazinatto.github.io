@@ -1,0 +1,79 @@
+/* Uso offline, etapa 2 (16/11/2026, docs/planejamento-offline.md, mock ../mock-layout/offline.html): o indicador na barra do topo
+   (#bOffline, de barra_topo()), o painel "Uso offline" (#offp), o aviso curto quando a rede cai ou volta e os links que, sem
+   internet, levariam a uma página não guardada. Cores pelas funções do tema: verde (--define) pronto, azul (--exemplo) baixando,
+   âmbar (--suavez) desatualizado ou parcial, neutro (--neutro) parado. */
+@layer componentes{
+.off-b{height:38px;border-radius:999px;border:1px solid var(--grade);background:var(--sup);display:flex;align-items:center;gap:7px;
+  padding:0 12px 0 9px;cursor:pointer;flex:none;color:var(--texto);font-size:14px;position:relative}
+.off-b[hidden]{display:none}
+.off-b:hover{background:var(--sup2)}
+.off-b .ico{position:relative;width:22px;height:22px;display:grid;place-items:center}
+.off-b .ico svg.anel{position:absolute;inset:-2px;width:26px;height:26px;transform:rotate(-90deg)}
+.off-b .ico svg.anel circle{fill:none;stroke-width:2.4}
+.off-b .ico svg.anel .fundo{stroke:var(--grade)}
+.off-b .ico svg.anel .feito{stroke:var(--exemplo);stroke-linecap:round;transition:stroke-dashoffset .4s}
+.off-b .ponto{position:absolute;right:-2px;bottom:-1px;width:9px;height:9px;border-radius:50%;border:2px solid var(--sup);background:var(--k)}
+.off-b .txt{white-space:nowrap}
+/* Abaixo de 900 px, só o ícone (decisão 3, seção 6.1 do planejamento). */
+@media (max-width:899px){.off-b{width:38px;padding:0;justify-content:center}.off-b .txt{display:none}}
+/* Barra apertada (barra.js, .compacta): como os outros botões, só o ícone, antes de o caminho perder níveis. */
+header.topo.compacta .off-b{width:38px;padding:0;justify-content:center}
+header.topo.compacta .off-b .txt{display:none}
+.off-b[data-estado="baixando"]{--k:var(--exemplo)}
+.off-b[data-estado="pronto"],.off-b[data-estado="offline"]{--k:var(--define)}
+.off-b[data-estado="atualizar"],.off-b[data-estado="offline-parcial"]{--k:var(--suavez)}
+.off-b[data-estado="pausado"],.off-b[data-estado="nada"]{--k:var(--neutro)}
+.off-b[data-estado="nada"] .ponto{display:none}
+.off-b[data-estado="dados-moveis"]{--k:var(--suavez)}
+.off-b[data-estado="atualizar"] .txt,.off-b[data-estado="offline-parcial"] .txt,.off-b[data-estado="dados-moveis"] .txt{color:var(--suavez);font-weight:700}
+
+.offp{position:absolute;right:16px;top:58px;width:min(400px,calc(100vw - 32px));max-height:calc(100vh - 80px);overflow:auto;
+  background:var(--sup);border:1px solid var(--grade);border-radius:var(--raio,14px);box-shadow:var(--sombra,0 12px 32px rgba(0,0,0,.18));
+  padding:16px;z-index:30;font-size:15px;color:var(--texto)}
+.offp[hidden]{display:none}
+.offp h3{font-size:13px;color:var(--apoio);font-weight:700;margin:14px 0 6px}
+.off-rede{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.off-rede i{width:10px;height:10px;border-radius:50%;background:var(--define)}
+.off-rede.off i{background:var(--neutro)}
+.off-sinc{color:var(--apoio);font-size:13px;margin:4px 0 0}
+.off-sinc code{font-family:inherit;background:var(--sup2);border:1px solid var(--grade);border-radius:5px;padding:0 5px}
+.off-pac{border:1px solid var(--grade);border-radius:12px;padding:12px;margin:8px 0;background:var(--sup2)}
+.off-pac .l1{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.off-pac .nome{font-weight:700}
+.off-pac .etq{font-size:13px;display:flex;align-items:center;gap:6px;color:var(--k);white-space:nowrap}
+.off-pac .etq:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--k)}
+.off-pac .off-barra{height:6px;border-radius:99px;background:var(--grade);margin:10px 0 6px;overflow:hidden}
+.off-pac .off-barra b{display:block;height:100%;background:var(--k);border-radius:99px;transition:width .4s}
+.off-pac .det{font-size:13px;color:var(--apoio)}
+.off-pac .bts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.off-pac button,.off-rodape button{white-space:nowrap;border:1px solid var(--grade);background:var(--sup);color:var(--texto);border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer}
+.off-pac button:hover,.off-rodape button:hover{background:var(--pagina,var(--fundo))}
+.off-pac button.pri{background:var(--exemplo);border-color:var(--exemplo);color:var(--fundo);font-weight:700}
+.off-pac button.perigo,.off-rodape button.perigo{color:var(--atencao)}
+.off-pac[data-k="pronto"]{--k:var(--define)}.off-pac[data-k="baixando"]{--k:var(--exemplo)}.off-pac[data-k="atualizar"]{--k:var(--suavez)}
+.off-pac[data-k="pausado"],.off-pac[data-k="nada"]{--k:var(--neutro)}.off-pac[data-k="dados-moveis"]{--k:var(--suavez)}
+/* Etapa 3: qual curso baixar, a pergunta dos dados móveis e a opção "Os dois cursos". */
+.off-escolha{margin-top:10px}
+.off-escolha p{margin:0 0 6px;font-weight:700;font-size:14px}
+.off-escolha small{color:var(--apoio);font-weight:400;margin-left:2px}
+.off-dm{border:1px solid var(--suavez);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:14px;background:var(--sup)}
+.off-op{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:10px;cursor:pointer}
+/* Cartões da página das disciplinas: o estado de cada uma, ao lado da etiqueta; sem internet e sem nada guardado, esmaecido. */
+.off-cartao{display:inline-flex;align-self:flex-start;align-items:center;gap:5px;font-size:13px;color:var(--k,var(--apoio))}
+.off-cartao[data-k="pronto"]{--k:var(--define)}.off-cartao[data-k="parcial"]{--k:var(--suavez)}.off-cartao[data-k="indisp"]{--k:var(--apoio)}
+article.cartao.off-indisp{opacity:.55;filter:grayscale(1)}
+article.cartao.off-indisp a{pointer-events:none}
+.off-nota{font-size:13px;color:var(--apoio);background:var(--pagina,var(--fundo));border-radius:8px;padding:8px 10px;margin:10px 0 0}
+.off-rodape{border-top:1px solid var(--grade);margin-top:14px;padding-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--apoio)}
+.offp :focus-visible{outline:3px solid var(--suavez);outline-offset:2px;border-radius:6px}
+
+/* Aviso curto, embaixo, quando a rede cai ou volta: some em 4 s (decisão 3). */
+.off-aviso{position:fixed;left:50%;bottom:18px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:60;display:flex;align-items:center;gap:8px;
+  max-width:calc(100vw - 32px);background:var(--texto);color:var(--fundo);border-radius:12px;padding:9px 14px;font-family:var(--f-texto);font-size:15px;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);transition:opacity .25s,transform .25s}
+.off-aviso.ver{opacity:1;transform:translate(-50%,0)}
+.off-leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Sem internet, link para página não guardada: esmaecido e sem clique (o título diz por quê). */
+a.off-nao{opacity:.45;filter:grayscale(1);pointer-events:none;cursor:default}
+}

@@ -13,6 +13,9 @@
 //   <disc>-base-recolhidos, -base-fixados, <disc>-comp-recolhidos, -comp-fixados   o mesmo na Revisão da base e nas Demonstrações
 //   disciplinas-ordem        [{nome, discs}]: a ordem dos níveis e das disciplinas que o aluno arrumou na página das disciplinas
 //   disciplinas-recolhidas   ["Ensino técnico..."]: os níveis recolhidos nela
+//   offline-<pasta>-cursos   "EE" ou "EE EQ": os cursos baixados para uso offline (tema/paginas/offline.js, docs/planejamento-offline.md)
+//   offline-<pasta>-baixar   "sim" (baixar, recomeça sozinho ao abrir outra página) ou "pausa" (pausado pela pessoa)
+// O que foi baixado para uso offline fica no Cache Storage do navegador (o service worker, sw.js), não aqui.
 // <disc> é o prefixo da disciplina (13/11/2026), no <html data-disc>, e os cursos dela vêm em <html data-cursos>, os dois do
 // disciplina.json. O Cálculo I usa "calculo", o mesmo de antes; a página sem data-disc (a das disciplinas) fica com ele.
 window.Memoria=(function(){

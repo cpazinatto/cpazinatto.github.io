@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sem conexão</title>
+<!-- Uso offline (16/11/2026, docs/planejamento-offline.md): o service worker serve esta página no lugar de uma que não está guardada
+     neste aparelho, quando não há internet. O endereço continua o da página pedida, por isso tudo aqui é embutido (nada de
+     caminho relativo) e a lista do que está guardado vem do próprio cache. Fonte em tema/offline/sem-conexao.html. -->
+<style>
+:root{--fundo:#F7F6F2;--sup:#FFFFFF;--texto:#11151C;--apoio:#4A5361;--grade:#D9D6CC;--k:#0A5CA8;color-scheme:light}
+html[data-modo="escuro"]{--fundo:#11151C;--sup:#1A1F29;--texto:#EDEBE4;--apoio:#A7AEBB;--grade:#2E3543;--k:#6CC4FF;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);font:17px/1.5 Luciole,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:640px;margin:0 auto;padding:48px 16px}
+.ic{width:56px;height:56px;border-radius:16px;background:var(--sup);border:1px solid var(--grade);display:grid;place-items:center;color:var(--k)}
+h1{font-size:28px;line-height:1.2;margin:20px 0 8px}
+p{margin:0 0 12px;color:var(--apoio)}
+.bts{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 32px}
+button,a.b{font:inherit;font-size:15px;border:1px solid var(--grade);background:var(--sup);color:var(--texto);border-radius:10px;padding:8px 14px;cursor:pointer;text-decoration:none}
+button.pri{background:var(--k);border-color:var(--k);color:var(--fundo);font-weight:700}
+h2{font-size:15px;color:var(--apoio);margin:0 0 8px}
+ul{list-style:none;margin:0;padding:0;border:1px solid var(--grade);border-radius:12px;background:var(--sup);overflow:hidden}
+li a{display:block;padding:10px 14px;color:var(--texto);text-decoration:none;border-top:1px solid var(--grade)}
+li:first-child a{border-top:0}
+li a:hover{background:var(--fundo)}
+li small{color:var(--apoio)}
+.vazio{padding:12px 14px;color:var(--apoio)}
+</style>
+<script>
+(function(){var m=null;try{m=localStorage.getItem('leitura-modo')||localStorage.getItem('calculo-modo')}catch(e){}
+if(!m)try{m=matchMedia('(prefers-color-scheme: dark)').matches?'escuro':'claro'}catch(e){}
+document.documentElement.setAttribute('data-modo',m||'claro')})();
+</script>
+</head>
+<body>
+<main>
+<div class="ic" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 9.2 4.5 4.5 0 0 0 7 18z"/><path d="M3 3l18 18"/></svg></div>
+<h1>Sem conexão</h1>
+<p>Esta página ainda não foi guardada neste aparelho, e agora não há internet para buscá-la.</p>
+<p>As páginas que você já abriu, ou que baixou para uso offline, continuam abrindo.</p>
+<div class="bts"><button class="pri" type="button" onclick="location.reload()">Tentar de novo</button><button type="button" onclick="history.back()">Voltar</button></div>
+<h2 id="tit-lista">Guardadas neste aparelho</h2>
+<ul id="lista" aria-labelledby="tit-lista"><li class="vazio">Procurando…</li></ul>
+</main>
+<script>
+(function(){
+  var ul=document.getElementById('lista');
+  function vazio(t){ul.innerHTML='<li class="vazio">'+t+'</li>'}
+  if(!('caches' in window)||!navigator.serviceWorker){vazio('Este navegador não informa o que está guardado.');return}
+  navigator.serviceWorker.getRegistration().then(function(reg){
+    if(!reg){vazio('Nada guardado ainda.');return}
+    var raiz=reg.scope,aqui=location.href.slice(raiz.length).split('/')[0];
+    // A Luciole, do pacote "site" (guardado): o endereço da página é o da pedida, então a letra vem pela raiz do site.
+    var st=document.createElement('style');st.textContent=['Regular','Bold'].map(function(p,i){return "@font-face{font-family:Luciole;font-weight:"+(i?700:400)+";src:url('"+raiz+"recursos/fontes/Luciole-"+p+".woff2') format('woff2')}"}).join('');
+    document.head.appendChild(st);
+    return caches.keys().then(function(ks){
+      var k=ks.filter(function(x){return x.indexOf('disciplinas-offline-')===0})[0];
+      if(!k){vazio('Nada guardado ainda.');return}
+      return caches.open(k).then(function(c){return c.keys().then(function(rs){
+        // As páginas da mesma pasta (a disciplina em que se estava) primeiro, e a página das disciplinas.
+        var urls=rs.map(function(r){return r.url}).filter(function(u){return /\.html$/.test(u)&&u.indexOf('/__offline__/')<0&&!/sem-conexao\.html$/.test(u)&&u.slice(raiz.length)!=='index.html'});
+        urls.sort(function(a,b){var pa=a.slice(raiz.length).split('/')[0]===aqui?0:1,pb=b.slice(raiz.length).split('/')[0]===aqui?0:1;return pa-pb||(a<b?-1:a>b?1:0)});
+        if(!urls.length){vazio('Nada guardado ainda.');return}
+        return Promise.all(urls.slice(0,200).map(function(u){return c.match(u).then(function(r){return r.text()}).then(function(t){
+          var m=t.match(/<title>([^<]*)<\/title>/);return {u:u,t:m?m[1]:u.slice(raiz.length)}})})).then(function(itens){
+          ul.innerHTML='';itens.forEach(function(it){var li=document.createElement('li'),a=document.createElement('a');
+            a.href=it.u.replace(/index\.html$/,'');a.textContent=it.t;var s=document.createElement('small');s.textContent=' · '+it.u.slice(raiz.length).replace(/index\.html$/,'');
+            a.appendChild(s);li.appendChild(a);ul.appendChild(li)})});
+      })})});
+  }).catch(function(){vazio('Não foi possível ler o que está guardado.')});
+})();
+</script>
+</body>
+</html>
