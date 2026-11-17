@@ -930,6 +930,12 @@
           for(var a=0;a<ts.length;a++)for(var c=a+1;c<ts.length;c++){var A=ts[a].b,B=ts[c].b,lx=Math.min(A.right,B.right)-Math.max(A.left,B.left),ly=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
             if(lx>2&&ly>4){var m='quadro '+nome+': rótulos sobrepostos'+onde+': '+ts[a].t+' / '+ts[c].t;if(r.indexOf(m)<0)r.push(m)}}
           {var lim=(s.closest('.bloco')||q).getBoundingClientRect();ts.forEach(function(x){if(x.b.right>lim.right||x.b.left<lim.left||x.b.top<lim.top||x.b.bottom>lim.bottom){var m='quadro '+nome+': rótulo sai do '+(s.closest('.bloco')?'bloco':'quadro')+onde+': '+x.t;if(r.indexOf(m)<0)r.push(m)}})}
+          // Rótulo do gráfico que passa da borda do desenho: invade a coluna ao lado sem sair do quadro (17/11/2026, B01 da ED,
+          // professor: "sobreposição"). Os números e os nomes dos eixos ficam de fora (o nome do eixo x fica depois da seta).
+          if(s.classList.contains('graf')){var sb=s.getBoundingClientRect();[].forEach.call(s.querySelectorAll('text,.lbf'),function(e){
+            if(e.classList.contains('tk')||e.classList.contains('axl')||getComputedStyle(e).visibility==='hidden')return;
+            var bb;if(e.classList.contains('lbf')){var g=document.createRange();g.selectNodeContents(e);bb=g.getBoundingClientRect()}else bb=e.getBoundingClientRect();
+            if(bb.width&&(bb.right>sb.right+2||bb.left<sb.left-2)){var m='quadro '+nome+': rótulo sai do gráfico'+onde+': '+(e.textContent||'').trim().slice(0,30)+' ('+(bb.right>sb.right+2?'direita ':'esquerda ')+Math.ceil(Math.max(bb.right-sb.right,sb.left-bb.left)/qr.width*1000)+')';if(r.indexOf(m)<0)r.push(m)}})}
           encostos(s,onde)}
         // Rótulo encostado em linha, curva ou ponto: testa uma grade de pontos dentro da caixa do rótulo (encolhida 15% de cada
         // lado) contra o traço de cada forma do desenho. A grade de fundo não conta; os números dos eixos ficam por cima das curvas, com contorno.
