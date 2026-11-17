@@ -14,7 +14,9 @@
 .porta .rodape{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;color:var(--apoio);padding-top:6px}
 .porta .rodape a{position:relative;z-index:1}
 .porta .seta{color:var(--k);font-weight:700;white-space:nowrap}
-.porta.p1{--k:var(--define)}.porta.p2{--k:var(--neutro)}.porta.p3{--k:var(--gancho)}
+.porta.p1{--k:var(--define)}.porta.p2{--k:var(--neutro)}.porta.p3{--k:var(--gancho)}.porta.p4{--k:var(--suavez)}
+/* Formulário ainda não liberado no site (17/11/2026): o cartão fica, sem link, como os módulos "em breve". */
+.porta.breve{box-shadow:none;background:var(--sup2)}.porta.breve .ico{filter:grayscale(1);opacity:.6}
 .cobre .bloco-d{background:var(--sup);border:1px solid var(--grade);border-radius:var(--raio);padding:14px 16px;display:flex;flex-direction:column;gap:4px;font-size:15px;color:var(--apoio)}
 .cobre .bloco-d b{color:var(--texto);font-size:17px}
 .cobre .faixa-d{font-size:13px;font-weight:700;color:var(--define)}

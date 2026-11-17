@@ -17,7 +17,7 @@
   // Etiquetas de cada resultado (11/11/2026, pedido do professor): de onde ele é e o que ele é, na ordem e na cor do tema.
   // A primeira diz o material (Aula, Seção da aula, Lista, Revisão da base, Demonstração); as outras, o conteúdo e o nível.
   var ETIQUETAS=[['em breve','Em breve','tipo'],['secao','Seção da aula','tipo'],['aula','Aula','tipo'],['lista','Lista','tipo'],['revisao','Revisão da base','tipo'],
-    ['demonstracao','Demonstração','tipo'],['definicao','Definição','de'],['teorema','Teorema','de'],['exemplo','Exemplo','ex'],
+    ['demonstracao','Demonstração','tipo'],['formula','Fórmula','tipo'],['definicao','Definição','de'],['teorema','Teorema','de'],['exemplo','Exemplo','ex'],
     ['sua vez','Sua vez','sv'],['exercicio','Exercício','sv'],['desafio','Desafio','sv'],['onde esta o erro','Onde está o erro','at'],
     ['atencao','Atenção','at'],['retomada','Retomada','re'],['gancho','Gancho','ga'],
     ['mecanica','Mecânica','nv'],['interpretacao','Interpretação','nv'],['aplicacao','Aplicação','nv']];

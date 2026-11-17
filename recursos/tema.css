@@ -286,6 +286,7 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .graf .cheia.original{fill:var(--apoio);stroke:var(--apoio);stroke-dasharray:none}
 .graf .aberta{fill:var(--sup,var(--fundo));stroke-width:4.5;stroke-dasharray:none}
 .graf .seta{stroke:var(--eixo);stroke-width:3.5;fill:none}
+.graf .seta.a{stroke:var(--curva-a)}.graf .seta.b{stroke:var(--curva-b);stroke-dasharray:none;stroke-linecap:round}
 .graf .lb{font-size:28px;font-weight:400;font-style:italic}
 .graf .lbf{font-size:32px;line-height:60px;color:var(--texto)}
 .graf .lbf.a{color:var(--curva-a)}.graf .lbf.b{color:var(--curva-b)}.graf .lbf.original{color:var(--apoio)}

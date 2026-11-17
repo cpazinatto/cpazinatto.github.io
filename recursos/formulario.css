@@ -1,0 +1,84 @@
+/* Formulário (17/11/2026, tema/montagem/92-formulario.py): fórmulas por bloco, filtro, "Ver como na prova" e a folha impressa. */
+@layer paginas{
+.fm-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+.fm-ctl input{font:inherit;font-size:15px;padding:8px 14px;border-radius:999px;border:1px solid var(--grade);background:var(--sup);color:var(--texto);width:min(320px,100%)}
+.fm-ctl .esp{flex:1}
+.fm-chips{display:flex;flex-wrap:wrap;gap:6px}
+.fm-chips button,.fm-b{font:inherit;font-size:14px;border:1px solid var(--grade);background:var(--sup);color:var(--apoio);border-radius:999px;padding:5px 13px;cursor:pointer}
+.fm-chips button[aria-pressed=true]{background:color-mix(in srgb,var(--suavez) 16%,var(--sup));border-color:var(--suavez);color:var(--texto);font-weight:700}
+.fm-b{display:inline-flex;align-items:center;gap:6px;color:var(--texto);font-weight:700}
+.fm-b[aria-pressed=true]{border-color:var(--suavez);background:color-mix(in srgb,var(--suavez) 16%,var(--sup))}
+.fm-imp{background:var(--define);border-color:var(--define);color:var(--fundo)}
+.fm-conta{margin:10px 0 0;color:var(--apoio);font-size:14px;min-height:1.2em}
+.fm-folha{display:none}
+.fm-g>h2 .fm-faixa{font-weight:700;letter-spacing:0;color:var(--apoio);margin-left:2px}
+.fm-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr));gap:14px}
+.fm{background:var(--sup);border:1px solid var(--grade);border-radius:var(--raio);padding:14px 18px;box-shadow:var(--sombra);
+  display:flex;flex-direction:column;gap:6px;min-width:0;scroll-margin-top:90px}
+.fm:target,.fm.alvo{border-color:var(--suavez);box-shadow:0 0 0 2px color-mix(in srgb,var(--suavez) 45%,transparent)}
+.fm-cab{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.fm-cod{font-weight:700;font-size:13px;color:var(--suavez);background:color-mix(in srgb,var(--suavez) 13%,var(--sup));border-radius:999px;padding:1px 9px}
+.fm h3{font:700 17px/1.25 var(--f-titulo);flex:1;min-width:10ch}
+.fm-top{font-size:13px;display:flex;gap:6px}
+.fm-top a{color:var(--define);font-weight:700}
+.fm-corpo{display:flex;flex-direction:column;gap:2px}
+.fm-eq{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 28px;font-size:1.12em;padding:4px 0}
+.fm-eq>span{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+/* Frações e integrais em tamanho cheio: o pandoc descarta o \displaystyle das fórmulas em linha. */
+.fm-eq math{math-style:normal}
+.fm-cond{margin:0;color:var(--apoio);font-size:14px}
+.fm-uso{margin:4px 0 0;font-size:15px;padding-top:8px;border-top:1px dashed var(--grade)}
+.fm-uso b{color:var(--suavez)}
+.fm-ex summary{cursor:pointer;color:var(--exemplo);font-size:14px;font-weight:700;width:max-content}
+.fm-ex>div{margin-top:6px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--exemplo) 7%,var(--sup));font-size:15px}
+.fm-vazio{color:var(--apoio);margin:0;padding:14px 18px;border:1px dashed var(--grade);border-radius:var(--raio)}
+/* Ver como na prova: só as fórmulas e as condições, mais juntas. */
+.fm-prova .fm-uso,.fm-prova .fm-ex,.fm-prova .fm-top{display:none}
+.fm-prova .fm-lista{gap:8px;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
+.fm-prova .fm{box-shadow:none;padding:8px 14px;gap:2px}
+}
+/* Painel "Imprimir" (17/11/2026, professor: "imprimir só põe tudo; tbm deve ser de forma compacta"): blocos e formato. */
+@layer paginas{
+.fm-impp{border:1px solid var(--grade);border-radius:var(--raio);background:var(--sup);color:var(--texto);padding:18px 20px;width:min(420px,calc(100% - 32px));
+  box-shadow:var(--sombra);font-size:15px}
+.fm-impp::backdrop{background:rgba(0,0,0,.35)}
+.fm-impp h2{font:700 19px var(--f-titulo);margin:0 0 12px}
+.fm-impp fieldset{border:0;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px}
+.fm-impp legend{font-weight:700;font-size:14px;color:var(--apoio);margin-bottom:4px;padding:0}
+.fm-impp label{display:flex;gap:8px;align-items:baseline;cursor:pointer}
+.fm-impp input{accent-color:var(--define)}
+.fm-impp small{color:var(--apoio)}
+.fm-impp .fm-impp-pe{display:flex;gap:10px;justify-content:flex-end;align-items:center;margin-top:6px}
+.fm-impp .fm-impp-pe span{margin-right:auto;color:var(--apoio);font-size:14px}
+.fm-impp .fm-impp-pe button{font:inherit;font-size:15px;border:1px solid var(--grade);background:var(--sup);color:var(--texto);border-radius:999px;padding:6px 14px;cursor:pointer}
+.fm-impp .fm-impp-pe .ok{background:var(--define);border-color:var(--define);color:var(--fundo);font-weight:700}
+}
+/* A folha impressa: o mesmo que "Ver como na prova", em fundo branco com as cores do modo claro. Fora das camadas, para valer
+   sobre as cores do tema (que também estão fora); :root repetido para vencer :root[data-cores][data-modo].
+   Sai só o que está à vista (bloco e filtro escolhidos) ou o que o painel marcou (.fm-fora fica de fora). Compacta é o padrão:
+   três colunas que se encaixam (column-count, sem as linhas da grade), letra menor e um traço fino entre as fórmulas;
+   "Ampla" (body.fm-ampla) é a de duas colunas com cartões. */
+@media print{
+:root:root:root:root{--fundo:#FFFFFF;--texto:#000000;--apoio:#333A44;--grade:#B9BDB5;--pagina:#FFFFFF;--sup:#FFFFFF;--sup2:#FFFFFF;
+  --define:#0A6B47;--exemplo:#0A5CA8;--suavez:#6B3E00;--sombra:none;color-scheme:light}
+@page{size:A4;margin:7mm}
+body.entrada{background:#fff;font-size:9px;line-height:1.25}
+.topo,.logos,.heroi,.rodape-pag,.fm-ctl,.fm-conta,.fm-uso,.fm-ex,.fm-top,.fm-vazio,.fm-fora,.fm-impp,#ir-para,.busca-veu{display:none!important}
+/* Escolhido no painel: o bloco marcado sai mesmo escondido pelo botão de bloco; sem "só o filtro", com todas as fórmulas. */
+.fm-g.fm-dentro{display:block!important}.fm-todas .fm-dentro .fm[hidden]{display:block!important}
+.pag{max-width:none;padding:0}
+.fm-folha{display:flex;justify-content:space-between;border-bottom:1.2px solid #000;padding-bottom:2px;margin-bottom:3px;font-size:11px}
+.secao{margin-top:3px}
+.secao>h2{font-size:9px;margin-bottom:2px;color:#000;break-after:avoid;gap:6px}
+.fm-lista{display:block;column-count:3;column-gap:10px;column-rule:.5px solid #ccc}
+.fm{display:block;box-shadow:none;border:0;border-bottom:.5px solid #bbb;border-radius:0;padding:1px 1px 2px;margin:0;break-inside:avoid;background:none}
+.fm:target,.fm.alvo{box-shadow:none}
+.fm-cab{display:block;line-height:1.2}.fm h3{display:inline;font-size:8.5px}.fm-cod{font-size:7px;padding:0 4px;margin-right:3px}
+.fm-eq{font-size:1em;justify-content:flex-start;gap:0 10px;padding:0}.fm-eq>span{overflow:visible;padding:0}
+.fm-cond{font-size:7.5px;line-height:1.25}
+/* Ampla: duas colunas de cartões, letra maior. */
+.fm-ampla{font-size:12px}
+.fm-ampla .fm-lista{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;column-count:auto;align-items:start}
+.fm-ampla .fm{border:1px solid var(--grade);border-radius:6px;padding:4px 8px}
+.fm-ampla .fm h3{font-size:11px}.fm-ampla .fm-cod{font-size:9px}.fm-ampla .fm-eq{justify-content:center;gap:2px 16px}.fm-ampla .fm-cond{font-size:10px}
+}

@@ -228,10 +228,10 @@
   // Depois do tema.js (que abre o quadro do endereço e pinta as animações), para a seção atual e o estado geral valerem.
   if(document.readyState==='complete')setTimeout(aoAbrir,0);else addEventListener('load',function(){setTimeout(aoAbrir,0)});
 
-  // ── Teclas: P abre e fecha o painel, e Ctrl+P / Cmd+P também o abrem (em vez de imprimir a tela como está); Esc fecha.
+  // ── Teclas: P abre e fecha o painel; Esc fecha. Ctrl+P / Cmd+P vai direto à impressão do navegador, sem o painel (17/11/2026,
+  // professor: "cmd+p deveria não passar pelo painel"), com as últimas opções guardadas ou as padrão (preparar, no beforeprint).
   document.addEventListener('keydown',function(e){
     var k=e.key,t=e.target||{},campo=/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName||'')&&!/^(radio|checkbox)$/.test(t.type)||t.isContentEditable;
-    if((e.ctrlKey||e.metaKey)&&!e.altKey&&!e.shiftKey&&(k==='p'||k==='P')){e.preventDefault();if(!aberto())abrir();return}
     if(e.ctrlKey||e.metaKey||e.altKey)return;
     if(aberto()){if(k==='Escape'){e.preventDefault();e.stopPropagation();fechar();return}
       if(k==='Enter'&&t.tagName==='INPUT'){e.preventDefault();veu.querySelector('.imp-ok').click();return}

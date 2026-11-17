@@ -28,6 +28,7 @@ a.ip-it:focus-visible,.ip-grade a:focus-visible,.ip-quadro :focus-visible{outlin
 .ip-tag.b{background:color-mix(in srgb,var(--define) 15%,var(--fundo));color:var(--define)}
 .ip-tag.p{background:color-mix(in srgb,var(--gancho) 15%,var(--fundo));color:var(--gancho)}
 .ip-tag.l{background:color-mix(in srgb,var(--suavez) 15%,var(--fundo));color:var(--suavez)}
+.ip-tag.f{background:color-mix(in srgb,var(--suavez) 15%,var(--fundo));color:var(--suavez)}
 /* No site, desligar() troca por texto o link para página não liberada: o item fica esmaecido, com "em breve". */
 .ip-col>.desligado,.ip-breve{opacity:.6}
 .ip-col>.desligado .ip-t::after{content:"em breve";display:block;color:var(--apoio);font-size:.82em}

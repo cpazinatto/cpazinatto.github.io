@@ -283,6 +283,18 @@
       if(o.pol){var lf=compilar(o.pol.f),ld=compilar(o.pol.de),la=compilar(o.pol.ate),ln=compilar(o.pol.n);fs.push(function(p){
         var a0=ld(0,p,F),b0=la(0,p,F),n=Math.max(1,Math.round(ln(0,p,F))),t=[];
         for(var k=0;k<=n;k++){var x=a0+(b0-a0)*k/n;t.push(X(x).toFixed(1)+','+Y(lf(x,p,F)).toFixed(1))}e.setAttribute('points',t.join(' '))})}
+      // Seta com parâmetro (17/11/2026): haste até 14 unidades antes da ponta e a ponta de 7 de meia largura, como na montagem.
+      if(o.seta){var s0=par(o.seta[0]),s1=par(o.seta[1]),ln=e.querySelector('line'),pt=e.querySelector('path');fs.push(function(p){
+        var u=s0(p),w=s1(p),xa=X(u[0]),ya=Y(u[1]),xc=X(w[0]),yc=Y(w[1]);
+        // corte="1": o trecho fora da janela sai, e a ponta fica na borda (recorte de Liang-Barsky, como na montagem).
+        if(o.jan){var t0=0,t1=1,dx=xc-xa,dy=yc-ya,fora=false;[[-dx,xa-o.jan[0]],[dx,o.jan[2]-xa],[-dy,ya-o.jan[1]],[dy,o.jan[3]-ya]].forEach(function(c){
+            if(fora)return;if(c[0]===0){if(c[1]<0)fora=true;return}var r=c[1]/c[0];if(c[0]<0)t0=Math.max(t0,r);else t1=Math.min(t1,r);if(t0>t1)fora=true});
+          if(fora){e.style.display='none';return}var xa2=xa+t0*dx,ya2=ya+t0*dy;xc=xa+t1*dx;yc=ya+t1*dy;xa=xa2;ya=ya2}
+        var n=Math.hypot(xc-xa,yc-ya);
+        var ok=isFinite(n)&&n>16;e.style.display=ok?'':'none';if(!ok)return;
+        var ux=(xc-xa)/n,uy=(yc-ya)/n,bx=xc-ux*14,by=yc-uy*14;
+        ln.setAttribute('x1',xa.toFixed(1));ln.setAttribute('y1',ya.toFixed(1));ln.setAttribute('x2',bx.toFixed(1));ln.setAttribute('y2',by.toFixed(1));
+        pt.setAttribute('d','M'+xc.toFixed(1)+' '+yc.toFixed(1)+'L'+(bx-uy*7).toFixed(1)+' '+(by+ux*7).toFixed(1)+'L'+(bx+uy*7).toFixed(1)+' '+(by-ux*7).toFixed(1)+'z')})}
       // Sem valor real (como arcsen de 2), o ponto some.
       if(o.c){var pc=par(o.c),circ=e.tagName.toLowerCase()==='circle';fs.push(function(p){var c=pc(p);
         var existe=isFinite(c[0])&&isFinite(c[1]);e.style.display=existe?'':'none';if(!existe)return;
