@@ -161,6 +161,90 @@
     setTimeout(tamanho,0);
     return function(p){if(!el.clientWidth)return;feito=true;montar(p);tamanho()};
   }
+  // Superfície z = f(x, y) (<superficie>, 16/11/2026): malha de 60 × 60 calculada a cada mudança de controle, com as linhas da
+  // grade por cima, cortada em cima e embaixo pela janela z; eixos com seta e nome no canto da caixa; cortes (plano x ou y
+  // constante) destacados na cor b, com o plano translúcido. O grupo deita (rotação em x) para o z ficar para cima.
+  function criarSuperficie(el,s,an){
+    var nada=function(){};
+    if(!window.THREE){el.classList.add('sem');return nada}
+    var ren;try{ren=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true})}catch(e){el.classList.add('sem');return nada}
+    el.appendChild(ren.domElement);ren.setPixelRatio(Math.min(2,window.devicePixelRatio||1));ren.localClippingEnabled=true;
+    var T=THREE,cena=new T.Scene(),cam=new T.PerspectiveCamera(30,4/3,0.01,1000),ctl=new T.OrbitControls(cam,ren.domElement);
+    ctl.enablePan=false;ctl.enableDamping=false;
+    var luz=new T.DirectionalLight(0xffffff,.55);luz.position.set(1,1.4,2);cam.add(luz);cena.add(cam);cena.add(new T.AmbientLight(0xffffff,.62));
+    var grupo=new T.Group();grupo.rotation.x=-Math.PI/2;cena.add(grupo);
+    var N=60,objs=[],cores={},fs={};Object.keys(s.fs).forEach(function(k){fs[k]=compilar(s.fs[k])});
+    var x0=s.x[0],x1=s.x[1],y0=s.y[0],y1=s.y[1],z0=s.z[0],z1=s.z[1];
+    // Caixa de 2 de largura no maior lado do plano; a altura, 1,4 (ou na escala real, com proporcao="real").
+    var k=2/Math.max(x1-x0,y1-y0),kz=s.real?k:1.4/Math.max(z1-z0,1e-9),cx=(x0+x1)/2,cy=(y0+y1)/2,H=(z1-z0)*kz;
+    function L(x,y,z){return new T.Vector3((x-cx)*k,(y-cy)*k,(z-z0)*kz-H/2)}
+    var corteC=[new T.Plane(new T.Vector3(0,-1,0),H/2+1e-4),new T.Plane(new T.Vector3(0,1,0),H/2+1e-4)];
+    var vao=Math.max(2,H),esp=vao*.012;
+    function ler(){var cs=getComputedStyle(el),c=function(n){return new T.Color((cs.getPropertyValue(n)||'#888').trim())};
+      cores={a:c('--curva-a'),b:c('--curva-b'),c:c('--gancho'),apoio:c('--apoio'),texto:c('--texto')}}
+    function z(f,x,y,p){var q=Object.assign({},p);q.y=y;var v=f(x,q,F);return isFinite(v)?v:1e6}
+    function por(o){grupo.add(o);objs.push(o)}
+    function malha(f,cor,p){var pos=[],idx=[],lin=[];
+      for(var i=0;i<=N;i++)for(var j=0;j<=N;j++){var x=x0+(x1-x0)*i/N,y=y0+(y1-y0)*j/N,v=L(x,y,z(f,x,y,p));pos.push(v.x,v.y,v.z)}
+      for(i=0;i<N;i++)for(j=0;j<N;j++){var a=i*(N+1)+j,b=a+N+1;idx.push(a,b,a+1,b,b+1,a+1)}
+      var g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+      por(new T.Mesh(g,new T.MeshLambertMaterial({color:cor,side:T.DoubleSide,transparent:true,opacity:.82,clippingPlanes:corteC})));
+      // Linhas da grade: 12 em cada direção, finas, na cor de apoio.
+      var passo=N/12;for(i=0;i<=N;i+=passo)for(j=0;j<N;j++){var e=i*(N+1)+j,e2=j*(N+1)+i,e3=(j+1)*(N+1)+i;
+        lin.push(pos[3*e],pos[3*e+1],pos[3*e+2],pos[3*e+3],pos[3*e+4],pos[3*e+5]);
+        lin.push(pos[3*e2],pos[3*e2+1],pos[3*e2+2],pos[3*e3],pos[3*e3+1],pos[3*e3+2])}
+      var gl=new T.BufferGeometry();gl.setAttribute('position',new T.Float32BufferAttribute(lin,3));
+      por(new T.LineSegments(gl,new T.LineBasicMaterial({color:cores.texto,transparent:true,opacity:.28,clippingPlanes:corteC})))}
+    function barra(a,b,cor,raio,clip){var l=a.distanceTo(b);if(l<1e-6)return;
+      var m=new T.Mesh(new T.CylinderGeometry(raio,raio,l,10),new T.MeshBasicMaterial({color:cor,clippingPlanes:clip?corteC:[]}));
+      m.position.copy(a.clone().add(b).multiplyScalar(.5));m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),b.clone().sub(a).normalize());por(m)}
+    function ponta(a,b,cor){var l=a.distanceTo(b),m=new T.Mesh(new T.ConeGeometry(l*.42,l,16),new T.MeshBasicMaterial({color:cor}));
+      m.position.copy(a.clone().add(b).multiplyScalar(.5));m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),b.clone().sub(a).normalize());por(m)}
+    function rotulo(txt,v){var cv=document.createElement('canvas');cv.width=cv.height=128;var cx2=cv.getContext('2d'),cs=getComputedStyle(el);
+      cx2.font='italic 96px '+cs.fontFamily;cx2.fillStyle='#'+cores.texto.getHexString();cx2.textAlign='center';cx2.textBaseline='middle';cx2.fillText(txt,64,64);
+      var sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(cv),depthTest:false,transparent:true}));
+      sp.scale.set(vao*.13,vao*.13,1);sp.position.copy(v);sp.renderOrder=5;por(sp)}
+    function eixo(a,b,nome,dir){barra(a,b,cores.texto,esp*.45);var c=b.clone().add(dir.clone().multiplyScalar(vao*.06));ponta(b,c,cores.texto);rotulo(nome,c.clone().add(dir.clone().multiplyScalar(vao*.08)))}
+    function montar(p){
+      objs.forEach(function(o){grupo.remove(o);if(o.geometry)o.geometry.dispose();if(o.material.map)o.material.map.dispose();o.material.dispose()});objs=[];
+      Object.keys(fs).forEach(function(c){malha(fs[c],cores[c],p)});
+      // Eixos no canto (x0, y0, z da base) e o contorno da base, fino.
+      var o=L(x0,y0,z0),ex=new T.Vector3(1,0,0),ey=new T.Vector3(0,1,0),ez=new T.Vector3(0,0,1);
+      eixo(o,L(x1,y0,z0),s.nomes[0],ex);eixo(o,L(x0,y1,z0),s.nomes[1],ey);eixo(o,L(x0,y0,z1),s.nomes[2],ez);
+      [[L(x1,y0,z0),L(x1,y1,z0)],[L(x0,y1,z0),L(x1,y1,z0)]].forEach(function(q){barra(q[0],q[1],cores.apoio,esp*.3)});
+      // Cortes: a curva da superfície no plano, grossa, na cor b, e o plano translúcido.
+      (s.cortes||[]).forEach(function(c){var f=fs[c.fn]||fs.a,v=compilar(c.v)(0,p,F),pts=[];
+        for(var i=0;i<=N;i++){var t=(c.eixo==='y'?x0+(x1-x0)*i/N:y0+(y1-y0)*i/N),x=c.eixo==='y'?t:v,y=c.eixo==='y'?v:t;pts.push(L(x,y,z(f,x,y,p)))}
+        for(i=0;i<N;i++)barra(pts[i],pts[i+1],cores.b,esp*1.5,true);
+        var A=c.eixo==='y'?[L(x0,v,z0),L(x1,v,z0),L(x1,v,z1),L(x0,v,z1)]:[L(v,y0,z0),L(v,y1,z0),L(v,y1,z1),L(v,y0,z1)];
+        var g=new T.BufferGeometry().setFromPoints([A[0],A[1],A[2],A[0],A[2],A[3]]);
+        var pl=new T.Mesh(g,new T.MeshBasicMaterial({color:cores.b,side:T.DoubleSide,transparent:true,opacity:.14,depthWrite:false}));pl.renderOrder=3;por(pl)});
+      desenhar3()}
+    function desenhar3(){ren.render(cena,cam)}
+    var feito=false,ultimo=0;
+    grupo.updateMatrixWorld();var alvo=new T.Vector3(0,0,0);
+    function enquadrar(asp){var dir=cam.position.clone().sub(ctl.target).normalize(),d=vao*3,cs=[];
+      [x0-.15*(x1-x0),x1+.15*(x1-x0)].forEach(function(x){[y0-.15*(y1-y0),y1+.15*(y1-y0)].forEach(function(y){[z0,z1+.15*(z1-z0)].forEach(function(zz){cs.push(grupo.localToWorld(L(x,y,zz)))})})});
+      for(var it=0;it<4;it++){cam.position.copy(ctl.target).add(dir.clone().multiplyScalar(d));cam.aspect=asp;cam.updateProjectionMatrix();cam.updateMatrixWorld();
+        var m=0;cs.forEach(function(c){var q=c.clone().project(cam);m=Math.max(m,Math.abs(q.x),Math.abs(q.y))});d*=m/.92}
+      cam.position.copy(ctl.target).add(dir.multiplyScalar(d));ctl.update();ctl.saveState()}
+    function tamanho(){var w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;if(!feito){feito=true;montar(an.v)}ren.setSize(w,h,false);cam.aspect=w/h;
+      if(Math.abs(cam.aspect-ultimo)>1e-3){ultimo=cam.aspect;enquadrar(cam.aspect)}cam.updateProjectionMatrix();desenhar3()}
+    // Vista como nos livros: x vindo para a frente e para a esquerda, y para a direita, z para cima. A câmera fica do lado de x
+    // e y positivos, acima; o grupo deita, então (x, y, z) do grupo é (x, z, −y) no mundo.
+    var dl=new T.Vector3(1,.45,.6).normalize();
+    cam.position.set(4*dl.x,4*dl.z,-4*dl.y);
+    ctl.target.copy(alvo);ctl.update();ctl.saveState();
+    var eu={cam:cam,ctl:ctl,q:el.closest('.quadro'),des:desenhar3,junto:s.junto},copiando=false;juntos.push(eu);
+    ctl.addEventListener('change',function(){desenhar3();if(!s.junto||copiando)return;
+      juntos.forEach(function(o){if(o===eu||!o.junto||o.q!==eu.q)return;copiando=true;o.cam.position.copy(cam.position);o.ctl.target.copy(ctl.target);o.ctl.update();o.des();copiando=false})});
+    ren.domElement.addEventListener('dblclick',function(){ctl.reset()});
+    ler();
+    if(window.ResizeObserver)new ResizeObserver(tamanho).observe(el);
+    new MutationObserver(function(){ler();montar(an.v)}).observe(document.documentElement,{attributes:true});
+    setTimeout(tamanho,0);
+    return function(p){if(!el.clientWidth)return;feito=true;montar(p);tamanho()};
+  }
   // Faixas de uma soma de Riemann: [esquerda, largura, c, f(c)]. No modo tvm, c é o ponto do TVM da primitiva G na faixa (bisseção).
   function faixas(f,G,modo,a0,b0,nn,p){var n=Math.max(1,Math.round(nn)),h=(b0-a0)/n,l=[];
     for(var k=0;k<n;k++){var e=a0+k*h,c;
@@ -173,7 +257,9 @@
     var d=JSON.parse(svg.dataset.anima),caixa=svg.closest('.anima'),a={q:svg.closest('.quadro'),svg:svg,d:d,v:{},passo:0,raf:0};
     var X=function(v){return d.esq+(v-d.x0)*d.ux},Y=function(v){return d.cima+(d.y1-v)*d.uy};
     var par=function(c){var f=compilar(c[0]),g=compilar(c[1]);return function(p){return [f(0,p,F),g(0,p,F)]}};
-    var acoes=[].map.call(svg.querySelectorAll('[data-din]'),function(e){
+    // Nos sólidos e superfícies, os rótulos ficam fora da cena (.rot3), e também mudam com o controle.
+    var dins=[].slice.call(svg.querySelectorAll('[data-din]')).concat(svg.classList.contains('cena')?[].slice.call(caixa.querySelectorAll('.rot3 [data-din]')):[]);
+    var acoes=dins.map(function(e){
       var o=JSON.parse(e.dataset.din),fs=[];
       if(o.pts){var ps=o.pts.map(par);fs.push(function(p){e.setAttribute('points',ps.map(function(f){var c=f(p);return X(c[0]).toFixed(1)+','+Y(c[1]).toFixed(1)}).join(' '))})}
       if(o.arco){var fa=o.arco.map(compilar);fs.push(function(p){var r=fa[0](0,p,F),t0=fa[1](0,p,F),t1=fa[2](0,p,F),cx=fa[3](0,p,F),cy=fa[4](0,p,F),t=[];
@@ -221,6 +307,7 @@
       else faixas(f,o.F?compilar(o.F):null,o.tipo,a0,b0,n,p).forEach(function(r){v+=r[1]*r[3]})
       p[o.nome]=v}});
     if(d.solido)acoes.push(criarSolido(svg,d.solido,a));
+    if(d.superficie)acoes.push(criarSuperficie(svg,d.superficie,a));
     a.acoes=acoes;a.entradas=entradas;
     // Gráfico que segue: todos os parâmetros vêm de outro gráfico do quadro (controle "segue"); não anima por conta própria.
     a.segue=d.controles.length>0&&d.controles.every(function(c){return c.segue});
