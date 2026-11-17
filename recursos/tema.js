@@ -401,10 +401,10 @@
     if(!muda||direto||semMovimento.matches||raiz.classList.contains('geral'))return mostrar();
     if(!fade){raiz.classList.add('trocando');fade=setTimeout(revelar,FADE)}
   }
-  // Na lista e nos módulos (etapa 2, 12/11/2026): no fim de uma parte do módulo, › segue para a parte seguinte; depois da última, fecha.
-  // A resolução de uma questão não leva à de outra (pedido do professor, 13/11/2026): no fim dela, › fecha e volta à página.
-  function seguinte(){if(i>=qs.length-1)return null;var a=grupoDe(qs[i].dataset.q),b=grupoDe(qs[i+1].dataset.q);
-    return a&&b&&!a.art&&!b.art?b:null}
+  // Nada leva de uma parte ou resolução à seguinte: no fim, › fecha e volta à página. Questões desde 13/11/2026; partes dos módulos
+  // (revisão, "Por que vale?", demonstrações) desde 17/11/2026 (professor: "ao final de uma parte, vai direto para a próxima. Não
+  // quero."). Antes, as partes seguiam encadeadas (etapa 2 do layout, 12/11/2026).
+  function seguinte(){return null}
   function prox(){if(passo<maxPasso(qs[i])){passo++;mostrar()}else if(i<qs.length-1&&mesma(i+1))ir(i+1);else if(lista&&seguinte())abrirLista(qs[i+1].dataset.q,null,true);else if(lista)fecharLista()}
   function ant(){if(passo>1){passo--;mostrar()}else if(i>0&&mesma(i-1))ir(i-1,maxPasso(qs[i-1]))}
   // Na lista: o passo conta todos os passos da questão; no último, o aviso diz para onde › leva.

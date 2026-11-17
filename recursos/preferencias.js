@@ -9,6 +9,7 @@
 //   <disc>-ultima            {u, h, cod, tit, n, tot, sec}: a última aula aberta ("Continuar de onde parou")
 //   <disc>-feita:<página>    {"q3":true}: questões marcadas como feitas numa lista ou num módulo
 //   <disc>-recolhida:<página> ["q1","q3"]: questões recolhidas numa lista ou num módulo
+//   <disc>-b00-acertos       {"3":true}: itens marcados "acertei" no B00 Autoavaliação (17/11/2026; antes, b00-acertos, sem a disciplina)
 //   <disc>-aulas-recolhidas, <disc>-aulas-fixadas   partes recolhidas e tópicos fixados em "Aulas e exercícios"
 //   <disc>-base-recolhidos, -base-fixados, <disc>-comp-recolhidos, -comp-fixados   o mesmo na Revisão da base e nas Demonstrações
 //   disciplinas-ordem        [{nome, discs}]: a ordem dos níveis e das disciplinas que o aluno arrumou na página das disciplinas
