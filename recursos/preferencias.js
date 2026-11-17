@@ -14,6 +14,7 @@
 //   disciplinas-ordem        [{nome, discs}]: a ordem dos níveis e das disciplinas que o aluno arrumou na página das disciplinas
 //   disciplinas-recolhidas   ["Ensino técnico..."]: os níveis recolhidos nela
 //   offline-<pasta>-cursos   "EE" ou "EE EQ": os cursos baixados para uso offline (tema/paginas/offline.js, docs/planejamento-offline.md)
+//   offline-<pasta>-partes   "T", "T B C": as partes baixadas (T aulas e listas, B base, C complementar); "" nenhuma
 //   offline-<pasta>-baixar   "sim" (baixar, recomeça sozinho ao abrir outra página) ou "pausa" (pausado pela pessoa)
 // O que foi baixado para uso offline fica no Cache Storage do navegador (o service worker, sw.js), não aqui.
 // <disc> é o prefixo da disciplina (13/11/2026), no <html data-disc>, e os cursos dela vêm em <html data-cursos>, os dois do

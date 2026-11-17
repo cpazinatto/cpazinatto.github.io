@@ -58,6 +58,8 @@ header.topo.compacta .off-b .txt{display:none}
 .off-escolha small{color:var(--apoio);font-weight:400;margin-left:2px}
 .off-dm{border:1px solid var(--suavez);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:14px;background:var(--sup)}
 .off-op{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:10px;cursor:pointer}
+/* Partes da disciplina (16/11/2026): uma caixa por parte, com o tamanho dela. */
+.off-partes{margin-top:10px}.off-partes p{margin:0;font-size:12.5px;color:var(--apoio)}.off-partes .off-op{margin-top:6px}.off-partes small{color:var(--apoio)}
 /* Cartões da página das disciplinas: o estado de cada uma, ao lado da etiqueta; sem internet e sem nada guardado, esmaecido. */
 .off-cartao{display:inline-flex;align-self:flex-start;align-items:center;gap:5px;font-size:13px;color:var(--k,var(--apoio))}
 .off-cartao[data-k="pronto"]{--k:var(--define)}.off-cartao[data-k="parcial"]{--k:var(--suavez)}.off-cartao[data-k="indisp"]{--k:var(--apoio)}

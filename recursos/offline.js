@@ -9,7 +9,10 @@
 //   painel), numa fila com prioridade (a página aberta, o tópico atual e o seguinte, os vistos, o resto; a página aberta passa à
 //   frente), com Pausar e Continuar; a fila para quando a aba fica escondida e volta sozinha; em dados móveis, para, avisa e
 //   pergunta (decisão 4); nos cartões da página das disciplinas, o estado de cada uma.
-// Guardado no navegador (Memoria, tema/preferencias.js): offline-<pasta>-cursos ("EE", "EE EQ") e offline-<pasta>-baixar ("sim" depois
+// Partes (16/11/2026, professor: "T, B e C deveriam poder ser carregados de forma separada"; "Sim" para a proposta): Aulas e
+// exercícios (T: aulas e listas), Revisão da base (B) e Demonstrações e desafios (C), cada uma com a sua caixa no painel; quem baixa
+// pela primeira vez começa só com T; quem já tinha baixado fica com o que tem. Desmarcar tira dos guardados o que a parte trazia.
+// Guardado no navegador (Memoria, tema/preferencias.js): offline-<pasta>-partes ("T", "T B C"), offline-<pasta>-cursos ("EE", "EE EQ") e offline-<pasta>-baixar ("sim" depois
 // de "Baixar" ou "Continuar"; "pausa" depois de "Pausar"); só nesta aba (sessionStorage): offline-dados-ok, "continuar com dados móveis".
 window.Offline=(function(){
   var s=document.currentScript,raiz=s?s.src.replace(/recursos\/offline\.js(\?.*)?$/,''):'';
@@ -61,18 +64,31 @@ window.Offline=(function(){
     var l=pac(rel).local;return l&&l.cursos||null}
   function nomesCursos(rel,cs){var p=pac(rel),n=(p.remoto&&p.remoto.cursos)||{};cs=cs||[];
     var ns=cs.map(function(c){return n[c]||c});return ns.length>1?ns.slice(0,-1).join(', ')+' e '+ns[ns.length-1]:ns[0]||''}
-  function vale(rel,a,cs){var x=pac(rel).remoto,g=x&&x.arquivos[a];var cu=g&&g[5];return !cu||!cs||cs.indexOf(cu)>=0}
+  var PARTES=[['T','Aulas e exercícios'],['B','Revisão da base'],['C','Demonstrações e desafios']],PARTE={aula:'T',lista:'T',base:'B',comp:'C'};
+  // Partes que o pacote tem (uma disciplina pode não ter base ou complementar).
+  function partesDe(rel){var r=pac(rel).remoto,t={};if(!r)return [];Object.keys(r.arquivos).forEach(function(a){var x=PARTE[r.arquivos[a][3]];if(x)t[x]=1});
+    return PARTES.map(function(x){return x[0]}).filter(function(x){return t[x]})}
+  // Partes a baixar: as escolhidas; senão, as do que já está guardado (antes das partes, tudo); senão, só as aulas (padrão).
+  function partesEscolhidas(rel){if(rel===SITE)return null;
+    var g=M.ler('offline-'+pastaDe(rel)+'-partes');if(g!==null&&g!==undefined)return g?g.split(' '):[];
+    var l=pac(rel).local;if(l&&(l.token||(l.arquivos&&Object.keys(l.arquivos).length)))return l.partes||partesDe(rel);
+    var ps=partesDe(rel);return ps.indexOf('T')>=0?['T']:ps}
+  function vale(rel,a,cs,ps){var x=pac(rel).remoto,g=x&&x.arquivos[a];var cu=g&&g[5],pa=g&&PARTE[g[3]];if(ps===undefined)ps=partesEscolhidas(rel);
+    return (!cu||!cs||cs.indexOf(cu)>=0)&&(!pa||!ps||ps.indexOf(pa)>=0)}
   function lista(rel){var r=pac(rel).remoto,cs=escolhidos(rel);if(!r)return null;return Object.keys(r.arquivos).filter(function(a){return vale(rel,a,cs)})}
   function feitos(rel){var l=pac(rel).local,ls=lista(rel);if(!l||!l.arquivos)return 0;
     if(!ls)return Object.keys(l.arquivos).length;var t={};Object.keys(l.arquivos).forEach(function(a){t[a]=1});return ls.filter(function(a){return t[a]}).length}
   function total(rel){var ls=lista(rel);return ls?ls.length:(pac(rel).local&&pac(rel).local.total)||0}
-  function tamanho(rel,cs,i){var r=pac(rel).remoto,t=0;if(!r)return 0;Object.keys(r.arquivos).forEach(function(a){if(vale(rel,a,cs))t+=r.arquivos[a][i]});return t}
+  function tamanho(rel,cs,i,ps){var r=pac(rel).remoto,t=0;if(!r)return 0;Object.keys(r.arquivos).forEach(function(a){if(vale(rel,a,cs,ps))t+=r.arquivos[a][i]});return t}
+  // Tamanho só de uma parte (para a caixa dela): os arquivos daquela parte, no curso escolhido.
+  function tamanhoParte(rel,x,cs){var r=pac(rel).remoto,t=0;if(!r)return 0;Object.keys(r.arquivos).forEach(function(a){var g=r.arquivos[a];
+    if(PARTE[g[3]]===x&&(!g[5]||!cs||cs.indexOf(g[5])>=0))t+=g[2]});return t}
   function bytes(rel){var p=pac(rel),l=p.local,r=p.remoto,t=0;if(!l||!l.arquivos)return 0;
     Object.keys(l.arquivos).forEach(function(a){var x=r&&r.arquivos[a];t+=x?x[1]:0});return t}
   function situacao(rel){var p=pac(rel),l=p.local,cs=escolhidos(rel);
     if(p.baixando)return 'baixando';
     if(p.dm)return 'dados-moveis';
-    if(l&&l.token&&(!cs||mesmos(l.cursos,cs)))return p.remoto&&p.remoto.token!==l.token?'atualizar':'pronto';
+    if(l&&l.token&&(!cs||mesmos(l.cursos,cs))&&(rel===SITE||mesmos(l.partes||partesDe(rel),partesEscolhidas(rel))))return p.remoto&&p.remoto.token!==l.token?'atualizar':'pronto';
     return feitos(rel)||(rel===DISC&&st.esperaWifi)?'pausado':'nada'}
   function pct(rel){var p=pac(rel);if(p.baixando)return Math.min(99,Math.floor(100*p.baixando.feitos/Math.max(1,p.baixando.total)));
     var t=total(rel);return t?Math.min(99,Math.floor(100*feitos(rel)/t)):0}
@@ -97,11 +113,12 @@ window.Offline=(function(){
       if(!visto)avisar('Download pausado: você está em dados móveis. Toque na nuvem, na barra do topo, para decidir.');tudo();return}
     p.dm=false;st.esperaWifi=false;
     p.baixando={feitos:feitos(rel),total:total(rel)};
-    pedir(rel,{cursos:escolhidos(rel),prioridade:prioridade(),pagina:paginaAtual()});tudo()}
+    pedir(rel,{cursos:escolhidos(rel),partes:partesEscolhidas(rel),prioridade:prioridade(),pagina:paginaAtual()});tudo()}
   function baixar(rel){var cs=escolhidos(rel),cods=codigos(rel);
     if(!cs&&cods.length>1){st.escolher=true;desenharPainel();return}
     if(situacao(rel)==='nada'&&!confirm('Baixar '+nome(rel)+(cs&&cods.length>1?' ('+nomesCursos(rel,cs)+')':'')+' para usar sem internet?\n\nSão cerca de '+mb(tamanho(rel,cs,2))+' pela rede e '+mb(tamanho(rel,cs,1))+' no aparelho. Em dados móveis, prefira o Wi-Fi.'))return;
     if(cs)M.gravar('offline-'+pastaDe(rel)+'-cursos',cs.join(' '));
+    var ps=partesEscolhidas(rel);if(ps)M.gravar('offline-'+pastaDe(rel)+'-partes',ps.join(' '));
     // Guarda permanente (o navegador não apaga por falta de espaço), pedida no primeiro "Baixar"; quem não tem, segue sem.
     if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});
     bandeira(rel,'sim');iniciar(rel)}
@@ -110,6 +127,11 @@ window.Offline=(function(){
   function doisCursos(rel,sim){var cods=codigos(rel),c=M.ler(M.chave('curso'));
     var cs=sim?cods:[cods.indexOf(c)>=0?c:cods[0]];M.gravar('offline-'+pastaDe(rel)+'-cursos',cs.join(' '));
     // Já baixado ou em curso: a sincronia acrescenta o outro curso ou tira o que saiu.
+    if(feitos(rel)&&bandeira(rel)!=='pausa'){if(pac(rel).baixando)mandar({tipo:'pausar',pacote:rel});setTimeout(function(){iniciar(rel)},300)}
+    tudo()}
+  // Marcar ou desmarcar uma parte: grava a escolha; já baixado ou em curso, a sincronia acrescenta a parte ou tira o que ela trazia.
+  function trocarParte(rel,x,sim){var ps=(partesEscolhidas(rel)||[]).filter(function(y){return y!==x});if(sim)ps.push(x);
+    ps=partesDe(rel).filter(function(y){return ps.indexOf(y)>=0});M.gravar('offline-'+pastaDe(rel)+'-partes',ps.join(' '));
     if(feitos(rel)&&bandeira(rel)!=='pausa'){if(pac(rel).baixando)mandar({tipo:'pausar',pacote:rel});setTimeout(function(){iniciar(rel)},300)}
     tudo()}
   // Aba escondida: a fila para; de volta, recomeça (decisão do planejamento, 2.3).
@@ -176,10 +198,13 @@ window.Offline=(function(){
         extra='<div class="off-dm" role="alert"><b>Pausado: você está em dados móveis.</b> Faltam cerca de '+mb(falta)+'. Continuar com dados móveis ou esperar o Wi-Fi?'+
           '<div class="bts"><button type="button" class="pri" data-acao="dm-sim">Continuar assim</button><button type="button" data-acao="dm-wifi">Esperar Wi-Fi</button></div></div>'}
     }
+    var pds=site||rel!==DISC?[]:partesDe(rel),pes=partesEscolhidas(rel)||[];
+    var partes=pds.length>1?'<div class="off-partes"><p>O que guardar</p>'+pds.map(function(x){var nm=PARTES.filter(function(y){return y[0]===x})[0][1];
+      return '<label class="off-op"><input type="checkbox" data-acao="parte" data-parte="'+x+'"'+(pes.indexOf(x)>=0?' checked':'')+'> '+esc(nm)+' <small>'+mb(tamanhoParte(rel,x,cs))+'</small></label>'}).join('')+'</div>':'';
     var dois=!site&&rel===DISC&&cods.length>1&&cs&&k!=='nada'?'<label class="off-op"><input type="checkbox" data-acao="dois"'+(cs.length===cods.length?' checked':'')+'> Os dois cursos ('+esc(nomesCursos(rel,cods))+')</label>':'';
     return '<div class="off-pac" data-k="'+k+'" data-pacote="'+esc(rel)+'"><div class="l1"><span class="nome">'+esc(titulo)+'</span><span class="etq">'+ETQ[k]+'</span></div>'+
       '<div class="off-barra" aria-hidden="true"><b style="width:'+(k==='pronto'||k==='atualizar'?100:pct(rel))+'%"></b></div><div class="det">'+det+'</div>'+
-      extra+(bts?'<div class="bts">'+bts+'</div>':'')+dois+'</div>'}
+      extra+partes+(bts?'<div class="bts">'+bts+'</div>':'')+dois+'</div>'}
   var espaco='',outros=[];
   function desenharPainel(){if(!painel||painel.hidden)return;
     var k=situacao(PRINCIPAL),p=pac(PRINCIPAL),l=p.local,r=p.remoto,sinc;
@@ -191,7 +216,7 @@ window.Offline=(function(){
     var ls=[SITE].concat(DISC?[DISC]:[]).concat(outros.filter(function(x){return x!==SITE&&x!==DISC}));
     // Só o progresso mudou (mesmos pacotes, estados e escolhas): atualiza a barra e os números no lugar, sem refazer os botões,
     // para um clique em "Pausar" no meio do download não cair num botão que acabou de ser trocado.
-    var assinatura=[st.rede,st.escolher,st.esperaWifi,espaco,sinc].concat(ls.map(function(rel){return rel+':'+situacao(rel)+':'+(escolhidos(rel)||[]).join(' ')})).join('|');
+    var assinatura=[st.rede,st.escolher,st.esperaWifi,espaco,sinc].concat(ls.map(function(rel){return rel+':'+situacao(rel)+':'+(escolhidos(rel)||[]).join(' ')+':'+(partesEscolhidas(rel)||[]).join(' ')})).join('|');
     if(painel.dataset.assinatura===assinatura){
       [].forEach.call(painel.querySelectorAll('.off-pac'),function(el){var tmp=document.createElement('div');tmp.innerHTML=linhaPacote(el.dataset.pacote);
         var novo=tmp.firstChild;el.querySelector('.off-barra b').style.width=novo.querySelector('.off-barra b').style.width;
@@ -214,10 +239,10 @@ window.Offline=(function(){
       Promise.all([medirEspaco(),guardados().then(function(g){outros=g})]).then(function(){
         return Promise.all(outros.map(function(rel){return pac(rel).local?null:lerLocal(rel)}))}).then(desenharPainel);desenharPainel()}}
   function apagarPacote(rel){if(!confirm('Apagar '+nome(rel)+' deste aparelho?\n\nAs aulas vistas, as questões feitas e as preferências ficam.'))return;
-    M.gravar('offline-'+pastaDe(rel)+'-baixar',null);M.gravar('offline-'+pastaDe(rel)+'-cursos',null);delete pac(rel).baixando;pac(rel).dm=false;
+    M.gravar('offline-'+pastaDe(rel)+'-baixar',null);M.gravar('offline-'+pastaDe(rel)+'-cursos',null);M.gravar('offline-'+pastaDe(rel)+'-partes',null);delete pac(rel).baixando;pac(rel).dm=false;
     mandar({tipo:'apagar',pacote:rel})}
   function apagarTudo(){if(!confirm('Apagar tudo o que foi guardado para uso sem internet neste aparelho?\n\nAs aulas vistas, as questões feitas e as preferências ficam. A página das disciplinas e o tema voltam a ser guardados na próxima abertura com internet.'))return;
-    Object.keys(st.pac).concat(outros).forEach(function(rel){if(rel!==SITE){M.gravar('offline-'+pastaDe(rel)+'-baixar',null);M.gravar('offline-'+pastaDe(rel)+'-cursos',null)}
+    Object.keys(st.pac).concat(outros).forEach(function(rel){if(rel!==SITE){M.gravar('offline-'+pastaDe(rel)+'-baixar',null);M.gravar('offline-'+pastaDe(rel)+'-cursos',null);M.gravar('offline-'+pastaDe(rel)+'-partes',null)}
       mandar({tipo:'apagar',pacote:rel})});
     setTimeout(function(){caches.delete(CACHE).then(function(){st.pac={};outros=[];return atualizarTudo()})},300)}
   if(b&&painel){
@@ -226,11 +251,12 @@ window.Offline=(function(){
     b.addEventListener('click',function(e){e.stopPropagation();abrirPainel(painel.hidden)});
     painel.addEventListener('click',function(e){e.stopPropagation();var t=e.target.closest('[data-acao]');if(!t||t.tagName==='INPUT')return;
       var rel=(t.closest('[data-pacote]')||{dataset:{}}).dataset.pacote;
-      ({baixar:function(){baixar(rel)},conferir:function(){pedir(rel,{cursos:escolhidos(rel)})},
+      ({baixar:function(){baixar(rel)},conferir:function(){pedir(rel,{cursos:escolhidos(rel),partes:partesEscolhidas(rel)})},
         pausar:function(){pausar(rel)},apagar:function(){apagarPacote(rel)},tudo:apagarTudo,curso:function(){escolherCurso(rel,t.dataset.curso)},
         'dm-sim':function(){try{sessionStorage.setItem('offline-dados-ok','1')}catch(x){}iniciar(rel)},
         'dm-wifi':function(){pac(rel).dm=false;st.esperaWifi=true;tudo()}})[t.dataset.acao]()});
-    painel.addEventListener('change',function(e){var t=e.target;if(t.dataset.acao==='dois')doisCursos(t.closest('[data-pacote]').dataset.pacote,t.checked)});
+    painel.addEventListener('change',function(e){var t=e.target,rel=t.closest('[data-pacote]').dataset.pacote;
+      if(t.dataset.acao==='dois')doisCursos(rel,t.checked);else if(t.dataset.acao==='parte')trocarParte(rel,t.dataset.parte,t.checked)});
     document.addEventListener('click',function(){if(!painel.hidden)abrirPainel(false)});
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!painel.hidden){abrirPainel(false);b.focus()}});
     var ba=document.getElementById('bAparencia');if(ba)ba.addEventListener('click',function(){if(!painel.hidden)abrirPainel(false)});

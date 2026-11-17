@@ -127,7 +127,11 @@ function pontuar(p, prio, pagina) {
 }
 function mesmos(a, b) { return (a || []).slice().sort().join(' ') === (b || []).slice().sort().join(' '); }
 var FILAS = {};
-// op: {cursos: ['EE'] (só os arquivos sem curso e os desses cursos; sem cursos, todos), prioridade: ['T14', 'T15', ...],
+// Partes da disciplina (16/11/2026, professor: "T, B e C deveriam poder ser carregados de forma separada"): pelo tipo do arquivo no
+// pacote, T são as aulas e as listas, B a base e C o complementar; o resto (páginas de entrada, recursos, Three.js) vai sempre.
+var PARTE = { aula: 'T', lista: 'T', base: 'B', comp: 'C' };
+// op: {cursos: ['EE'] (só os arquivos sem curso e os desses cursos; sem cursos, todos), partes: ['T', 'B'] (sem partes, todas),
+// prioridade: ['T14', 'T15', ...],
 // pagina: 'calculo-i/aulas/T14-EE.html'}. Com a sincronia já em curso, só reordena a fila (a página aberta passa à frente).
 function sincronizar(rel, op) {
   op = op || {};
@@ -144,12 +148,15 @@ function sincronizar(rel, op) {
   ]).then(function (x) {
     var p = x[0], c = x[1];
     return lerMeta(c, rel).then(function (meta) {
-      var cursos = op.cursos || meta.cursos || null;
-      function vale(a) { var cu = p.arquivos[a] && p.arquivos[a][5]; return !cu || !cursos || cursos.indexOf(cu) >= 0; }
+      var cursos = op.cursos || meta.cursos || null, partes = op.partes || meta.partes || null;
+      function vale(a) {
+        var g = p.arquivos[a] || [], cu = g[5], pa = PARTE[g[3]];
+        return (!cu || !cursos || cursos.indexOf(cu) >= 0) && (!pa || !partes || partes.indexOf(pa) >= 0);
+      }
       var lista = Object.keys(p.arquivos).filter(vale);
       // Outros cursos que antes: o token guardado deixa de valer até a nova sincronia terminar.
-      if (!mesmos(meta.cursos, cursos)) meta.token = null;
-      meta.nome = p.nome; meta.total = lista.length; meta.cursos = cursos;
+      if (!mesmos(meta.cursos, cursos) || !mesmos(meta.partes, partes)) meta.token = null;
+      meta.nome = p.nome; meta.total = lista.length; meta.cursos = cursos; meta.partes = partes;
       var base = { tipo: 'pacote', pacote: rel, token: p.token, data: p.data };
       if (meta.token === p.token) return avisar(Object.assign({ estado: 'sincronizado', feitos: lista.length, total: lista.length }, base));
       var faltam = lista.filter(function (a) { return meta.arquivos[a] !== p.arquivos[a][0]; });
@@ -240,7 +247,7 @@ function textos(x) { return Array.isArray(x) ? x.filter(function (t) { return ty
 self.addEventListener('message', function (e) {
   var d = e.data || {};
   if (typeof d.pacote !== 'string' || !/^[\w\/-]*offline\.json$/.test(d.pacote)) return;
-  var op = { cursos: textos(d.cursos), prioridade: textos(d.prioridade), pagina: typeof d.pagina === 'string' ? d.pagina : '' };
+  var op = { cursos: textos(d.cursos), partes: textos(d.partes), prioridade: textos(d.prioridade), pagina: typeof d.pagina === 'string' ? d.pagina : '' };
   if (d.tipo === 'sincronizar') e.waitUntil(sincronizar(d.pacote, op));
   else if (d.tipo === 'prioridade') { if (FILAS[d.pacote]) FILAS[d.pacote].ordenar(op.prioridade, op.pagina); }
   else if (d.tipo === 'pausar') e.waitUntil(pausar(d.pacote));
