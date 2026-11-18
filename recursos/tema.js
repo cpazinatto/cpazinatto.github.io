@@ -444,7 +444,13 @@
   function tela(){
     if(document.fullscreenElement||document.webkitFullscreenElement)(document.exitFullscreen||document.webkitExitFullscreen).call(document);
     else if(raiz.requestFullscreen)raiz.requestFullscreen();else if(raiz.webkitRequestFullscreen)raiz.webkitRequestFullscreen()}
-  function geral(){fecharIndice();raiz.classList.toggle('geral');botoes();if(raiz.classList.contains('geral'))qs.forEach(ajustarRadicais);else ajustarRadicais(qs[i]);pintarAnimacoes()}
+  // Visão geral (V): abre rolada até o quadro em que se estava, marcado, e não no começo da aula (professor, 18/11/2026: "seria
+  // bom começar em torno do frame que está").
+  function geral(){fecharIndice();raiz.classList.toggle('geral');botoes();
+    qs.forEach(function(q,k){q.classList.toggle('aqui',k===i&&raiz.classList.contains('geral'))});
+    if(raiz.classList.contains('geral')){qs.forEach(ajustarRadicais);
+      requestAnimationFrame(function(){qs[i].scrollIntoView({block:'center',behavior:'instant'})})}
+    else ajustarRadicais(qs[i]);pintarAnimacoes()}
   // Todos os botões ficam sempre no menu; os que não têm serventia no momento ficam esmaecidos.
   function podeVoltar(){return !raiz.classList.contains('geral')&&(passo>1||(i>0&&mesma(i-1)))}
   function podeAvancar(){return !raiz.classList.contains('geral')&&(passo<maxPasso(qs[i])||(i<qs.length-1&&mesma(i+1))||lista)}

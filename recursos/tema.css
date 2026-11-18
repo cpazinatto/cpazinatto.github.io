@@ -263,6 +263,8 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .qs th.p{border-top:0;font-weight:700}
 .col .qs .s{min-width:3.4cqw}
 .col .qs td.r{padding-right:1cqw}
+/* Nome de curva no texto, na cor dela (18/11/2026): a legenda diz qual é qual sem depender do traço. */
+.cor-a{color:var(--curva-a);font-weight:700}.cor-b{color:var(--curva-b);font-weight:700}
 .qs .mais{color:var(--curva-b);font-weight:700}
 .qs .menos{color:var(--curva-a);font-weight:700}
 .qs tr.res td{border-top:.3cqw solid var(--eixo);font-weight:700}
@@ -281,7 +283,8 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .graf .original{stroke:var(--apoio);stroke-width:4.5;stroke-dasharray:13 11;stroke-linecap:butt}
 .graf .original.sol{stroke:var(--texto);stroke-width:5;stroke-dasharray:none;stroke-linecap:round}
 .graf .a{stroke:var(--curva-a)}
-.graf .b{stroke:var(--curva-b);stroke-dasharray:24 9;stroke-linecap:butt}
+/* Segunda curva sólida, como a primeira (professor, 18/11/2026: "Mudar em tudo"); só o original de partida segue tracejado. */
+.graf .b{stroke:var(--curva-b)}
 /* Intervalo na reta é sempre linha cheia: tracejado sugeriria que faltam pontos. */
 .graf.reta .b{stroke-dasharray:none}
 .graf .b.sol{stroke-dasharray:none;stroke-linecap:round}
@@ -425,6 +428,7 @@ body.fixo .prog{left:var(--larg-ind)}
 .geral,.geral body{overflow:auto;height:auto}
 .geral body{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding:14px;align-items:start}
 .geral .quadro{display:block;width:100%;outline:1px solid var(--apoio);cursor:pointer}
+.geral .quadro.aqui{outline:3px solid var(--define);outline-offset:1px}
 .geral .oculto{visibility:visible}
 
 /* Regiões preenchidas (area, entre, entrey) e retângulos de Riemann: tinta da cor da curva, sem traço. */
