@@ -387,7 +387,7 @@
     animacoes.forEach(function(a){if(a.q===qs[i])a.d.controles.forEach(function(c){if(!c.mudo)l.push({a:a,c:c})})});return l}
   function marcarEscolhido(){var l=controlesAtivos(),k=qs[i].escolhido||0;
     atalhos.style.display=l.length?'':'none';var varios=atalhos.querySelector('.varios');varios.style.display=l.length>1?'':'none';
-    varios.innerHTML=l.map(function(o,n){return '<b class="'+(n===k?'esc':'')+'"><kbd>'+(n+1)+'</kbd> <i>'+o.c.mostra+'</i></b>'}).join(' ');
+    varios.innerHTML=l.map(function(o,n){return '<b class="'+(n===k?'esc':'')+'"><kbd>'+(n+1)+'</kbd> <i>'+(o.c.mostrah||o.c.mostra)+'</i></b>'}).join(' ');
     l.forEach(function(o,n){o.a.entradas[o.c.nome].closest('.controle').classList.toggle('escolhido',l.length>1&&n===k)})}
   function escolher(n){if(n<controlesAtivos().length){qs[i].escolhido=n;marcarEscolhido()}}
   function ajustar(sinal){var l=controlesAtivos(),o=l[qs[i].escolhido||0];if(!o)return;
@@ -915,6 +915,17 @@
         var ps=[].slice.call(q.querySelectorAll('[data-passo]'));
         for(var pv=2,mx=maxPasso(q);pv<=mx;pv++){if(!ps.some(function(e){if(+e.dataset.passo!==pv)return false;
           for(var a=e.parentElement;a&&a!==q;a=a.parentElement){if(a.dataset.passo&&+a.dataset.passo>pv)return false}return true}))r.push('quadro '+(q.dataset.n||k+1)+': passo '+pv+' não mostra nada novo')}
+        // Exemplo passo a passo (17/11/2026, docs/planejamento-ganchos-roteiro-e-passos.md): a conta não fica à vista no passo 1
+        // nem entra inteira num passo só. Só nas aulas; `aberto` no bloco dispensa.
+        // Número de passo da faixa do roteiro fora do bloco (18/11/2026): o passo é parte do gancho, fica dentro dele.
+        if([].some.call(q.querySelectorAll('.rpasso'),function(p){return !p.closest('.bloco')}))r.push('quadro '+(q.dataset.n||k+1)+': número do passo fora do bloco');
+        if(!lista)[].forEach.call(q.querySelectorAll('.bloco.ex:not(.aberto)'),function(b){
+          function pp(e){var m=1;for(var a=e;a&&a!==q;a=a.parentElement)if(a.dataset&&a.dataset.passo)m=Math.max(m,+a.dataset.passo);return m}
+          var iguais=[].filter.call(b.querySelectorAll('mo'),function(o){return o.textContent.trim()==='='&&!o.closest('svg')&&!o.closest('h3')});
+          if(iguais.filter(function(o){return pp(o)===1}).length>=3)r.push('quadro '+(q.dataset.n||k+1)+': exemplo com a conta à vista no passo 1');
+          var por={};[].forEach.call(b.querySelectorAll('p,tr'),function(l){if(l.classList.contains('s')||l.classList.contains('junto')||l.closest('svg'))return;
+            if(![].some.call(l.querySelectorAll('mo'),function(o){return o.textContent.trim()==='='&&pp(o)===pp(l)}))return;var v=pp(l);if(v>1)por[v]=(por[v]||0)+1});
+          for(var v in por)if(por[v]>=2){r.push('quadro '+(q.dataset.n||k+1)+': exemplo com a conta num passo só (passo '+v+')');break}});
         [].forEach.call(q.querySelectorAll('.oculto'),function(e){e.classList.remove('oculto')});
         var nome=q.dataset.n||('divisor '+(k+1)),inn=q.querySelector('.in'),qr=q.getBoundingClientRect(),pe=q.querySelector('.pe'),limite=pe?pe.getBoundingClientRect().top-qr.width*0.004:qr.bottom-qr.height*0.035;
         var ult=0,dir=0;[].forEach.call(inn.children,function(c){var b=c.getBoundingClientRect();ult=Math.max(ult,b.bottom);dir=Math.max(dir,b.right)});

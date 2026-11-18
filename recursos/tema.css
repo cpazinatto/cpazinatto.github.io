@@ -127,6 +127,8 @@ html:not(.js) .quadro{display:block;margin:0 auto 12px}
 .pe{position:absolute;left:4.6cqw;right:4.6cqw;bottom:1.3cqw;display:flex;justify-content:space-between;
   font-size:calc(1.75cqw*var(--tam));color:var(--apoio)}
 .oculto{visibility:hidden}
+/* Linha de tabela escondida (exemplo passo a passo, 17/11/2026): a borda dela também some. */
+html:not(.geral) tr.oculto>*{border-color:transparent}
 .centro{justify-content:center}
 
 /* Blocos */
@@ -144,6 +146,13 @@ html:not(.js) .quadro{display:block;margin:0 auto 12px}
    para a linha de baixo quando as duas não cabem lado a lado (antes ficava absoluta e se sobrepunha ao título, 11/11/2026). Bloco
    com título e sem rótulo usa o mesmo h3, só com a etiqueta na faixa (13/11/2026: no T13, o título passava por baixo dela). */
 .bloco:has(>.base-etq){position:relative;margin-top:1.95cqw}
+/* Faixa do roteiro "da situação à equação" (<roteiro passo="3"/>, ED, 17/11/2026): os 6 passos, o do quadro aceso. */
+.roteiro{display:flex;flex-wrap:wrap;gap:.5cqw;margin:0 0 1.2cqw;font-size:1.45cqw;line-height:1.3}
+.roteiro>span{padding:.25cqw .9cqw;border-radius:99px;border:.15cqw solid var(--grade);color:var(--apoio)}
+.roteiro>span.on{border-color:var(--gancho);background:color-mix(in srgb,var(--gancho) var(--tinta,12%),transparent);color:var(--texto);font-weight:700}
+.rpasso,.rcont{padding-left:2.6cqw}
+.rpasso{text-indent:-2.6cqw;margin-top:.5cqw}
+.rnum{display:inline-block;width:2.6cqw;text-indent:0;color:var(--apoio);font-weight:400;font-size:2.1cqw}
 .bloco>h3.rotulado:has(.base-etq){flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:.5cqw 1cqw;margin-top:-3.15cqw}
 .bloco>h3.rotulado:has(.base-etq)>.rot{margin:0 0 0 -1cqw}
 .bloco>h3.rotulado:has(.base-etq)>.tt{flex-basis:100%}
