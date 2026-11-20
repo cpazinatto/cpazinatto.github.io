@@ -87,6 +87,7 @@
   html.imp-aula .imp-c{display:flex;flex-direction:column;gap:1mm;break-inside:avoid;min-width:0}
   html.imp-aula #imp-folhas .quadro{display:block!important;width:100%!important;height:auto;aspect-ratio:16/9;box-sizing:border-box;border:.25mm solid #aaa;outline:0;box-shadow:none}
   html.imp-aula #imp-folhas .oculto{visibility:visible!important}
+  html.imp-aula #imp-folhas [data-ate]{visibility:hidden!important}
   html.imp-aula #imp-folhas :is(.controles input,.controles .limite){display:none}
   html.imp-aula .imp-anima{font-size:8pt;color:#555}
   html.imp-aula .imp-linhas{background:repeating-linear-gradient(#fff 0 8mm,#ccc 8mm 8.25mm);min-height:100%}

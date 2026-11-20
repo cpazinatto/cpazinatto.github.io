@@ -98,6 +98,12 @@ math{font-family:var(--f-math)}
 /* Texto dentro de fórmula (\text{...}) na letra do texto (10/11/2026): a Luciole Math não tem letras acentuadas, e o Chrome
    montava o í com o i de ponto e o acento solto. */
 math mtext{font-family:var(--f-texto)}
+/* Cores dentro da fórmula (\ca, \cb, \cc; regra "Aula sem saltos", 19/11/2026): a e b com o papel fixo das curvas, c o pedaço que muda. */
+math mrow.ca{color:var(--curva-a)}math mrow.cb{color:var(--curva-b)}
+math mrow.cc{background:color-mix(in srgb,var(--atencao) 18%,transparent);border-radius:.25em;box-shadow:0 0 0 .12em color-mix(in srgb,var(--atencao) 18%,transparent);margin-inline:.12em}
+/* A sombra do destaque passa .12em da fórmula: a margem guarda essa folga, para o destaque não encostar no vizinho (19/11/2026,
+   professor, no T26: "afastar um pouco"). O pedaço seguinte da mesma linha do <conta> (||) fica só com o espaço de antes
+   ("Resolva esse espaço adicional nos iguais"). */
 /* A barra começa no canto do traço (tema/ajustar_radical.py); esta é a folga até o conteúdo, e a barra a cobre. */
 msqrt>:first-child,mroot>:first-child{margin-inline-start:.08em}
 
@@ -252,6 +258,28 @@ table{border-collapse:collapse;text-align:center;font-size:calc(2.9cqw*var(--tam
 th{font-weight:400;color:var(--apoio);padding:.5cqw 1.2cqw;border-bottom:.22cqw solid var(--eixo)}
 td{padding:.75cqw 1.2cqw;border-bottom:.07cqw solid var(--grade)}
 .esq td,.esq th{text-align:left}
+/* As casas de partes (<partes>, 19/11/2026): a grade na largura toda, uma faixa por etapa, o porquê embaixo de cada casa. */
+table.casas{width:100%;table-layout:fixed}
+table.casas th{width:24%;white-space:nowrap;text-align:left;color:var(--texto);font-weight:400;border-bottom:.07cqw solid var(--grade);padding-left:0}
+table.casas th,table.casas td{vertical-align:baseline}
+table.casas td{text-align:left}
+/* Derivação em duas colunas (19/11/2026, T26, quadro 6): o que se faz à esquerda, a conta à direita, uma linha por passo. */
+table.passos-conta{width:100%}
+table.passos-conta td{text-align:left;vertical-align:baseline;padding:.3cqw .6cqw}
+table.passos-conta td.r{width:1%;white-space:nowrap;color:var(--texto);padding-left:0}
+table.passos-conta td.r.t{white-space:normal;color:var(--apoio)}
+table.passos-conta .rt{display:block;width:var(--c1,26cqw)}
+table.passos-conta td.l{width:1%;white-space:nowrap;text-align:right;padding-right:0}
+table.passos-conta td.d{padding-left:0}
+table.passos-conta td.r .rnum{width:auto;margin-right:.6cqw}
+table.passos-conta .por{display:block;font-size:.85em}
+/* Fórmulas numeradas (19/11/2026, T26, retomada): o número numa coluna estreita, um traço entre as linhas, um rótulo por grupo. */
+table.regras{width:100%;align-self:start}
+table.regras th{text-align:left;padding:.3cqw 0 0;border-bottom:none}
+table.regras td{text-align:left;padding:.3cqw .6cqw}
+table.regras td.n{width:1%;white-space:nowrap;color:var(--apoio)}
+table.regras .por{display:block;font-size:.8em;color:var(--apoio)}
+table.casas .por{display:block;font-size:.8em;color:var(--apoio);margin-top:.3cqw}
 .dest{color:var(--k,var(--exemplo));font-weight:700}
 
 /* Quadro de sinais */
@@ -298,6 +326,17 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .graf .cheia.original{fill:var(--apoio);stroke:var(--apoio);stroke-dasharray:none}
 .graf .aberta{fill:var(--sup,var(--fundo));stroke-width:4.5;stroke-dasharray:none}
 .graf .seta{stroke:var(--eixo);stroke-width:3.5;fill:none}
+/* Campo de direções (18/11/2026): traços finos na cor de apoio, atrás das curvas; o traço isolado (traco) na cor da classe. Linha de fase
+   na cor dos eixos, com as setas e os equilíbrios (cheio, vazio, meio cheio) por cima. */
+.graf .campo{stroke:var(--apoio);stroke-width:2.2;stroke-linecap:round;fill:none;opacity:.7}
+.graf .campo-iso{stroke-width:3.4;stroke-linecap:round;fill:none}.graf .campo-iso.a{stroke:var(--curva-a)}.graf .campo-iso.b{stroke:var(--curva-b)}
+/* Isóclina: linha fina e tracejada, o "lugar dos pontos", para não ser lida como curva de solução (19/11/2026). */
+.graf .iso{stroke-width:3;stroke-dasharray:10 8;stroke-linecap:butt}
+/* Triângulo da inclinação: anda 1, sobe f; fino e tracejado, na cor do traço. */
+.graf .tri{stroke-width:3;stroke-dasharray:7 6;stroke-linecap:butt;fill:none}.graf .tri.a{stroke:var(--curva-a)}.graf .tri.b{stroke:var(--curva-b)}
+.graf .traco{stroke-width:6.5;stroke-linecap:round}.graf .traco.a{stroke:var(--curva-a)}.graf .traco.b{stroke:var(--curva-b)}
+.graf .fase{stroke:var(--eixo);stroke-width:3.5}.graf .pt.fase{fill:var(--eixo);stroke:none}
+.graf path.cheia{stroke:none}
 .graf .seta.a{stroke:var(--curva-a)}.graf .seta.b{stroke:var(--curva-b);stroke-dasharray:none;stroke-linecap:round}
 .graf .lb{font-size:28px;font-weight:400;font-style:italic}
 .graf .lbf{font-size:32px;line-height:60px;color:var(--texto)}
@@ -430,6 +469,8 @@ body.fixo .prog{left:var(--larg-ind)}
 .geral .quadro{display:block;width:100%;outline:1px solid var(--apoio);cursor:pointer}
 .geral .quadro.aqui{outline:3px solid var(--define);outline-offset:1px}
 .geral .oculto{visibility:visible}
+/* O que só vale num intervalo de passos (data-ate) não entra na visão geral, que mostra o quadro no fim. */
+.geral .quadro [data-ate]{visibility:hidden}
 
 /* Regiões preenchidas (area, entre, entrey) e retângulos de Riemann: tinta da cor da curva, sem traço. */
 .graf .reg{stroke:none;fill:var(--curva-a);fill-opacity:.22}

@@ -25,8 +25,9 @@
   function pintar(){
     if(!qs.length)return;
     qs.forEach(function(q,k){q.classList.toggle('ativo',k===i)});
-    [].forEach.call(qs[i].querySelectorAll('[data-passo]'),function(e){e.classList.toggle('oculto',+e.dataset.passo>passo)});
-    ajustarRadicais(qs[i]);
+    // data-ate: o elemento some depois desse passo (19/11/2026, T03: o triângulo da inclinação só no passo do seu ponto).
+    [].forEach.call(qs[i].querySelectorAll('[data-passo]'),function(e){e.classList.toggle('oculto',+e.dataset.passo>passo||(!!e.dataset.ate&&passo>+e.dataset.ate))});
+    ajustarRadicais(qs[i]);ajustarSinais(qs[i]);
     pintarAnimacoes();marcarEscolhido();
     var c=document.getElementById('cont');if(c)c.textContent=lista?(i+1)+' / '+qs.length:qs[i].dataset.n?qs[i].dataset.n+' / '+numerados:'Seção '+secDe[i];
     botoes();
@@ -48,15 +49,36 @@
       if(sobra>1)m.style.marginInlineEnd=(-sobra/fs+.04).toFixed(3)+'em';
     });
   }
+  // Sinal com nota em cima ou embaixo (L'H e a forma, T19, 19/11/2026) na coluna dos "=" do <conta>: a pilha é mais larga
+  // que o "=", que sai do alinhamento; puxa a fórmula para a esquerda até o "=" ficar na coluna dos outros.
+  function ajustarSinais(q){
+    // Linha sem sinal (o lado esquerdo da conta, "De onde paramos: lim …") larga demais empurrava a coluna dos "=" para a direita e
+    // espremia o resto da conta (19/11/2026, T09). Passando de um quarto da tabela, ela vai para a coluna dos sinais: os "=" de baixo ficam sob o começo dela.
+    [].forEach.call(q.querySelectorAll('table.passos-conta'),function(t){
+      [].forEach.call(t.querySelectorAll('tr'),function(tr){
+        var l=tr.querySelector('td.l'),d=tr.querySelector('td.d');if(!l||!d||d.textContent.trim()||!l.querySelector('math'))return;
+        var m=l.querySelector('math'),tw=t.getBoundingClientRect().width;
+        if(tw&&m.getBoundingClientRect().width>tw*.25){while(l.firstChild)d.appendChild(l.firstChild)}
+      })});
+    [].forEach.call(q.querySelectorAll('table.passos-conta td.d'),function(td){
+      var m=td.querySelector('math');if(!m)return;m.style.marginInlineStart='';
+      var e=m.firstElementChild;while(e&&/^(semantics|mrow|mstyle)$/i.test(e.tagName)&&e.firstElementChild)e=e.firstElementChild;
+      if(!e||!/^(munder|mover|munderover)$/i.test(e.tagName))return;
+      var base=e.firstElementChild;while(base&&/^(mrow|munder|mover|munderover)$/i.test(base.tagName)&&base.firstElementChild)base=base.firstElementChild;
+      if(!base||base.tagName.toLowerCase()!=='mo')return;
+      var w=e.getBoundingClientRect().width,wb=base.getBoundingClientRect().width;if(!w||!wb||w-wb<1)return;
+      m.style.marginInlineStart=(-(w-wb)/2/parseFloat(getComputedStyle(m).fontSize)).toFixed(3)+'em';
+    });
+  }
   function ajustarTudo(){
-    qs.forEach(function(q){var a=q.classList.contains('ativo');q.classList.add('ativo');ajustarRadicais(q);if(!a)q.classList.remove('ativo')});
+    qs.forEach(function(q){var a=q.classList.contains('ativo');q.classList.add('ativo');ajustarRadicais(q);ajustarSinais(q);if(!a)q.classList.remove('ativo')});
   }
   function ajustarTudoLista(){ajustarTudo();var m=document.querySelector('main');if(lista&&m)ajustarRadicais(m)}
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(ajustarTudoLista);else ajustarTudoLista();
   // Outra letra ou outro tamanho mudam as medidas: refaz depois que a fonte nova carregar.
   document.addEventListener('preferencias',function(){requestAnimationFrame(function(){
     var refazer=function(){ajustarTudoLista();animacoes.forEach(medirValores)};if(document.fonts&&document.fonts.ready)document.fonts.ready.then(refazer);else refazer()})});
-  var tr;window.addEventListener('resize',function(){clearTimeout(tr);tr=setTimeout(function(){ajustarRadicais(qs[i])},150)});
+  var tr;window.addEventListener('resize',function(){clearTimeout(tr);tr=setTimeout(function(){ajustarRadicais(qs[i]);ajustarSinais(qs[i])},150)});
 
 // ── tema/js/02-animacoes.js: Gráficos animados (controles, paradas do passador), sólidos 3D (Three.js) e somas de Riemann.
   // Animações: <grafico> com "controle". O desenho vem pronto no estado do PDF; aqui ele é refeito com os valores do momento.
@@ -253,6 +275,51 @@
       else c=e+{esq:0,dir:1,meio:.5}[modo]*h;
       l.push([e,h,c,f(c,p,F)])}return l}
   function fator(v,casas){var n=+v.toFixed(casas);return n===1?'':n===-1?'−':escrever(n,casas)}
+  // Campo de direções, curva pelo ponto e linha de fase (18/11/2026, T03 da ED): o mesmo cálculo de tracos_campo(),
+  // curva_integral(), equilibrios() e linha_fase() em tema/montagem/30-graficos.py. Mudar um pede mudar o outro.
+  function fxy(f,x,y,p){var q=Object.assign({},p);q.y=y;var v=f(x,q,F);return isFinite(v)?v:null}
+  function caminhoCampo(f,nx,ny,j,p,X,Y,ux,uy,passo){var pts=[],cel;
+    if(passo){var px=passo[0],py=passo[1],xs=[],ys=[],a;for(a=Math.floor(j[0]/px);a<=Math.ceil(j[2]/px);a++)if(a*px>j[0]+px*.2&&a*px<j[2]-px*.2)xs.push(a*px);
+      for(a=Math.floor(j[1]/py);a<=Math.ceil(j[3]/py);a++)if(a*py>j[1]+py*.2&&a*py<j[3]-py*.2)ys.push(a*py);xs.forEach(function(x){ys.forEach(function(y){pts.push([x,y])})});cel=[px,py]}
+    else{for(var i=0;i<nx;i++)for(var k=0;k<ny;k++)pts.push([j[0]+(i+.5)*(j[2]-j[0])/nx,j[1]+(k+.5)*(j[3]-j[1])/ny]);cel=[(j[2]-j[0])/nx,(j[3]-j[1])/ny]}
+    var meio=.3*Math.min(cel[0]*ux,cel[1]*uy),d='';
+    pts.forEach(function(q){var cx=q[0],cy=q[1],m=fxy(f,cx,cy,p);if(m===null)return;
+      var vx=ux,vy=-m*uy,n=Math.hypot(vx,vy);vx=vx/n*meio;vy=vy/n*meio;
+      d+='M'+(X(cx)-vx).toFixed(1)+' '+(Y(cy)-vy).toFixed(1)+'L'+(X(cx)+vx).toFixed(1)+' '+(Y(cy)+vy).toFixed(1)});return d}
+  function curvaIntegral(f,xa,ya,j,p,inteira){var h0=(j[2]-j[0])/400,folga=(j[3]-j[1])/2;
+    function ramo(h){var pts=[],x=xa,y=ya;while(x<=j[2]+1e-9&&x>=j[0]-1e-9){pts.push([x,y]);if(!(y>=j[1]-folga&&y<=j[3]+folga))break;
+      var k1=fxy(f,x,y,p);if(k1===null)break;var k2=fxy(f,x+h/2,y+h/2*k1,p);if(k2===null)break;var k3=fxy(f,x+h/2,y+h/2*k2,p);if(k3===null)break;
+      var k4=fxy(f,x+h,y+h*k3,p);if(k4===null)break;y+=h/6*(k1+2*k2+2*k3+k4);x+=h}return pts}
+    return (inteira?ramo(-h0).reverse().slice(0,-1):[]).concat(ramo(h0))}
+  function equilibrios(g,lo,hi){var n=600,vs=[],fs=[],k,r=[];for(k=0;k<=n;k++){vs.push(lo+(hi-lo)*k/n);fs.push(g(vs[k]))}
+    var esc=1;fs.forEach(function(v){if(v!==null)esc=Math.max(esc,Math.abs(v))});
+    for(k=0;k<n;k++){var a=vs[k],b=vs[k+1],fa=fs[k],fb=fs[k+1];if(fa===null||fb===null)continue;
+      if(fa===0)r.push(a);else if(fa*fb<0){for(var it=0;it<60;it++){var m=(a+b)/2,fm=g(m);if(fm===null)break;if(fa*fm<=0)b=m;else{a=m;fa=fm}}r.push((a+b)/2)}}
+    for(k=1;k<n;k++){if(fs[k-1]===null||fs[k]===null||fs[k+1]===null||!(Math.abs(fs[k])<=Math.abs(fs[k-1])&&Math.abs(fs[k])<=Math.abs(fs[k+1])))continue;
+      var a2=vs[k-1],b2=vs[k+1];for(var it2=0;it2<80;it2++){var m1=a2+(b2-a2)/3,m2=b2-(b2-a2)/3;if(Math.abs(g(m1)||0)<Math.abs(g(m2)||0))b2=m2;else a2=m1}
+      var rr=(a2+b2)/2,gr=g(rr);if(Math.abs(gr===null?1:gr)<1e-9*esc)r.push(rr)}
+    var tol=(hi-lo)*1e-4,u=[];r.sort(function(a,b){return a-b}).forEach(function(v){if(v>=lo-tol&&v<=hi+tol&&!u.some(function(w){return Math.abs(v-w)<tol}))u.push(v)});
+    var dd=(hi-lo)*1e-3;return u.map(function(v){var ab=g(v-dd)||0,ac=g(v+dd)||0;return [v,ab>0&&ac<0?'estavel':ab<0&&ac>0?'instavel':ab>0?'semi+':'semi-']})}
+  function htmlFase(o,f,p,X,Y){var pe=o.var==='y',tl=o.tela!=null?o.tela:(pe?X:Y)(compilar(o.pos)(0,p,F)),P=pe?function(v){return [tl,Y(v)]}:function(v){return [X(v),tl]};
+    var g=pe?function(v){return fxy(f,0,v,p)}:function(v){var w=f(v,p,F);return isFinite(w)?w:null};
+    var EXT=16,eq=equilibrios(g,o.lo,o.hi),A=P(o.lo),B=P(o.hi);if(pe){A[1]+=EXT;B[1]-=EXT}else{A[0]-=EXT;B[0]+=EXT}
+    var s='<line class="fase" x1="'+A[0].toFixed(1)+'" y1="'+A[1].toFixed(1)+'" x2="'+B[0].toFixed(1)+'" y2="'+B[1].toFixed(1)+'"/>';
+    var marcas=[o.lo].concat(eq.map(function(e){return e[0]})).concat([o.hi]);
+    var C=22,M=13,FO=24,tela=function(v){return pe?P(v)[1]:P(v)[0]},eqs=eq.map(function(e){return e[0]});
+    for(var k=0;k+1<marcas.length;k++){var a=marcas[k],b=marcas[k+1],ta=tela(a),tb=tela(b);
+      var da=eqs.indexOf(a)>=0?FO:-(EXT-C/2-2),db=eqs.indexOf(b)>=0?FO:-(EXT-C/2-2),sn=tb>ta?1:-1,c0=ta+sn*da,c1=tb-sn*db;
+      if((c1-c0)*sn<0)continue;
+      var ct=Math.min(Math.max((ta+tb)/2,Math.min(c0,c1)),Math.max(c0,c1)),fr=tb!==ta?(ct-ta)/(tb-ta):.5;
+      var m=a+(b-a)*fr,fm=g(m);if(fm===null||fm===0){m=a+(b-a)*.37;fm=g(m)}if(fm===null||fm===0)continue;
+      var q=P(m),sx=q[0],sy=q[1],u,h=C/2;
+      if(pe){u=fm>0?-1:1;s+='<path class="pt fase" d="M'+sx.toFixed(1)+' '+(sy+h*u).toFixed(1)+'L'+(sx-M).toFixed(1)+' '+(sy-h*u).toFixed(1)+'L'+(sx+M).toFixed(1)+' '+(sy-h*u).toFixed(1)+'z"/>'}
+      else{u=fm>0?1:-1;s+='<path class="pt fase" d="M'+(sx+h*u).toFixed(1)+' '+sy.toFixed(1)+'L'+(sx-h*u).toFixed(1)+' '+(sy-M).toFixed(1)+'L'+(sx-h*u).toFixed(1)+' '+(sy+M).toFixed(1)+'z"/>'}}
+    eq.forEach(function(e){var q=P(e[0]),cx=q[0].toFixed(1),cy=q[1].toFixed(1);
+      if(e[1]==='estavel'){s+='<circle class="cheia '+o.cls+'" cx="'+cx+'" cy="'+cy+'" r="9.5"/>';return}
+      s+='<circle class="aberta '+o.cls+'" cx="'+cx+'" cy="'+cy+'" r="9.5"/>';
+      if(e[1].indexOf('semi')===0){if(pe)s+='<path class="cheia '+o.cls+'" d="M'+(q[0]-9.5).toFixed(1)+' '+cy+'A9.5 9.5 0 0 '+(e[1]==='semi+'?0:1)+' '+(q[0]+9.5).toFixed(1)+' '+cy+'Z"/>';
+        else s+='<path class="cheia '+o.cls+'" d="M'+cx+' '+(q[1]-9.5).toFixed(1)+'A9.5 9.5 0 0 '+(e[1]==='semi+'?0:1)+' '+cx+' '+(q[1]+9.5).toFixed(1)+'Z"/>'}});
+    return s}
   var animacoes=[].map.call(document.querySelectorAll('svg[data-anima],.cena[data-anima]'),function(svg){
     var d=JSON.parse(svg.dataset.anima),caixa=svg.closest('.anima'),a={q:svg.closest('.quadro'),svg:svg,d:d,v:{},passo:0,raf:0};
     var X=function(v){return d.esq+(v-d.x0)*d.ux},Y=function(v){return d.cima+(d.y1-v)*d.uy};
@@ -280,6 +347,11 @@
         fx.forEach(function(r){t+=o.riem.pontos?'M'+(X(r[2])-7).toFixed(1)+' '+Y(r[3]).toFixed(1)+'a7 7 0 1 0 14 0a7 7 0 1 0 -14 0Z':
           'M'+X(r[0]).toFixed(1)+' '+Y(0).toFixed(1)+'V'+Y(r[3]).toFixed(1)+'H'+X(r[0]+r[1]).toFixed(1)+'V'+Y(0).toFixed(1)+'Z'});
         e.setAttribute('d',t)})}
+      if(o.campo){var cf=compilar(o.campo.f),cnx=o.campo.nx?compilar(o.campo.nx):null,cny=o.campo.ny?compilar(o.campo.ny):null,jc=[d.x0,d.y0,d.x1,d.y1];fs.push(function(p){
+        e.setAttribute('d',caminhoCampo(cf,cnx?Math.round(cnx(0,p,F)):0,cny?Math.round(cny(0,p,F)):0,jc,p,X,Y,d.ux,d.uy,o.campo.passo))})}
+      if(o.integral){var inf=compilar(o.integral.f),ip=par(o.integral.p);fs.push(function(p){var c=ip(p);
+        e.setAttribute('points',curvaIntegral(inf,c[0],c[1],o.integral.jan,p,o.integral.inteira).map(function(q){return X(q[0]).toFixed(1)+','+Y(q[1]).toFixed(1)}).join(' '))})}
+      if(o.fase){var ff2=compilar(o.fase.f);fs.push(function(p){e.innerHTML=htmlFase(o.fase,ff2,p,X,Y)})}
       if(o.pol){var lf=compilar(o.pol.f),ld=compilar(o.pol.de),la=compilar(o.pol.ate),ln=compilar(o.pol.n);fs.push(function(p){
         var a0=ld(0,p,F),b0=la(0,p,F),n=Math.max(1,Math.round(ln(0,p,F))),t=[];
         for(var k=0;k<=n;k++){var x=a0+(b0-a0)*k/n;t.push(X(x).toFixed(1)+','+Y(lf(x,p,F)).toFixed(1))}e.setAttribute('points',t.join(' '))})}
@@ -914,7 +986,7 @@
     if(lista){document.body.classList.add('visor-aberto');[].forEach.call(document.querySelectorAll('.resol'),function(r){r.classList.add('aberta')})}
     document.fonts.ready.then(function(){
       ajustarTudo();
-      var r=[];
+      var r=[],dicas=[];
       qs.forEach(function(q,k){
         qs.forEach(function(x){x.classList.remove('ativo')});q.classList.add('ativo');
         // Transição vazia: um passo sem nada novo, por número pulado ou por estar dentro de um bloco que só aparece depois.
@@ -925,6 +997,19 @@
         // nem entra inteira num passo só. Só nas aulas; `aberto` no bloco dispensa.
         // Número de passo da faixa do roteiro fora do bloco (18/11/2026): o passo é parte do gancho, fica dentro dele.
         if([].some.call(q.querySelectorAll('.rpasso'),function(p){return !p.closest('.bloco')}))r.push('quadro '+(q.dataset.n||k+1)+': número do passo fora do bloco');
+        // Título preto (19/11/2026, professor: "ou com ou sem títulos pretos, precisamos de consistencia de layout"): o quadro que é um
+        // bloco com título próprio (exemplo, teorema, atenção, gancho) não leva o h2; os outros levam. Só nas aulas.
+        if(!lista&&!q.matches('.suavez,.gabarito,.divisor')){var h2=q.querySelector(':scope>.in>h2'),pri=h2?h2.nextElementSibling:q.querySelector(':scope>.in>*');
+          // Colunas que começam o quadro contam pelo bloco de dentro (definição ao lado do gráfico, dois teoremas lado a lado).
+          var tb=function(b){if(b&&b.classList.contains('col'))return [].map.call(b.children,function(c){return tb(c)||tb(c.firstElementChild)}).join('');
+            if(!b||!b.classList.contains('bloco'))return '';var h3=b.querySelector(':scope>h3');if(!h3)return '';
+            var tt=h3.querySelector('.tt'),ro=h3.querySelector('.rot');if(!tt&&ro)return /\d$/.test(ro.textContent.trim())?'':ro.textContent.trim();return ((tt||h3).textContent||'').trim()};
+          // "Nesta seção", "Resumo" e "Onde está o erro?" marcam a seção ou o tipo do quadro e ficam sempre com o título.
+          // Tirar só quando o quadro é um bloco só (professor, 19/11/2026: "título preto só em quadros com blocos bem definidos. se for
+          // para marcar a seção, pode ter"): o título que junta vários blocos ("Onde está o erro?", "Dois cuidados") fica.
+          var umBloco=pri&&pri.classList.contains('bloco')&&q.querySelectorAll('.bloco').length===1;
+          if(h2&&umBloco&&tb(pri)&&!/^(Nesta seção|Resumo|Onde está o erro\?)$/.test(h2.textContent.trim()))r.push('quadro '+(q.dataset.n||k+1)+': título preto e bloco com título (tirar o título preto)');
+          if(!h2&&!tb(pri))r.push('quadro '+(q.dataset.n||k+1)+': sem título preto nem bloco com título')}
         if(!lista)[].forEach.call(q.querySelectorAll('.bloco.ex:not(.aberto)'),function(b){
           function pp(e){var m=1;for(var a=e;a&&a!==q;a=a.parentElement)if(a.dataset&&a.dataset.passo)m=Math.max(m,+a.dataset.passo);return m}
           var iguais=[].filter.call(b.querySelectorAll('mo'),function(o){return o.textContent.trim()==='='&&!o.closest('svg')&&!o.closest('h3')});
@@ -936,6 +1021,9 @@
         var nome=q.dataset.n||('divisor '+(k+1)),inn=q.querySelector('.in'),qr=q.getBoundingClientRect(),pe=q.querySelector('.pe'),limite=pe?pe.getBoundingClientRect().top-qr.width*0.004:qr.bottom-qr.height*0.035;
         var ult=0,dir=0;[].forEach.call(inn.children,function(c){var b=c.getBoundingClientRect();ult=Math.max(ult,b.bottom);dir=Math.max(dir,b.right)});
         if(ult>limite+1)r.push('quadro '+nome+': passa da altura em '+((ult-limite)/qr.width*100).toFixed(1)+' cqw');
+        // Espaço sobrando embaixo de um quadro com gráfico (19/11/2026, professor: "a figura não pode crescer?"): dica, não problema;
+        // o gráfico tinha sido encolhido quando o que passava da altura era o texto. Quadros centrados ficam de fora.
+        else if(inn.querySelector('svg.graf')&&!q.classList.contains('centro')&&(limite-ult)/qr.width*100>6)dicas.push('dica: quadro '+nome+': sobram '+((limite-ult)/qr.width*100).toFixed(0)+' cqw embaixo; o gráfico pode crescer');
         [].forEach.call(inn.querySelectorAll('*'),function(e){var b=e.getBoundingClientRect();
           if(b.width&&b.right>qr.right-qr.width*0.02&&!e.closest('svg')){r.push('quadro '+nome+': passa da largura <'+e.tagName+'>')}});
         // Fórmula que passa da borda direita do bloco (T27, quadros 7 e 9: o "+ C" na borda), mesmo sem passar do quadro.
@@ -944,6 +1032,8 @@
         [].forEach.call(inn.querySelectorAll('svg.graf'),function(s){var b=s.getBoundingClientRect(),p=s.parentElement.getBoundingClientRect();
           if(b.right>qr.right+1||b.left<qr.left-1)r.push('quadro '+nome+': gráfico fora do quadro');
           var ws=parseFloat(s.style.width);if(ws&&b.width<ws/100*qr.width*0.88)r.push('quadro '+nome+': gráfico encolhido para '+(b.width/qr.width*100).toFixed(0)+' de '+ws+' cqw')});
+        // Avisos da montagem do gráfico (data-aviso): campo com escalas diferentes, seta da linha de fase sem espaço (19/11/2026).
+        [].forEach.call(inn.querySelectorAll('svg.graf[data-aviso]'),function(s){var t='quadro '+nome+': '+s.dataset.aviso;if(r.indexOf(t)<0)r.push(t)});
         // Controle (deslizador) mais largo que a coluna do gráfico: invade o texto ou a borda do bloco, sem passar do quadro (T18, 15/11/2026).
         [].forEach.call(inn.querySelectorAll('.anima .controle'),function(c){var an=c.closest('.anima').getBoundingClientRect(),b=c.getBoundingClientRect();
           if(b.width&&(b.right>an.right+qr.width*0.003||b.left<an.left-qr.width*0.003)){var t='quadro '+nome+': controle passa da coluna do gráfico';if(r.indexOf(t)<0)r.push(t)}});
@@ -999,6 +1089,47 @@
           var g=document.createRange();g.selectNode(pr);var nb=g.getBoundingClientRect();
           if(nb.width&&Math.abs(nb.top-m.getBoundingClientRect().top)<qr.width*.03&&nb.left<fim-1)r.push('quadro '+nome+': fórmula com radical encosta no que vem depois')});
         [].forEach.call(inn.querySelectorAll('.col>*,.col3>*,.col4>*'),function(c){if(c.scrollWidth>c.clientWidth+1&&!c.querySelector('svg,table'))r.push('quadro '+nome+': conteúdo passa da coluna')});
+        // Conta fora do <conta> (19/11/2026, professor, no T26: "não deveria ficar no conta?"): num quadro de aula, a linha que é
+        // só uma fórmula com dois sinais de relação ou mais (uma cadeia), a que começa por um sinal (continua a de cima) e duas
+        // ou mais linhas seguidas de fórmula com sinal são conta, e conta de exemplo vai no <conta>. Definição solta (f(x) = x²)
+        // não conta, salvo no bloco que já tem conta. Retomada, definição e teorema enunciam, não fazem conta (T15, 19/11/2026:
+        // mudança de base e as hiperbólicas). Fora também: Sua vez, gabarito, Resumo, "Onde está o erro?".
+        if(!lista&&!q.matches('.suavez,.gabarito,.divisor')){var h2c=q.querySelector(':scope>.in>h2');
+          if(!(h2c&&/^(Resumo|Onde está o erro\?)$/.test(h2c.textContent.trim()))&&![].some.call(inn.querySelectorAll('h3,.tit'),function(t){return /Onde está o erro/.test(t.textContent)})){
+            var REL=['=','≈','<','>','≤','≥','≠'],soFormula=function(c){if(c.tagName!=='P'||c.closest('table,svg,.lbf,li'))return null;var ms=c.querySelectorAll('math');if(ms.length!==1)return null;
+              var t=c.textContent.replace(ms[0].textContent,'').replace(/[\s.,;:]/g,'');if(t)return null;
+              var rs=[].filter.call(ms[0].querySelectorAll('mo'),function(o){return REL.indexOf(o.textContent.trim())>=0&&!o.closest('mfrac,msub,msup,msubsup,munder,mover,munderover')});
+              if(!rs.length)return null;var pri=[].find.call(ms[0].querySelectorAll('mi,mn,mo,mtext'),function(e){return e.textContent.trim()});
+              return {n:rs.length,comeca:pri===rs[0]}};
+            // No bloco que já tem conta ou casas (<conta>, <partes>), toda linha de fórmula com sinal é passo da conta.
+            var fora=false;[].forEach.call(inn.querySelectorAll('.bloco,.in'),function(b){if(b.matches('.bloco.re,.bloco.de,.bloco.te,.bloco.con'))return;var seguidas=0,temConta=!!b.querySelector(':scope>table.passos-conta,:scope>table.casas');
+              [].forEach.call(b.children,function(c){var f=soFormula(c);
+              if(!f){seguidas=0;return}seguidas++;if(f.n>=2||f.comeca||seguidas>=2||temConta)fora=true})});
+            if(fora)r.push('quadro '+nome+': conta fora do <conta>')}}
+        // Iguais desalinhados (19/11/2026, professor: "eu não aguento mais isso, iguais desalinhados"): numa conta em passos
+        // (<conta>) e em linhas seguidas de exemplo que começam por fórmula com "=", o primeiro "=" de cada linha cai na mesma
+        // vertical. Tolerância de 0,6% da largura.
+        var primeiroIgual=function(el){var m=el.querySelector('math');if(!m)return null;var o=[].find.call(m.querySelectorAll('mo'),function(x){var t=x.textContent.trim();return ['=','≈','<','>','≤','≥','≠'].indexOf(t)>=0});return o?o.getBoundingClientRect().left:null};
+        var grupos=[];[].forEach.call(inn.querySelectorAll('table.passos-conta'),function(t){grupos.push([].map.call(t.querySelectorAll('tr'),function(tr){var l=tr.querySelector('td.l'),d=tr.querySelector('td.d');var xl=l?primeiroIgual(l):null;return xl!==null?xl:(d?primeiroIgual(d):null)}))});
+        [].forEach.call(inn.querySelectorAll('.bloco.ex,.bloco.ga'),function(b){var g=[];[].forEach.call(b.children,function(c){var ok=c.tagName==='P'&&c.firstChild&&(c.firstChild.nodeName.toLowerCase()==='math'||(c.firstChild.nodeType===3&&!c.firstChild.textContent.trim()&&c.firstElementChild&&c.firstElementChild.tagName.toLowerCase()==='math'&&c.firstElementChild===c.querySelector('*')));
+          var x=ok?primeiroIgual(c):null;if(x!==null)g.push(x);else{if(g.length>1)grupos.push(g);g=[]}});if(g.length>1)grupos.push(g)});
+        grupos.forEach(function(g){var xs=g.filter(function(x){return x!==null});if(xs.length<2)return;if(Math.max.apply(null,xs)-Math.min.apply(null,xs)>qr.width*0.006){var t='quadro '+nome+': iguais desalinhados';if(r.indexOf(t)<0)r.push(t)}});
+        // Colunas que se sobrepõem ou quase encostam (19/11/2026, T26: a tabela das casas invadia a conta ao lado, e a conferência
+        // de cima pula tabela e figura). Mede a tinta de cada coluna (texto, fórmula, figura) e cobra uma folga de 2% da largura.
+        var tinta=function(el){var bs=[];[].forEach.call(el.querySelectorAll('math,svg,img,canvas'),function(e){if(e.closest('svg')!==e&&e.closest('svg'))return;
+            // Gráfico: a caixa do desenho (getBBox), não a do SVG com as margens.
+            if(e.tagName.toLowerCase()==='svg'&&e.getBBox&&e.getScreenCTM()){try{var bb=e.getBBox(),M=e.getScreenCTM(),p1=new DOMPoint(bb.x,bb.y).matrixTransform(M),p2=new DOMPoint(bb.x+bb.width,bb.y+bb.height).matrixTransform(M);
+              var R=e.getBoundingClientRect(),L=Math.max(R.left,Math.min(p1.x,p2.x)),Rt=Math.min(R.right,Math.max(p1.x,p2.x)),T=Math.max(R.top,Math.min(p1.y,p2.y)),B=Math.min(R.bottom,Math.max(p1.y,p2.y));
+              // O que passa da janela do gráfico é cortado (clip): só conta o que fica dentro do SVG.
+              bs.push({left:L,right:Rt,top:T,bottom:B,width:Rt-L,height:B-T});return}catch(err){}}
+            bs.push(e.getBoundingClientRect())});
+          var w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null);while(w.nextNode()){var t=w.currentNode;if(!t.textContent.trim()||t.parentElement.closest('math,svg'))continue;
+            var g=document.createRange();g.selectNodeContents(t);[].forEach.call(g.getClientRects(),function(b){bs.push(b)})}
+          return bs.filter(function(b){return b.width>0&&b.height>0})};
+        [].forEach.call(inn.querySelectorAll('.col,.col3,.col4'),function(col){var fs=[].slice.call(col.children).map(function(c){return {c:c,b:tinta(c)}}).filter(function(f){return f.b.length});
+          for(var i=0;i<fs.length;i++)for(var j=0;j<fs.length;j++){if(i===j)continue;var A=fs[i],B=fs[j],ra=A.c.getBoundingClientRect(),rb=B.c.getBoundingClientRect();if(ra.left>=rb.left)continue;
+            var dir=-1e9,esq=1e9;A.b.forEach(function(a){B.b.forEach(function(b){if(Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>0){dir=Math.max(dir,a.right);esq=Math.min(esq,b.left)}})});
+            if(dir>-1e9&&esq-dir<qr.width*0.02){var t='quadro '+nome+': '+(esq<dir?'colunas se sobrepõem':'colunas quase encostam')+' ('+(Math.round((esq-dir)/qr.width*1000)/10)+' cqw)';if(r.indexOf(t)<0)r.push(t)}}})
         if(q.querySelector('merror'))r.push('quadro '+nome+': erro em fórmula');
         // Toda figura leva descrição para leitor de tela (aria-label), a automática do <grafico> ou uma escrita à mão.
         [].forEach.call(q.querySelectorAll('svg:not([aria-hidden]):not(.marcas)'),function(g){var l=g.getAttribute('aria-label');
@@ -1012,7 +1143,7 @@
       ['Luciole','Luciole Math'].forEach(function(n){if(!carregadas[n])r.push('fonte não carregada: '+n)});
       if(lista){document.body.classList.remove('visor-aberto');var lw=document.documentElement.scrollWidth,vw=window.innerWidth;
         if(lw>vw+1)r.push('página da lista: rolagem lateral, '+lw+' px em janela de '+vw+' px');document.body.classList.add('visor-aberto')}
-      var pre=document.createElement('pre');pre.id='relatorio';pre.textContent='RELATORIO\n'+(r.length?r.join('\n'):'nenhum problema')+'\nFIM';
+      var pre=document.createElement('pre');pre.id='relatorio';pre.textContent='RELATORIO\n'+(r.length?r.join('\n'):'nenhum problema')+(dicas.length?'\n'+dicas.join('\n'):'')+'\nFIM';
       document.body.appendChild(pre);
     });
   }
