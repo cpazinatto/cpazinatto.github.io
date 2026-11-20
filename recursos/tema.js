@@ -51,7 +51,27 @@
   }
   // Sinal com nota em cima ou embaixo (L'H e a forma, T19, 19/11/2026) na coluna dos "=" do <conta>: a pilha é mais larga
   // que o "=", que sai do alinhamento; puxa a fórmula para a esquerda até o "=" ficar na coluna dos outros.
+  // Linhas seguidas de exemplo que começam por fórmula com sinal (3x²−48 = 0, x² = 16, x = 4): o primeiro sinal de cada uma
+  // vai para a mesma vertical, empurrando a linha (20/11/2026, professor: "Ajusta onde falta então também"; os módulos de base
+  // não têm o <conta>). Mesmo agrupamento da conferência "iguais desalinhados".
+  function alinharLinhas(q){
+    var REL=['=','≈','<','>','≤','≥','≠'];
+    var sinal=function(c){var m=c.querySelector('math');if(!m)return null;return [].find.call(m.querySelectorAll('mo'),function(x){return REL.indexOf(x.textContent.trim())>=0})||null};
+    [].forEach.call(q.querySelectorAll('.bloco.ex,.bloco.ga'),function(b){
+      var g=[],grupos=[];
+      [].forEach.call(b.children,function(c){
+        var ok=c.tagName==='P'&&c.firstChild&&(c.firstChild.nodeName.toLowerCase()==='math'||(c.firstChild.nodeType===3&&!c.firstChild.textContent.trim()&&c.firstElementChild&&c.firstElementChild.tagName.toLowerCase()==='math'&&c.firstElementChild===c.querySelector('*')));
+        var s=ok?sinal(c):null;if(s){g.push([c,s])}else{if(g.length>1)grupos.push(g);g=[]}});
+      if(g.length>1)grupos.push(g);
+      grupos.forEach(function(gr){
+        gr.forEach(function(p){p[0].style.paddingInlineStart=''});
+        var xs=gr.map(function(p){return p[1].getBoundingClientRect().left});if(xs.some(function(x){return !x}))return;
+        var alvo=Math.max.apply(null,xs),esc=b.offsetWidth?b.getBoundingClientRect().width/b.offsetWidth:1;
+        gr.forEach(function(p,k){var d=(alvo-xs[k])/esc;if(d>.5)p[0].style.paddingInlineStart=(d/parseFloat(getComputedStyle(p[0]).fontSize)).toFixed(3)+'em'})});
+    });
+  }
   function ajustarSinais(q){
+    alinharLinhas(q);
     // Linha sem sinal (o lado esquerdo da conta, "De onde paramos: lim …") larga demais empurrava a coluna dos "=" para a direita e
     // espremia o resto da conta (19/11/2026, T09). Passando de um quarto da tabela, ela vai para a coluna dos sinais: os "=" de baixo ficam sob o começo dela.
     [].forEach.call(q.querySelectorAll('table.passos-conta'),function(t){
@@ -1127,7 +1147,11 @@
             var g=document.createRange();g.selectNodeContents(t);[].forEach.call(g.getClientRects(),function(b){bs.push(b)})}
           return bs.filter(function(b){return b.width>0&&b.height>0})};
         [].forEach.call(inn.querySelectorAll('.col,.col3,.col4'),function(col){var fs=[].slice.call(col.children).map(function(c){return {c:c,b:tinta(c)}}).filter(function(f){return f.b.length});
-          for(var i=0;i<fs.length;i++)for(var j=0;j<fs.length;j++){if(i===j)continue;var A=fs[i],B=fs[j],ra=A.c.getBoundingClientRect(),rb=B.c.getBoundingClientRect();if(ra.left>=rb.left)continue;
+          // A coluna da direita que começa por "=" (ou outro sinal) é a continuação da conta da esquerda, alinhada de propósito
+          // com o espaço normal antes do sinal: não são duas colunas de conteúdo (20/11/2026, listas do T11 e o C11).
+          var abreComSinal=function(el){var m=el.querySelector('math');if(!m)return false;var t=[].find.call(m.querySelectorAll('mi,mn,mo,mtext'),function(x){return x.textContent.trim()});
+            return !!t&&t.tagName.toLowerCase()==='mo'&&['=','≈','<','>','≤','≥','≠'].indexOf(t.textContent.trim())>=0&&!el.textContent.replace(m.textContent,'').trim()&&el.firstElementChild===m};
+          for(var i=0;i<fs.length;i++)for(var j=0;j<fs.length;j++){if(i===j)continue;var A=fs[i],B=fs[j],ra=A.c.getBoundingClientRect(),rb=B.c.getBoundingClientRect();if(ra.left>=rb.left)continue;if(abreComSinal(B.c))continue;
             var dir=-1e9,esq=1e9;A.b.forEach(function(a){B.b.forEach(function(b){if(Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>0){dir=Math.max(dir,a.right);esq=Math.min(esq,b.left)}})});
             if(dir>-1e9&&esq-dir<qr.width*0.02){var t='quadro '+nome+': '+(esq<dir?'colunas se sobrepõem':'colunas quase encostam')+' ('+(Math.round((esq-dir)/qr.width*1000)/10)+' cqw)';if(r.indexOf(t)<0)r.push(t)}}})
         if(q.querySelector('merror'))r.push('quadro '+nome+': erro em fórmula');
