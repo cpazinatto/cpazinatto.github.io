@@ -95,6 +95,9 @@
 html,body{margin:0;height:100%;height:100dvh;background:var(--fundo);color:var(--texto);overflow:hidden}
 body{font-family:var(--f-texto);display:flex;align-items:center;justify-content:center}
 math{font-family:var(--f-math)}
+/* Índice embaixo de f, F, P, T, V, W, Y mais perto da letra (20/11/2026; classes de limpa() em tema/montagem/40-formulas.py). */
+:is(msub,msubsup)>mi:is(.ks,.ks-f)+*{margin-left:-.12em}
+:root[data-letra="stix"] :is(msub,msubsup)>mi.ks-f+*{margin-left:0}
 /* Texto dentro de fórmula (\text{...}) na letra do texto (10/11/2026): a Luciole Math não tem letras acentuadas, e o Chrome
    montava o í com o i de ponto e o acento solto. */
 math mtext{font-family:var(--f-texto)}
@@ -308,6 +311,8 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .graf.reta .tk{font-size:28px}
 .graf .axl{fill:var(--texto);font-size:26px;font-style:italic}
 .graf polyline{fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-width:6}
+/* Curva de nível (nivel, 20/11/2026): um <path>, com o traço das curvas; antes do .original, que a deixa tracejada e mais fina. */
+.graf .niv{fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-width:6}
 .graf .original{stroke:var(--apoio);stroke-width:4.5;stroke-dasharray:13 11;stroke-linecap:butt}
 .graf .original.sol{stroke:var(--texto);stroke-width:5;stroke-dasharray:none;stroke-linecap:round}
 .graf .a{stroke:var(--curva-a)}
@@ -329,6 +334,14 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 /* Campo de direções (18/11/2026): traços finos na cor de apoio, atrás das curvas; o traço isolado (traco) na cor da classe. Linha de fase
    na cor dos eixos, com as setas e os equilíbrios (cheio, vazio, meio cheio) por cima. */
 .graf .campo{stroke:var(--apoio);stroke-width:2.2;stroke-linecap:round;fill:none;opacity:.7}
+/* Retrato de fase (20/11/2026, T15 a T18 da ED): o campo do sistema (vetores) com setas finas na cor de apoio, atrás; as retas
+   dos autovetores (autoretas) mais finas que as trajetórias, com pontas cheias; a reta de equilíbrios (λ = 0) pontilhada. */
+.graf .vet{stroke:var(--apoio);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:var(--apoio);opacity:.55}
+.graf .autoreta{stroke-width:4.5;stroke-linecap:round}.graf .autoreta.parada{stroke-width:7;stroke-dasharray:0 14}
+/* Trajetórias (20/11/2026, professor: "ficou bem poluído"): mais finas que as curvas dos outros gráficos (6; a neutra, 5), para
+   não pesar sobre as autoretas; com 3 ou mais no gráfico (muitas), mais finas ainda. */
+.graf .traj polyline{stroke-width:5}.graf .traj .original.sol{stroke-width:4}
+.graf .traj.muitas polyline{stroke-width:4}.graf .traj.muitas .original.sol{stroke-width:3.2}
 .graf .campo-iso{stroke-width:3.4;stroke-linecap:round;fill:none}.graf .campo-iso.a{stroke:var(--curva-a)}.graf .campo-iso.b{stroke:var(--curva-b)}
 /* Isóclina: linha fina e tracejada, o "lugar dos pontos", para não ser lida como curva de solução (19/11/2026). */
 .graf .iso{stroke-width:3;stroke-dasharray:10 8;stroke-linecap:butt}

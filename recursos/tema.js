@@ -104,6 +104,13 @@
   // Animações: <grafico> com "controle". O desenho vem pronto no estado do PDF; aqui ele é refeito com os valores do momento.
   // O passador leva, em movimento, até a parada do passo. O mouse arrasta livremente, e o valor fica até a próxima parada.
   var F={sqrt:Math.sqrt,abs:Math.abs,cbrt:Math.cbrt,exp:Math.exp,ln:Math.log,log:Math.log,log10:Math.log10,sen:Math.sin,cos:Math.cos,tan:Math.tan,sinh:Math.sinh,cosh:Math.cosh,tanh:Math.tanh,arcsen:Math.asin,arccos:Math.acos,arctg:Math.atan,floor:Math.floor,min:Math.min,max:Math.max};
+  // soma(n,a,b,termo), prod(j,a,b,fator) e fat(n) (20/11/2026): a montagem traduz soma(n,0,N,T) em F.soma(0,p.N,function($n){return T}).
+  // Limites e fatorial arredondados com floor(v+0.5); soma vazia 0, produto vazio 1; as mesmas contas, na mesma ordem, de
+  // _soma, _prod e _fat em tema/montagem/10-expressoes.py (mudar um pede mudar o outro). Acima de 1000 termos, corta.
+  function inteiro(v){return Math.floor(v+.5)}
+  F.soma=function(a,b,f){a=inteiro(a);b=Math.min(inteiro(b),a+999);for(var s=0,n=a;n<=b;n++)s+=f(n);return s};
+  F.prod=function(a,b,f){a=inteiro(a);b=Math.min(inteiro(b),a+999);for(var r=1,j=a;j<=b;j++)r*=f(j);return r};
+  F.fat=function(v){var n=inteiro(v);if(n<0)return NaN;for(var r=1,k=2;k<=n;k++)r*=k;return r};
   var DURACAO=900;
   function compilar(js){return new Function('x','p','F','return '+js)}
   function escrever(v,casas){var n=+v.toFixed(casas);return String(n===0?0:n).replace('-','−').replace('.',',')}
@@ -311,6 +318,120 @@
       var k1=fxy(f,x,y,p);if(k1===null)break;var k2=fxy(f,x+h/2,y+h/2*k1,p);if(k2===null)break;var k3=fxy(f,x+h/2,y+h/2*k2,p);if(k3===null)break;
       var k4=fxy(f,x+h,y+h*k3,p);if(k4===null)break;y+=h/6*(k1+2*k2+2*k3+k4);x+=h}return pts}
     return (inteira?ramo(-h0).reverse().slice(0,-1):[]).concat(ramo(h0))}
+  // integral2 e integral3 (20/11/2026): o mesmo cálculo de curva_integral_n() em tema/montagem/30-graficos.py, no vetor
+  // (y, y1[, y2]), com as derivadas lidas como p.y1 e p.y2 na expressão.
+  function curvaIntegralN(f,xa,u0,j,p,inteira){var h0=(j[2]-j[0])/400,folga=(j[3]-j[1])/2,nomes=['y','y1','y2'];
+    function der(x,u){var q=Object.assign({},p);u.forEach(function(v,i){q[nomes[i]]=v});var v=f(x,q,F);return isFinite(v)?u.slice(1).concat([v]):null}
+    function soma(u,k,c){return u.map(function(a,i){return a+c*k[i]})}
+    function ramo(h){var pts=[],x=xa,u=u0.slice();while(x<=j[2]+1e-9&&x>=j[0]-1e-9){pts.push([x,u[0]]);if(!(u[0]>=j[1]-folga&&u[0]<=j[3]+folga))break;
+      var k1=der(x,u);if(k1===null)break;var k2=der(x+h/2,soma(u,k1,h/2));if(k2===null)break;var k3=der(x+h/2,soma(u,k2,h/2));if(k3===null)break;
+      var k4=der(x+h,soma(u,k3,h));if(k4===null)break;u=u.map(function(a,i){return a+h/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i])});x+=h}return pts}
+    return (inteira?ramo(-h0).reverse().slice(0,-1):[]).concat(ramo(h0))}
+  // notempo (20/11/2026, T19 da ED): o mesmo cálculo de curva_no_tempo() em tema/montagem/30-graficos.py: a componente k da
+  // solução de (x, y[, z])' = (F, G[, H])(t, x, y, z) contra t, com t lido como p.t e y, z como p.y, p.z nas expressões.
+  function curvaNoTempo(fs,k,t0,u0,j,p,inteira){var h0=(j[2]-j[0])/400,folga=(j[3]-j[1])/2,nomes=['x','y','z'];
+    function der(t,u){var q=Object.assign({},p),r=[];q.t=t;u.forEach(function(v,i){q[nomes[i]]=v});for(var i=0;i<fs.length;i++){var v=fs[i](u[0],q,F);if(!isFinite(v))return null;r.push(v)}return r}
+    function soma(u,kk,c){return u.map(function(a,i){return a+c*kk[i]})}
+    function ramo(h){var pts=[],t=t0,u=u0.slice();while(t<=j[2]+1e-9&&t>=j[0]-1e-9){pts.push([t,u[k]]);if(!(u[k]>=j[1]-folga&&u[k]<=j[3]+folga))break;
+      var k1=der(t,u);if(k1===null)break;var k2=der(t+h/2,soma(u,k1,h/2));if(k2===null)break;var k3=der(t+h/2,soma(u,k2,h/2));if(k3===null)break;
+      var k4=der(t+h,soma(u,k3,h));if(k4===null)break;u=u.map(function(a,i){return a+h/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i])});t+=h}return pts}
+    return (inteira?ramo(-h0).reverse().slice(0,-1):[]).concat(ramo(h0))}
+  // Curvas de nível F(x, y) = c (20/11/2026, T06 da ED): o mesmo cálculo de curvas_nivel() e caminho_nivel() em
+  // tema/montagem/30-graficos.py (marching squares, bisseção nas arestas, sela pelo centro, polo de fora, segmentos ligados). Mudar um pede mudar o outro.
+  function curvasNivel(f,cs,j,nx,ny,p,X,Y){var xs=[],ys=[],val=[],i,k,d='';
+    for(i=0;i<=nx;i++)xs.push(j[0]+(j[2]-j[0])*i/nx);for(k=0;k<=ny;k++)ys.push(j[1]+(j[3]-j[1])*k/ny);
+    for(i=0;i<=nx;i++){val.push([]);for(k=0;k<=ny;k++)val[i].push(fxy(f,xs[i],ys[k],p))}
+    cs.forEach(function(c){var g=val.map(function(col){return col.map(function(v){return v===null?null:v-c})}),pts={},ruins={},segs=[],adj={};
+      function aresta(e){if(e in pts)return pts[e];if(e in ruins)return null;var q=e.split(','),h=q[0]==='h',a=+q[1],b=+q[2],a2=h?a+1:a,b2=h?b:b+1;
+        var ga=g[a][b],gb=g[a2][b2],lo=0,hi=1,glo=ga,t,v;
+        for(var it=0;it<14;it++){t=(lo+hi)/2;v=fxy(f,xs[a]+(xs[a2]-xs[a])*t,ys[b]+(ys[b2]-ys[b])*t,p);if(v===null){ruins[e]=1;return null}
+          if((v-c>0)===(glo>0)){lo=t;glo=v-c}else hi=t}
+        if(Math.abs(v-c)>.01*Math.max(Math.abs(ga),Math.abs(gb))+1e-12){ruins[e]=1;return null}
+        t=(lo+hi)/2;return pts[e]=[xs[a]+(xs[a2]-xs[a])*t,ys[b]+(ys[b2]-ys[b])*t]}
+      for(var a=0;a<nx;a++)for(var b=0;b<ny;b++){var A=g[a][b],Bv=g[a+1][b],Cv=g[a+1][b+1],D=g[a][b+1];if(A===null||Bv===null||Cv===null||D===null)continue;
+        var idx=(A>0?1:0)|(Bv>0?2:0)|(Cv>0?4:0)|(D>0?8:0);if(idx===0||idx===15)continue;
+        var EB='h,'+a+','+b,ER='v,'+(a+1)+','+b,ET='h,'+a+','+(b+1),EL='v,'+a+','+b,pares;
+        if(idx===5||idx===10){var ce=(A+Bv+Cv+D)/4>0;pares=((idx===5)===ce)?[[EB,ER],[ET,EL]]:[[EL,EB],[ER,ET]]}
+        else{var cr=[];[[EB,A,Bv],[ER,Bv,Cv],[ET,D,Cv],[EL,A,D]].forEach(function(z){if((z[1]>0)!==(z[2]>0))cr.push(z[0])});pares=[cr]}
+        if(pares.some(function(q){return aresta(q[0])===null||aresta(q[1])===null}))continue;
+        pares.forEach(function(q){segs.push(q)})}
+      segs.forEach(function(s,n){(adj[s[0]]=adj[s[0]]||[]).push(n);(adj[s[1]]=adj[s[1]]||[]).push(n)});
+      var usado={};
+      segs.forEach(function(s,n){if(usado[n])return;usado[n]=1;var ca=[s[0],s[1]];
+        for(var r=0;r<2;r++){for(;;){var l=adj[ca[ca.length-1]].filter(function(m){return !usado[m]});if(!l.length)break;usado[l[0]]=1;
+          var sg=segs[l[0]];ca.push(sg[0]===ca[ca.length-1]?sg[1]:sg[0])}ca.reverse()}
+        var fe=ca.length>2&&ca[0]===ca[ca.length-1];if(fe)ca.pop();
+        d+='M'+ca.map(function(e){return X(pts[e][0]).toFixed(1)+' '+Y(pts[e][1]).toFixed(1)}).join('L')+(fe?'Z':'')})});
+    return d}
+  // Retrato de fase (20/11/2026, T15 a T18 da ED): o mesmo cálculo de setas_vetores(), trajetoria_sistema(), curva_param(),
+  // pontas_ao_longo(), matriz_sistema(), autovetores() e html_autoretas() em tema/montagem/30-graficos.py. Mudar um pede mudar o outro.
+  function fgxy(f,g,x,y,p){var a=fxy(f,x,y,p);if(a===null)return null;var b=fxy(g,x,y,p);return b===null?null:[a,b]}
+  function pontosGrade(nx,ny,j,passo){var pts=[],cel;
+    if(passo){var px=passo[0],py=passo[1],xs=[],ys=[],a;for(a=Math.floor(j[0]/px);a<=Math.ceil(j[2]/px);a++)if(a*px>j[0]+px*.2&&a*px<j[2]-px*.2)xs.push(a*px);
+      for(a=Math.floor(j[1]/py);a<=Math.ceil(j[3]/py);a++)if(a*py>j[1]+py*.2&&a*py<j[3]-py*.2)ys.push(a*py);xs.forEach(function(x){ys.forEach(function(y){pts.push([x,y])})});cel=[px,py]}
+    else{for(var i=0;i<nx;i++)for(var k=0;k<ny;k++)pts.push([j[0]+(i+.5)*(j[2]-j[0])/nx,j[1]+(k+.5)*(j[3]-j[1])/ny]);cel=[(j[2]-j[0])/nx,(j[3]-j[1])/ny]}
+    return [pts,cel]}
+  function setasVetores(f,g,nx,ny,j,p,X,Y,ux,uy,passo){var pc_=pontosGrade(nx,ny,j,passo),cel=pc_[1],comp=Math.min(.55*Math.min(cel[0]*ux,cel[1]*uy),26),pc=.36*comp,pm=.2*comp,d='';
+    pc_[0].forEach(function(q){var v=fgxy(f,g,q[0],q[1],p);if(v===null)return;var vx=v[0]*ux,vy=-v[1]*uy,n=Math.hypot(vx,vy);if(n<1e-9)return;vx/=n;vy/=n;
+      var px=X(q[0]),py=Y(q[1]),ax=px-vx*comp/2,ay=py-vy*comp/2,bx=px+vx*comp/2,by=py+vy*comp/2,mx=bx-vx*pc,my=by-vy*pc;
+      d+='M'+ax.toFixed(1)+' '+ay.toFixed(1)+'L'+mx.toFixed(1)+' '+my.toFixed(1)+'M'+bx.toFixed(1)+' '+by.toFixed(1)+'L'+(mx-vy*pm).toFixed(1)+' '+(my+vx*pm).toFixed(1)+'L'+(mx+vy*pm).toFixed(1)+' '+(my-vx*pm).toFixed(1)+'Z'});
+    return d}
+  var PASSO_TRAJ=2,PASSOS_TRAJ=6000,PONTA_COMP=13,PONTA_MEIA=5.5,ESPACO_PONTAS=480,LONGE_PONTAS=44;
+  function trajetoriaSistema(f,g,xa,ya,j,p,ux,uy,inteira){var fx=(j[2]-j[0])/2,fy=(j[3]-j[1])/2;
+    function ramo(sn){var pts=[[xa,ya]],x=xa,y=ya,ant=null,longe=0;
+      for(var it=0;it<PASSOS_TRAJ;it++){if(!(x>=j[0]-fx&&x<=j[2]+fx&&y>=j[1]-fy&&y<=j[3]+fy))break;
+        var k1=fgxy(f,g,x,y,p);if(k1===null)break;var vel=Math.hypot(k1[0]*ux,k1[1]*uy);if(vel<1e-12)break;var h=sn*PASSO_TRAJ/vel;
+        // Passo partido ao meio até andar no máximo 1,5 vez o previsto e para a frente (como no Python, 20/11/2026).
+        var novo=null;for(var tt=0;tt<40;tt++){var k2=fgxy(f,g,x+h/2*k1[0],y+h/2*k1[1],p),k3=k2===null?null:fgxy(f,g,x+h/2*k2[0],y+h/2*k2[1],p),k4=k3===null?null:fgxy(f,g,x+h*k3[0],y+h*k3[1],p);
+          if(k4!==null){var cx=x+h/6*(k1[0]+2*k2[0]+2*k3[0]+k4[0]),cy=y+h/6*(k1[1]+2*k2[1]+2*k3[1]+k4[1]),ddx=(cx-x)*ux,ddy=(cy-y)*uy;
+            if(Math.hypot(ddx,ddy)<=1.5*PASSO_TRAJ&&(ddx*k1[0]*ux+ddy*k1[1]*uy)*sn>0){novo=[cx,cy];break}}h/=2}
+        if(novo===null)break;var nx=novo[0],ny=novo[1],dx=(nx-x)*ux,dy=(ny-y)*uy;if(Math.hypot(dx,dy)<1e-3*PASSO_TRAJ)break;
+        if(ant&&dx*ant[0]+dy*ant[1]<0)break;ant=[dx,dy];x=nx;y=ny;
+        var dist=Math.hypot((x-xa)*ux,(y-ya)*uy);if(longe>10*PASSO_TRAJ&&dist<PASSO_TRAJ){pts.push([xa,ya]);return [pts,true]}
+        longe=Math.max(longe,dist);pts.push([x,y])}
+      return [pts,false]}
+    var ida=ramo(1);if(ida[1]||!inteira)return ida;return [ramo(-1)[0].reverse().slice(0,-1).concat(ida[0]),false]}
+  function curvaParam(fx,fy,t0,t1,p){var pts=[];for(var k=0;k<=400;k++){var s=t0+(t1-t0)*k/400,a=fx(s,p,F),b=fy(s,p,F);if(isFinite(a)&&isFinite(b))pts.push([a,b])}return pts}
+  function ponta(cx,cy,vx,vy){var h=PONTA_COMP/2,tx=cx+vx*h,ty=cy+vy*h,bx=cx-vx*h,by=cy-vy*h;
+    return 'M'+tx.toFixed(1)+' '+ty.toFixed(1)+'L'+(bx-vy*PONTA_MEIA).toFixed(1)+' '+(by+vx*PONTA_MEIA).toFixed(1)+'L'+(bx+vy*PONTA_MEIA).toFixed(1)+' '+(by-vx*PONTA_MEIA).toFixed(1)+'Z'}
+  // Pontas lidas do d já arredondado (pontas_do_caminho), para as linhas seguintes evitarem; uma por trecho visível contínuo.
+  function pontasDoCaminho(d){var r=[],re=/M(-?[\d.]+) (-?[\d.]+)/g,m;while((m=re.exec(d||'')))r.push([parseFloat(m[1]),parseFloat(m[2])]);return r}
+  function pontasAoLongo(tl,jt,ocup,nfixo){var trechos=[],atual=[],k;
+    for(k=0;k+1<tl.length;k++){var a=tl[k],b=tl[k+1];if(a[0]>=jt[0]&&a[0]<=jt[2]&&b[0]>=jt[0]&&b[0]<=jt[2]&&a[1]>=jt[1]&&a[1]<=jt[3]&&b[1]>=jt[1]&&b[1]<=jt[3]){
+      var c=Math.hypot(b[0]-a[0],b[1]-a[1]);if(c>1e-9)atual.push([a[0],a[1],b[0],b[1],c])}else if(atual.length){trechos.push(atual);atual=[]}}
+    if(atual.length)trechos.push(atual);var d='',postas=(ocup||[]).slice();
+    trechos.forEach(function(segs){var total=0;segs.forEach(function(s){total+=s[4]});if(total<30)return;
+      var n=nfixo||Math.max(1,Math.floor(total/ESPACO_PONTAS)),ped=total/n;
+      function em(dist){var acum=0;for(var i=0;i<segs.length;i++){var s=segs[i];if(dist<=acum+s[4]){var f=(dist-acum)/s[4];return [s[0]+(s[2]-s[0])*f,s[1]+(s[3]-s[1])*f,(s[2]-s[0])/s[4],(s[3]-s[1])/s[4]]}acum+=s[4]}
+        var u=segs[segs.length-1];return [u[2],u[3],(u[2]-u[0])/u[4],(u[3]-u[1])/u[4]]}
+      for(var q=0;q<n;q++){var meio=(q+.5)*ped,esc=null;
+        for(var pa=0;pa*8<=.4*ped&&!esc;pa++){var alvos=pa===0?[meio]:[meio+pa*8,meio-pa*8];
+          for(var z=0;z<alvos.length;z++){var e=em(alvos[z]),tx=e[0]+e[2]*PONTA_COMP/2,ty=e[1]+e[3]*PONTA_COMP/2;
+            if(postas.every(function(o){return Math.hypot(tx-o[0],ty-o[1])>=LONGE_PONTAS})){esc=e;break}}}
+        var e2=esc||em(meio),uma=ponta(e2[0],e2[1],e2[2],e2[3]);postas=postas.concat(pontasDoCaminho(uma));d+=uma}});
+    return d}
+  // As pontas que a trajetória e evita, como no Python: as das autoretas (desenhadas por cima de tudo, mas vindas antes no
+  // slides.html) e as das trajetórias anteriores no mesmo gráfico.
+  function pontasAntes(e){var r=[],svg=e.closest('svg');if(!svg)return r;
+    svg.querySelectorAll('.autoretas path.pt').forEach(function(q){r=r.concat(pontasDoCaminho(q.getAttribute('d')))});
+    svg.querySelectorAll('g.traj > path').forEach(function(q){if(!e.contains(q)&&(e.compareDocumentPosition(q)&Node.DOCUMENT_POSITION_PRECEDING))r=r.concat(pontasDoCaminho(q.getAttribute('d')))});return r}
+  function matrizSistema(f,g,p){var v=[[0,0],[1,0],[0,1]].map(function(q){return fgxy(f,g,q[0],q[1],p)});if(v.some(function(w){return w===null}))return null;
+    return [v[1][0]-v[0][0],v[2][0]-v[0][0],v[1][1]-v[0][1],v[2][1]-v[0][1]]}
+  function autovetores(a,b,c,d){var esc=Math.pow(Math.abs(a)+Math.abs(b)+Math.abs(c)+Math.abs(d),2)||1,dl=(a-d)*(a-d)+4*b*c,lams;
+    if(dl<-1e-9*esc)return null;if(Math.abs(dl)<=1e-9*esc)lams=[(a+d)/2];else{var r=Math.sqrt(dl);lams=[(a+d+r)/2,(a+d-r)/2]}
+    var res=[];for(var k=0;k<lams.length;k++){var l=lams[k],l1=[b,l-a],l2=[l-d,c],v=Math.hypot(l1[0],l1[1])>=Math.hypot(l2[0],l2[1])?l1:l2,n=Math.hypot(v[0],v[1]);
+      if(n<1e-9*Math.sqrt(esc))return 'estrela';res.push([l,[v[0]/n,v[1]/n]])}return res}
+  function recortarJ(xa,ya,xc,yc,jan){var t0=0,t1=1,dx=xc-xa,dy=yc-ya,c=[[-dx,xa-jan[0]],[dx,jan[2]-xa],[-dy,ya-jan[1]],[dy,jan[3]-ya]];
+    for(var k=0;k<4;k++){var pp=c[k][0],q=c[k][1];if(pp===0){if(q<0)return null;continue}var r=q/pp;if(pp<0)t0=Math.max(t0,r);else t1=Math.min(t1,r);if(t0>t1)return null}
+    return [xa+t0*dx,ya+t0*dy,xa+t1*dx,ya+t1*dy]}
+  function htmlAutoretas(f,g,j,p,X,Y){var A=matrizSistema(f,g,p);if(!A)return '';var lista=autovetores(A[0],A[1],A[2],A[3]);if(!Array.isArray(lista))return '';
+    var esc=Math.abs(A[0])+Math.abs(A[1])+Math.abs(A[2])+Math.abs(A[3])||1,R=2*(Math.abs(j[0])+Math.abs(j[2])+Math.abs(j[1])+Math.abs(j[3]))+1,s='';
+    lista.forEach(function(e,i){var l=e[0],v=e[1],cls=['a','b'][i],parada=Math.abs(l)<1e-9*esc,d='';
+      [1,-1].forEach(function(sn){var rc=recortarJ(0,0,sn*R*v[0],sn*R*v[1],j);if(!rc)return;var xa=X(rc[0]),ya=Y(rc[1]),xc=X(rc[2]),yc=Y(rc[3]);
+        s+='<line class="autoreta '+cls+(parada?' parada':'')+'" x1="'+xa.toFixed(1)+'" y1="'+ya.toFixed(1)+'" x2="'+xc.toFixed(1)+'" y2="'+yc.toFixed(1)+'"/>';
+        var c=Math.hypot(xc-xa,yc-ya);if(!parada&&c>50){var u=(xc-xa)/c,w=(yc-ya)/c;if(l<0){u=-u;w=-w}d+=ponta(xa+.55*(xc-xa),ya+.55*(yc-ya),u,w)}});
+      if(d)s+='<path class="pt '+cls+'" d="'+d+'"/>'});
+    return s}
   function equilibrios(g,lo,hi){var n=600,vs=[],fs=[],k,r=[];for(k=0;k<=n;k++){vs.push(lo+(hi-lo)*k/n);fs.push(g(vs[k]))}
     var esc=1;fs.forEach(function(v){if(v!==null)esc=Math.max(esc,Math.abs(v))});
     for(k=0;k<n;k++){var a=vs[k],b=vs[k+1],fa=fs[k],fb=fs[k+1];if(fa===null||fb===null)continue;
@@ -371,6 +492,21 @@
         e.setAttribute('d',caminhoCampo(cf,cnx?Math.round(cnx(0,p,F)):0,cny?Math.round(cny(0,p,F)):0,jc,p,X,Y,d.ux,d.uy,o.campo.passo))})}
       if(o.integral){var inf=compilar(o.integral.f),ip=par(o.integral.p);fs.push(function(p){var c=ip(p);
         e.setAttribute('points',curvaIntegral(inf,c[0],c[1],o.integral.jan,p,o.integral.inteira).map(function(q){return X(q[0]).toFixed(1)+','+Y(q[1]).toFixed(1)}).join(' '))})}
+      if(o.integraln){var gf=compilar(o.integraln.f),gp=o.integraln.p.map(compilar);fs.push(function(p){var c=gp.map(function(g){return g(0,p,F)});
+        e.setAttribute('points',curvaIntegralN(gf,c[0],c.slice(1),o.integraln.jan,p,o.integraln.inteira).map(function(q){return X(q[0]).toFixed(1)+','+Y(q[1]).toFixed(1)}).join(' '))})}
+      if(o.notempo){var tfs=o.notempo.f.map(compilar),tps=o.notempo.p.map(compilar),tt0=compilar(o.notempo.t0);fs.push(function(p){var c=tps.map(function(g){return g(0,p,F)});
+        e.setAttribute('points',curvaNoTempo(tfs,o.notempo.k,tt0(0,p,F),c,o.notempo.jan,p,o.notempo.inteira).map(function(q){return X(q[0]).toFixed(1)+','+Y(q[1]).toFixed(1)}).join(' '))})}
+      if(o.nivel){var nf=compilar(o.nivel.f),nc=o.nivel.c.map(compilar);fs.push(function(p){
+        e.setAttribute('d',curvasNivel(nf,nc.map(function(c){return c(0,p,F)}),o.nivel.jan,o.nivel.n[0],o.nivel.n[1],p,X,Y))})}
+      if(o.vetores){var vf=compilar(o.vetores.f),vg=compilar(o.vetores.g),vnx=o.vetores.nx?compilar(o.vetores.nx):null,vny=o.vetores.ny?compilar(o.vetores.ny):null,jv=[d.x0,d.y0,d.x1,d.y1];fs.push(function(p){
+        e.setAttribute('d',setasVetores(vf,vg,vnx?Math.round(vnx(0,p,F)):0,vny?Math.round(vny(0,p,F)):0,jv,p,X,Y,d.ux,d.uy,o.vetores.passo))})}
+      if(o.autoretas){var af=compilar(o.autoretas.f),ag=compilar(o.autoretas.g);fs.push(function(p){e.innerHTML=htmlAutoretas(af,ag,o.autoretas.jan,p,X,Y)})}
+      // Trajetória e curva paramétrica: a linha e as pontas no mesmo <g>, refeitas com o valor do momento.
+      if(o.traj||o.curva){var jq=[X(d.x0)+12,Y(d.y1)+12,X(d.x1)-12,Y(d.y0)-12],tpl=e.querySelector('polyline'),tpt=e.querySelector('path'),tcalc;
+        if(o.traj){var tf=compilar(o.traj.f),tg=compilar(o.traj.g),tp=par(o.traj.p);tcalc=function(p){var c=tp(p);return trajetoriaSistema(tf,tg,c[0],c[1],o.traj.jan,p,d.ux,d.uy,o.traj.inteira)[0]}}
+        else{var cx_=compilar(o.curva.x),cy_=compilar(o.curva.y),cd=compilar(o.curva.de),ca=compilar(o.curva.ate);tcalc=function(p){return curvaParam(cx_,cy_,cd(0,p,F),ca(0,p,F),p)}}
+        fs.push(function(p){var tl=tcalc(p).map(function(q){return [X(q[0]),Y(q[1])]});
+          tpl.setAttribute('points',tl.map(function(q){return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' '));if(tpt)tpt.setAttribute('d',pontasAoLongo(tl,jq,pontasAntes(e),(o.traj||o.curva).n))})}
       if(o.fase){var ff2=compilar(o.fase.f);fs.push(function(p){e.innerHTML=htmlFase(o.fase,ff2,p,X,Y)})}
       if(o.pol){var lf=compilar(o.pol.f),ld=compilar(o.pol.de),la=compilar(o.pol.ate),ln=compilar(o.pol.n);fs.push(function(p){
         var a0=ld(0,p,F),b0=la(0,p,F),n=Math.max(1,Math.round(ln(0,p,F))),t=[];
@@ -1126,11 +1262,12 @@
               [].forEach.call(b.children,function(c){var f=soFormula(c);
               if(!f){seguidas=0;return}seguidas++;if(f.n>=2||f.comeca||seguidas>=2||temConta)fora=true})});
             if(fora)r.push('quadro '+nome+': conta fora do <conta>')}}
-        // Iguais desalinhados (19/11/2026, professor: "eu não aguento mais isso, iguais desalinhados"): numa conta em passos
+        // Iguais desalinhados (19/11/2026, professor: "eu não aguento mais isso, iguais desalinhados"; desde 20/11/2026, só nas linhas
+        // encadeadas do <conta>, tr.cad: "Alinhamos apenas em encadeamentos necessários por igualdades"): numa conta em passos
         // (<conta>) e em linhas seguidas de exemplo que começam por fórmula com "=", o primeiro "=" de cada linha cai na mesma
         // vertical. Tolerância de 0,6% da largura.
         var primeiroIgual=function(el){var m=el.querySelector('math');if(!m)return null;var o=[].find.call(m.querySelectorAll('mo'),function(x){var t=x.textContent.trim();return ['=','≈','<','>','≤','≥','≠'].indexOf(t)>=0});return o?o.getBoundingClientRect().left:null};
-        var grupos=[];[].forEach.call(inn.querySelectorAll('table.passos-conta'),function(t){grupos.push([].map.call(t.querySelectorAll('tr'),function(tr){var l=tr.querySelector('td.l'),d=tr.querySelector('td.d');var xl=l?primeiroIgual(l):null;return xl!==null?xl:(d?primeiroIgual(d):null)}))});
+        var grupos=[];[].forEach.call(inn.querySelectorAll('table.passos-conta'),function(t){grupos.push([].map.call(t.querySelectorAll('tr.cad'),function(tr){var l=tr.querySelector('td.l'),d=tr.querySelector('td.d');var xl=l?primeiroIgual(l):null;return xl!==null?xl:(d?primeiroIgual(d):null)}))});
         [].forEach.call(inn.querySelectorAll('.bloco.ex,.bloco.ga'),function(b){var g=[];[].forEach.call(b.children,function(c){var ok=c.tagName==='P'&&c.firstChild&&(c.firstChild.nodeName.toLowerCase()==='math'||(c.firstChild.nodeType===3&&!c.firstChild.textContent.trim()&&c.firstElementChild&&c.firstElementChild.tagName.toLowerCase()==='math'&&c.firstElementChild===c.querySelector('*')));
           var x=ok?primeiroIgual(c):null;if(x!==null)g.push(x);else{if(g.length>1)grupos.push(g);g=[]}});if(g.length>1)grupos.push(g)});
         grupos.forEach(function(g){var xs=g.filter(function(x){return x!==null});if(xs.length<2)return;if(Math.max.apply(null,xs)-Math.min.apply(null,xs)>qr.width*0.006){var t='quadro '+nome+': iguais desalinhados';if(r.indexOf(t)<0)r.push(t)}});
