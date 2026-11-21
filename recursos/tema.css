@@ -311,6 +311,9 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .graf.reta .tk{font-size:28px}
 .graf .axl{fill:var(--texto);font-size:26px;font-style:italic}
 .graf polyline{fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-width:6}
+/* fn com buracos (21/11/2026): um <path class="fn"> de trechos, traçado como a polyline; o :where deixa a especificidade igual à dela
+   (.graf .original, .graf .b.tg e as outras classes de linha continuam valendo por cima). */
+.graf :where(path.fn){fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-width:6}
 /* Curva de nível (nivel, 20/11/2026): um <path>, com o traço das curvas; antes do .original, que a deixa tracejada e mais fina. */
 .graf .niv{fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-width:6}
 .graf .original{stroke:var(--apoio);stroke-width:4.5;stroke-dasharray:13 11;stroke-linecap:butt}
@@ -329,6 +332,8 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .graf .cheia{stroke-width:2}
 /* Ponto cheio neutro: sem esta regra o SVG pinta de preto, e no modo escuro o ponto some. */
 .graf .cheia.original{fill:var(--apoio);stroke:var(--apoio);stroke-dasharray:none}
+/* Ponto neutro sólido (cheia neutra, 21/11/2026): na cor do texto, como o fn neutra; antes saía sem classe pintada (preto, sumido no escuro). */
+.graf .cheia.original.sol{fill:var(--texto);stroke:var(--texto)}
 .graf .aberta{fill:var(--sup,var(--fundo));stroke-width:4.5;stroke-dasharray:none}
 .graf .seta{stroke:var(--eixo);stroke-width:3.5;fill:none}
 /* Campo de direções (18/11/2026): traços finos na cor de apoio, atrás das curvas; o traço isolado (traco) na cor da classe. Linha de fase

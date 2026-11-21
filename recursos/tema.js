@@ -475,8 +475,12 @@
         // Arco de comprimento zero não tem sentido: sem ponta de seta.
         if(e.dataset.ponta){if(Math.abs(t1-t0)>0.05)e.setAttribute('marker-end',e.dataset.ponta);else e.removeAttribute('marker-end')}})}
       if(o.guia){var fg=compilar(o.v);fs.push(function(p){var v=fg(0,p,F);if(o.guia==='x'){e.setAttribute('x1',X(v).toFixed(1));e.setAttribute('x2',X(v).toFixed(1))}else{e.setAttribute('y1',Y(v).toFixed(1));e.setAttribute('y2',Y(v).toFixed(1))}})}
-      if(o.fn){var fy=compilar(o.fn),de=compilar(o.de),ate=compilar(o.ate);fs.push(function(p){var a0=de(0,p,F),b0=ate(0,p,F),t=[];
-        for(var k=0;k<=o.n;k++){var x=a0+(b0-a0)*k/o.n,y=fy(x,p,F);if(isFinite(y))t.push(X(x).toFixed(1)+','+Y(y).toFixed(1))}e.setAttribute('points',t.join(' '))})}
+      // fn com buracos (21/11/2026, como na montagem, 30-graficos.py): onde a função não existe (divisão por zero, raiz de
+      // negativo, ln de 0), a curva para e recomeça depois, num <path> de trechos (M ... L ... M ...), em vez de ligar os dois lados.
+      if(o.fn){var fy=compilar(o.fn),de=compilar(o.de),ate=compilar(o.ate);fs.push(function(p){var a0=de(0,p,F),b0=ate(0,p,F),t='',novo=true;
+        for(var k=0;k<=o.n;k++){var x=a0+(b0-a0)*k/o.n,y;try{y=fy(x,p,F)}catch(_){y=NaN}
+          if(isFinite(y)){t+=(novo?'M':'L')+X(x).toFixed(1)+' '+Y(y).toFixed(1);novo=false}else novo=true}
+        e.setAttribute('d',t)})}
       // Região preenchida (area, entre, entrey), com parâmetro nos limites ou nas curvas.
       if(o.reg){var rf=compilar(o.reg.f),rg=compilar(o.reg.g),rd=compilar(o.reg.de),ra=compilar(o.reg.ate);fs.push(function(p){
         var a0=rd(0,p,F),b0=ra(0,p,F),ida=[],volta=[];
