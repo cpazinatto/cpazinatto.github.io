@@ -26,6 +26,12 @@ body.entrada{background:var(--pagina);font-family:var(--f-texto);font-size:calc(
 .cursosel button{--k:var(--apoio);border:1.5px solid var(--k);color:var(--k);background:transparent;border-radius:999px;padding:4px 14px;font-size:15px;font-weight:700;cursor:pointer}
 .cursosel button.c-EE{--k:var(--exemplo)}.cursosel button.c-EQ{--k:var(--gancho)}
 .cursosel button[aria-pressed=true]{background:var(--k);color:var(--fundo)}
+/* 22/11/2026: "ver os dois cursos" é link pequeno e só aparece com um curso escolhido; em "Aulas e exercícios", a linha
+   "Mostrando a ... · trocar no início" no lugar dos botões, também só com curso escolhido. */
+.cursosel button.cursotodos{border:0;padding:4px 2px;font-weight:400;font-size:14px;color:var(--apoio);text-decoration:underline;text-underline-offset:3px}
+html:not([data-curso]) .cursosel button.cursotodos,html:not([data-curso]) .cursoinfo{display:none}
+.cursoinfo{margin:0;font-size:14px;color:var(--apoio)}.cursoinfo .ci{display:none;color:var(--texto)}
+html[data-curso=EE] .cursoinfo .ci-EE,html[data-curso=EQ] .cursoinfo .ci-EQ{display:inline}
 .entrada .progresso{font-size:14px}
 .secao{margin-top:34px}
 .secao>h2{font:700 14px var(--f-texto);color:var(--cor,var(--apoio));letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;display:flex;gap:10px;align-items:center}

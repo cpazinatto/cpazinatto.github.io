@@ -64,7 +64,7 @@ window.Offline=(function(){
     var l=pac(rel).local;return l&&l.cursos||null}
   function nomesCursos(rel,cs){var p=pac(rel),n=(p.remoto&&p.remoto.cursos)||{};cs=cs||[];
     var ns=cs.map(function(c){return n[c]||c});return ns.length>1?ns.slice(0,-1).join(', ')+' e '+ns[ns.length-1]:ns[0]||''}
-  var PARTES=[['T','Aulas e exercícios'],['B','Revisão da base'],['C','Demonstrações e desafios']],PARTE={aula:'T',lista:'T',base:'B',comp:'C'};
+  var PARTES=[['T','Aulas e exercícios'],['B','Revisão da base'],['C','Para ir além']],PARTE={aula:'T',lista:'T',base:'B',comp:'C'};
   // Partes que o pacote tem (uma disciplina pode não ter base ou complementar).
   function partesDe(rel){var r=pac(rel).remoto,t={};if(!r)return [];Object.keys(r.arquivos).forEach(function(a){var x=PARTE[r.arquivos[a][3]];if(x)t[x]=1});
     return PARTES.map(function(x){return x[0]}).filter(function(x){return t[x]})}
