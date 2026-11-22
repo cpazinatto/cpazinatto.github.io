@@ -76,6 +76,13 @@
     C29:'<text x="80" y="34" text-anchor="middle" class="fm" style="font-size:15px">1/(x² − 1) =</text><text x="80" y="58" text-anchor="middle" class="fm" style="font-size:15px">A/(x − 1) + B/(x + 1)</text>',
     C31:'<path d="M20 40h120" class="ex"/><path d="M28 40C50 10 90 10 132 22" class="cv"/><path d="M28 40C50 70 90 70 132 58" class="dash"/><ellipse cx="80" cy="40" rx="6" ry="22" class="cx"/><ellipse cx="132" cy="40" rx="6" ry="18" class="cx"/>',
     C32:graf(-0.3,4.2,-0.3,3,[{f:function(x){return 0.4+0.5*x+0.6*Math.sin(x*1.6)}}],{lin:[[0,0.4,1,0.4+0.5+0.6*Math.sin(1.6),'tr2'],[1,0.4+0.5+0.6*Math.sin(1.6),2,0.4+1+0.6*Math.sin(3.2),'tr2'],[2,0.4+1+0.6*Math.sin(3.2),3,0.4+1.5+0.6*Math.sin(4.8),'tr2'],[3,0.4+1.5+0.6*Math.sin(4.8),4,0.4+2+0.6*Math.sin(6.4),'tr2']]}),
+    // Matemática dos cursos técnicos integrados (página das disciplinas, em preparação).
+    'D-MAT1':graf(-1,4,-1,4,[{f:function(x){return x*x/2-x/2+0.3}},{f:function(x){return x+0.5},c:'cv2'}]),
+    'D-MAT2':graf(0,6.6,-1.4,1.4,[{f:Math.sin},{f:function(x){return Math.cos(x)},c:'cv2'}]),
+    'D-MAT3':graf(-1.5,4,-1.5,4,[{f:Math.exp,b:1.4},{f:function(x){return Math.log(x)},a:0.05,c:'cv2'},{f:function(x){return x},c:'dash'}]),
+    'D-MAT4':tx('C(n, p)  ·  P(A)',17),
+    'D-MAT5':'<g transform="translate(80 40) scale(1.15) translate(-80 -40)"><path d="M34 18h30M34 18v30M34 18l-10 10" class="dash"/><path d="M24 28h30v30H24zM54 28l10-10v30L54 58M24 28l10-10h30" class="cv"/><path d="M108 20L92 60h46z" class="cv"/><circle cx="111.5" cy="46.8" r="13.2" class="cv2" fill="none"/></g>',
+    // Cálculo dos cursos técnicos: reaproveita D-CALC1.
     'D-CALC1':graf(-0.5,4.5,-0.4,3,[{f:function(x){return 0.6+0.9*Math.sin(x*0.9)+0.35*x}},{f:function(x){return 0.6+0.9*Math.sin(2.7)+1.05+(0.81*Math.cos(2.7)+0.35)*(x-3)},a:1.9,b:4.2,c:'cv2'}],{area:[0.4,2.2],pts:[[3,0.6+0.9*Math.sin(2.7)+1.05]]}),
     'D-ED':(function(){var l=[];for(var i=0;i<6;i++)for(var j=0;j<4;j++){var x=0.4+i*0.75,y=0.3+j*0.75,m=-0.8*(y-1.4),h=0.22/Math.sqrt(1+m*m);l.push([x-h,y-m*h,x+h,y+m*h,'tr'])}
       return graf(0,4.6,0,2.8,[{f:function(x){return 1.4+1.2*Math.exp(-0.8*x)}},{f:function(x){return 1.4-1.1*Math.exp(-0.8*x)},c:'cv2'}],{lin:l})})(),
