@@ -52,3 +52,25 @@ a.mod:hover .capa{background:color-mix(in srgb,var(--k) 14%,var(--sup))}
 @media (max-width:640px){.rc-nota{display:none}.secao.cat>h2::after{display:none}.secao.cat>h2 .rc-nome{flex:0 1 auto;min-width:0}}
 @media (prefers-reduced-motion:reduce){.rc-pino{transition:none}}
 }
+
+/* "Demonstrações e desafios": o grupo "Para estudar sozinho" (etapa 5 do aprofundamento, 22/11/2026; mock em
+   ../mock-layout/aprofundamento/, na cor do selo, o ocre --selo do tema.css): um cartão por seção de aprofundamento, por unidade,
+   com a contagem e os botões de cada curso (c-EE, c-EQ). O curso guardado esconde o outro; sem curso, a contagem da Elétrica. */
+@layer paginas{
+.secao.estudar{scroll-margin-top:70px}
+.secao.estudar .abre{margin:-4px 0 6px;color:var(--apoio);max-width:760px}
+.secao.estudar .unid>h3{font:700 13px var(--f-texto);color:var(--apoio);letter-spacing:.04em;margin:18px 0 10px}
+.rc-fechada>.abre,.rc-fechada>.unid{display:none}
+.rc-filtrando .rc-fechada>.unid{display:block}
+.mod.aprof{--k:var(--selo)}
+.mod.aprof .capa{color:var(--selo);background:color-mix(in srgb,var(--selo) 8%,var(--sup));border-bottom-color:color-mix(in srgb,var(--selo) 22%,var(--grade))}
+.mod.aprof .nota{margin:0;color:var(--apoio);font-size:14px}
+.mod.aprof .conta{display:block;width:100%;font-size:13px;color:var(--apoio)}
+.mod.aprof .conta a.ls{color:var(--selo);font-weight:600;white-space:nowrap}
+html:not([data-curso=EQ]) .mod.aprof .conta.c-EQ,html[data-curso=EQ] .mod.aprof .conta.c-EE{display:none}
+.mod.aprof .bts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.mod.aprof .bts a{font-size:14px;font-weight:600;border-radius:999px;padding:3px 12px;text-decoration:none;background:var(--selo);color:var(--sobre-suavez)}
+.mod.aprof .bts a:hover{background:color-mix(in srgb,var(--selo) 82%,var(--texto))}
+html[data-curso=EE] .mod.aprof .bts .c-EQ,html[data-curso=EQ] .mod.aprof .bts .c-EE{display:none}
+@media (pointer:coarse){.mod.aprof .bts a{padding:7px 14px}}
+}

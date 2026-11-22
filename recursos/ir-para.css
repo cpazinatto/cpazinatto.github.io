@@ -28,6 +28,11 @@ a.ip-it:focus-visible,.ip-grade a:focus-visible,.ip-quadro :focus-visible{outlin
 .ip-tag.b{background:color-mix(in srgb,var(--define) 15%,var(--fundo));color:var(--define)}
 .ip-tag.p{background:color-mix(in srgb,var(--gancho) 15%,var(--fundo));color:var(--gancho)}
 .ip-tag.l{background:color-mix(in srgb,var(--suavez) 15%,var(--fundo));color:var(--suavez)}
+/* Seção de aprofundamento e tópico vizinho inteiro de aprofundamento (etapa 2, 22/11/2026): a etiqueta "Aprof." no ocre do selo. */
+.ip-aprof{display:inline-flex;align-items:center;gap:.25em;margin-left:.45em;font-size:.75em;font-weight:700;line-height:1.3;color:var(--selo);
+  border:1.5px dashed var(--selo);border-radius:99px;padding:0 .55em 0 .4em;white-space:nowrap;vertical-align:.08em}
+.ip-aprof .ic-livro{width:1.15em;height:1.15em}
+.ip-it:where([data-camada="aprofundamento"]){border-style:dashed;border-color:color-mix(in srgb,var(--selo) 55%,var(--grade))}
 .ip-tag.f{background:color-mix(in srgb,var(--suavez) 15%,var(--fundo));color:var(--suavez)}
 /* No site, desligar() troca por texto o link para página não liberada: o item fica esmaecido, com "em breve". */
 .ip-col>.desligado,.ip-breve{opacity:.6}
@@ -44,6 +49,10 @@ a.ip-it:focus-visible,.ip-grade a:focus-visible,.ip-quadro :focus-visible{outlin
 .ip-dica{margin:0;padding:10px 16px 14px;border-top:1px solid var(--grade);color:var(--apoio);font-size:.82em}
 @media (max-width:600px){.ip-veu{padding:0}.ip{border-radius:0;min-height:100%;border:0}.ip-dica{display:none}}
 @media (pointer:coarse){.ip-dica{display:none}}
+/* Grade da lista (etapa 4, 22/11/2026): a questão de aprofundamento com o livro e o contorno tracejado no ocre do selo. */
+.ip-grade a[data-camada]{border-style:dashed;border-color:var(--selo);display:inline-flex;align-items:center;justify-content:center;gap:2px}
+.ip-grade a[data-camada] .ic-livro{width:13px;height:13px;color:var(--selo);flex:none}
+.ip-nota .ic-livro{width:1.1em;height:1.1em;color:var(--selo);vertical-align:-.18em}
 }
 /* Roda do mouse (07b-ir-para.js): o gesto de dois dedos para o lado não volta a página na aula e com o visor aberto pelo
    overscroll-behavior do tema.css, que já vale para os dois eixos. */

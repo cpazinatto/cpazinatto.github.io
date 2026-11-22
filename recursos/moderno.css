@@ -124,3 +124,20 @@ body.visor-aberto .fim-q.ver{display:block}
 @media (pointer:coarse){.rq-seta{width:38px;height:38px;border-radius:10px}}
 @media (prefers-reduced-motion:reduce){.rq-seta svg{transition:none}}
 }
+
+/* Questão de aprofundamento (etapa 4 do aprofundamento, 22/11/2026; docs/planejamento-aprofundamento.md, proposta 7; mock em
+   ../mock-layout/aprofundamento/listas/): o selo curto (tema.css) ao lado do nível, no tamanho dele; no índice da página, o livro no
+   ocre do selo depois do nome; o botão "Só o que cai em prova" ao lado de "Recolher todas" (tema/js/06-listas.js), que esconde as
+   questões de aprofundamento na página, no índice e no "Ir para" (html.so-nucleo-on). */
+@layer paginas{
+.questao>h2 .selo-curto{font-size:13px;margin-left:0;padding:3.5px 10px 3.5px 8px;gap:4px}
+.questao>h2 .selo-curto .ic-livro{width:14px;height:14px}
+.rail-pag a.q[data-camada] .ic-livro{flex:none;width:15px;height:15px;color:var(--selo);align-self:center}
+.rq-linha{flex-wrap:wrap;align-items:center;gap:8px}
+.so-nucleo{font:700 13px var(--f-texto);color:var(--selo);background:none;border:1.5px solid var(--selo);border-radius:999px;padding:4.5px 12px;cursor:pointer}
+.so-nucleo:hover{background:color-mix(in srgb,var(--selo) 10%,transparent)}
+.so-nucleo[aria-pressed="true"]{background:var(--selo);color:var(--fundo)}
+.so-nucleo:focus-visible,.rq-tudo:focus-visible{outline:3px solid var(--exemplo);outline-offset:2px}
+.so-nucleo-aviso{margin-right:auto;font:14px var(--f-texto);color:var(--apoio)}
+html.so-nucleo-on .questao.aprof-q,html.so-nucleo-on .rail-pag a.q[data-camada],html.so-nucleo-on .ip-grade a[data-camada]{display:none}
+}

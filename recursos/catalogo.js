@@ -1,11 +1,17 @@
 // Catálogos: figuras nos cartões (figuras.js) e o filtro por nome ou código.
+// Cartão sem desenho com data-fig-tx (os do grupo "Para estudar sozinho", etapa 5 do aprofundamento): o nome curto, nunca vazio.
 (function(){
-  if(window.figura)[].forEach.call(document.querySelectorAll('[data-fig]'),function(c){c.innerHTML=figura(c.dataset.fig)});
+  function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+  if(window.figura)[].forEach.call(document.querySelectorAll('[data-fig]'),function(c){var s=figura(c.dataset.fig);
+    if(!s&&c.dataset.figTx&&window.FIG_AUX)s='<svg viewBox="0 0 160 80" class="fig" aria-hidden="true">'+FIG_AUX.tx(esc(c.dataset.figTx),20)+'</svg>';
+    c.innerHTML=s});
   var f=document.getElementById('filtro'),n=document.getElementById('cConta');
-  function contar(){var v=f.value.trim().toLowerCase(),k=0;
-    [].forEach.call(document.querySelectorAll('.secao.cat .mod'),function(m){var ok=!v||m.dataset.f.indexOf(v)>=0;m.style.display=ok?'':'none';if(ok)k++});
+  // O grupo "Para estudar sozinho" conta à parte, em seções: "7 módulos · 21 seções" (o cartão do tópico inteiro diz quantas em data-n).
+  function contar(){var v=f.value.trim().toLowerCase(),k=0,j=0;
+    [].forEach.call(document.querySelectorAll('.secao.cat .mod'),function(m){var ok=!v||m.dataset.f.indexOf(v)>=0;m.style.display=ok?'':'none';if(ok){if(m.classList.contains('aprof'))j+=(+m.dataset.n||1);else k++}});
+    [].forEach.call(document.querySelectorAll('.secao.cat .unid'),function(s){s.style.display=s.querySelector('.mod:not([style*="none"])')?'':'none'});
     [].forEach.call(document.querySelectorAll('.secao.cat'),function(s){s.style.display=s.querySelector('.mod:not([style*="none"])')?'':'none'});
-    n.textContent=k+(k===1?' módulo':' módulos')}
+    n.textContent=k+(k===1?' módulo':' módulos')+(document.querySelector('.secao.estudar')?' · '+j+(j===1?' seção':' seções'):'')}
   if(f){f.oninput=contar;contar()}
 })();
 
@@ -23,6 +29,8 @@
   Recolher.grupos({
     grupos: grupos, chave: Memoria.chave(PAG + '-recolhidos'), seta: 14,
     resumo: function(s){ var mods = s.querySelectorAll('.mod');
+      if (s.classList.contains('estudar')) { var ns = +s.dataset.secoes || mods.length;
+        return ns + (ns === 1 ? ' seção' : ' seções') + ', de ' + codDe(mods[0]).split(' ')[0] + ' a ' + codDe(mods[mods.length - 1]).split(' ')[0]; }
       return mods.length === 1 ? codDe(mods[0]) : codDe(mods[0]) + ' a ' + codDe(mods[mods.length - 1]) + ' · ' + mods.length + ' módulos'; },
     preparar: function(s, seta, resumo){
       var h = s.querySelector('h2'), nome = h.textContent.trim(), rn = document.createElement('span');

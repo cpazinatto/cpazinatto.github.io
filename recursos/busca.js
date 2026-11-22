@@ -13,6 +13,11 @@
     ['Parte',[['base','Base'],['limites','Limites'],['derivadas','Derivadas'],['integrais','Integrais']]]];
   // As partes vêm da disciplina da página (13/11/2026): <html data-partes="Base|Limites|...">, os blocos do disciplina.json.
   if(raiz.dataset.partes)GRUPOS[2]=['Parte',raiz.dataset.partes.split('|').map(function(p){return [norm(p),p]})];
+  // Camada (etapa 3 do aprofundamento, 22/11/2026, docs/planejamento-aprofundamento.md, proposta 5): só na disciplina que marca seção
+  // (<html data-camadas>, posto por cabeca()). "Para estudar sozinho" é a tag "aprofundamento"; "Em sala" ("em sala", tratado em
+  // passa()) é aula ou lista sem ela. As questões das listas levam a tag quando são de aprofundamento (etapa 4, 22/11/2026: secao= na
+  // questão, data-camada no <article> montado, camada_questao() em indice_busca.py); as do núcleo contam como "Em sala".
+  if(raiz.dataset.camadas!==undefined)GRUPOS.push(['Camada',[['em sala','Em sala'],['aprofundamento','Para estudar sozinho']]]);
   var POR_PAGINA=5,MAXIMO=40,GRUPOS_VISTOS=GRUPOS;
   // Etiquetas de cada resultado (11/11/2026, pedido do professor): de onde ele é e o que ele é, na ordem e na cor do tema.
   // A primeira diz o material (Aula, Seção da aula, Lista, Revisão da base, Demonstração); as outras, o conteúdo e o nível.
@@ -26,6 +31,9 @@
       if(k.indexOf(t[0])<0)return false;
       if(t[2]==='tipo'){if(tipo)return false;tipo=true}   // "Seção da aula" no lugar de "Aula"
       return ++vistas<=5}).map(function(t){return '<i class="b-tag b-'+t[2]+(t[0]==='em breve'?' b-breve':'')+'">'+t[1]+'</i>'}).join('')+'</span>'}
+  // O selo curto ao lado do título do resultado de aprofundamento (o mesmo do índice da aula, .selo-curto do tema.css, com o livro).
+  var SELO='<span class="selo-curto" title="Para estudar sozinho, fora da prova"><svg class="ic-livro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3 5v13c4-.5 7 0 9 1.5 2-1.5 5-2 9-1.5V5c-4-.5-7 0-9 1.5z"/><path d="M12 6.5v13"/></svg>aprofundamento</span>';
+  function selo(e){return e.k&&e.k.indexOf('aprofundamento')>=0?SELO:''}
   var LUPA='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>';
 
   function norm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\/∞]+/g,' ').trim()}
@@ -102,6 +110,13 @@
   // Palavras de parada e letras soltas (o "f" e o "x" de f'(x)) saem, como no índice, a não ser que não sobre nada.
   function palavrasDe(q){var ts=norm(simbolos(q)).split(' ').filter(Boolean),sem=ts.filter(function(t){return !PARADAS[t]&&!/^[a-z]$/.test(t)});return sem.length?sem:ts}
 
+  // Busca igual a um sinônimo (seção 9 do planejamento, 22/11/2026): quando a busca inteira, normalizada, é uma das expressões
+  // de um grupo "= a | b" de busca_tags.txt que tem tag de quadro, sobem as entradas com essa tag ("estudar sozinho" sobe as de
+  // "aprofundamento"). Só a busca inteira: "equação diferencial" não é "equação diferencial parcial". O índice traz a tabela
+  // pronta (comum.sn, de sinonimos_de_tag() em tema/indice_busca.py), sem as tags de parte.
+  var SINONIMO=3;
+  function tagsDaFrase(q){var f=norm(simbolos(q));return DADOS.map(function(D){var sn=D.comum&&D.comum.sn;
+    return f&&sn&&Object.prototype.hasOwnProperty.call(sn,f)?sn[f]:null})}
   function buscar(q,tags){
     var ts=palavrasDe(q),curso=cursoAtual(),achadas={};
     // A tag "@N" é a do grupo Disciplina (a entrada é da fonte N); "%EE" e "%EQ", a do grupo Curso (o material comum aos
@@ -109,7 +124,8 @@
     function passa(e){if(curso&&e.c&&e.c!==curso)return false;
       return GRUPOS_VISTOS.every(function(g){var sel=g[1].filter(function(o){return tags[o[0]]});
         return !sel.length||sel.some(function(o){var t=o[0];
-          return t[0]==='@'?e.fi===+t.slice(1):t[0]==='%'?!e.c||e.c===t.slice(1):e.k&&e.k.indexOf(t)>=0})})}
+          return t[0]==='@'?e.fi===+t.slice(1):t[0]==='%'?!e.c||e.c===t.slice(1):
+            t==='em sala'?!!e.k&&(e.k.indexOf('aula')>=0||e.k.indexOf('lista')>=0)&&e.k.indexOf('aprofundamento')<0:e.k&&e.k.indexOf(t)>=0})})}
     var res=[];
     if(!ts.length){E.forEach(function(e,i){if(passa(e))res.push({i:i,n:0})});return {r:res,m:achadas}}
     var total=null;
@@ -125,10 +141,11 @@
       topico.forEach(function(v,i){if(!proprio.has(i))por.set(i,.4*v)});
       if(total===null)total=por;else{var junto=new Map();total.forEach(function(v,i){var o=por.get(i);if(o)junto.set(i,v+o)});total=junto}});
     // Palavras na ordem buscada, juntas, valem mais ("teorema fundamental" no título ganha de "teorema" e "fundamental" soltos).
-    var frase=ts.length>1?' '+ts.join(' ')+' ':'';
+    var frase=ts.length>1?' '+ts.join(' ')+' ':'',sobe=tagsDaFrase(q);
     function junto(v){return v&&(' '+v+' ').indexOf(frase)>=0}
     total.forEach(function(n,i){var e=E[i];if(!passa(e))return;
       if(frase)n+=junto(e.h)||junto(e.k&&e.k.join(' '))?3:junto(e.b)||junto(e.oo)?2:junto(e.w)?1:0;
+      if(sobe[e.fi]&&e.k&&e.k.some(function(t){return sobe[e.fi].indexOf(t)>=0}))n+=SINONIMO;
       res.push({i:i,n:n})});
     res.sort(function(a,b){return b.n-a.n||a.i-b.i});
     return {r:res,m:achadas};
@@ -147,7 +164,7 @@
     if(!grupos.length){alvo.innerHTML='<p class="b-nada">Nada encontrado'+(cursoAtual()?' neste curso':'')+'. Tente outra palavra ou tire uma tag.</p>';return}
     alvo.innerHTML='<p class="b-conta">'+(b.r.length>n?'Os '+n+' primeiros de '+b.r.length+' resultados':b.r.length+' resultado'+(b.r.length>1?'s':''))+'</p>'+
       grupos.map(function(g){return '<section class="b-grupo'+(g.c?' c-'+g.c:'')+'"><h4>'+esc(g.p)+'</h4>'+g.l.map(function(e){
-        return '<a class="b-item" href="'+esc(e.href)+'">'+etiquetas(e)+'<b>'+marcar(e.t,b.m)+'</b>'+(e.x?'<span>'+marcar(e.x,b.m)+'</span>':'')+'</a>'}).join('')+'</section>'}).join('');
+        return '<a class="b-item" href="'+esc(e.href)+'">'+etiquetas(e)+'<b>'+marcar(e.t,b.m)+selo(e)+'</b>'+(e.x?'<span>'+marcar(e.x,b.m)+'</span>':'')+'</a>'}).join('')+'</section>'}).join('');
   }
 
   // A caixa: campo, tags e resultados. Um resultado na mesma página (outro quadro da aula aberta) recarrega no quadro certo.

@@ -41,6 +41,23 @@
 html[data-curso=EE] .links.c-EQ,html[data-curso=EQ] .links.c-EE{display:none}
 .so-lib .linhas>li.breve{display:none}
 @media(max-width:640px){.linhas>li{grid-template-columns:1fr}.links{grid-column:1}.links .ver{padding-left:0}}
+/* Seções de aprofundamento (etapa 2, 22/11/2026; mock em ../mock-layout/aprofundamento/, na cor ocre escolhida): o botão da seção com
+   contorno tracejado no ocre do selo (--selo, tema.css) e o livro; a nota "N seções em sala · M para estudar sozinho"; o selo curto
+   ao lado do título do tópico inteiro; no alto, as duas barras, "Em sala" e "Para estudar sozinho" (#global.camadas). */
+.links a.aula[data-camada="aprofundamento"]{background:transparent;color:var(--selo);border:1.5px dashed var(--selo);padding:2.5px 11px}
+.links a.aula[data-camada="aprofundamento"].com-vis{background:linear-gradient(color-mix(in srgb,var(--selo) 30%,transparent),color-mix(in srgb,var(--selo) 30%,transparent)) no-repeat 12px calc(100% - 3px)/calc((100% - 24px)*var(--f)) 3px,transparent}
+.links a.aula[data-camada="aprofundamento"] .ic-livro{width:15px;height:15px;margin-right:4px;vertical-align:-2px}
+.links .nota-camada{font-size:14px;color:var(--apoio)}
+.links .nota-camada .ic-livro{width:14px;height:14px;color:var(--selo);margin:0 3px 0 1px;vertical-align:-2px}
+.linhas .tit .selo-curto{font-size:13px;margin-left:10px;vertical-align:2px;padding:3px 9px 3px 7px;gap:4px}
+.linhas .tit .selo-curto .ic-livro{width:14px;height:14px}
+#global.camadas .barra-p{flex:none;width:200px}
+#global .progresso b.camada{color:var(--texto)}
+#global .progresso.aprof .barra-p{background-image:repeating-linear-gradient(90deg,color-mix(in srgb,var(--selo) 25%,transparent) 0 6px,transparent 6px 10px)}
+#global .progresso.aprof .barra-p i{background:var(--selo)}
+#global .progresso.aprof b.camada{color:var(--selo)}
+#global .progresso.aprof .ic-livro{width:15px;height:15px;color:var(--selo);margin-right:3px;vertical-align:-2px}
+@media(max-width:600px){#global.camadas .barra-p{width:120px}}
 /* Índice ao lado: aparece quando o cabeçalho sai de vista; em tela estreita, pelo botão "Índice". */
 }
 /* Índice dos tópicos (componente .rail, em componentes.css): à esquerda da lista, ou à direita em tela média; no celular, pelo botão. */

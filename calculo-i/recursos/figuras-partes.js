@@ -356,6 +356,13 @@ Object.assign(F,{
   'C32.r2':(function(){var f=function(x){return 0.4+1.5*Math.sin(Math.PI*x/3.6)+0.15*x};
     return graf(0.1,3.8,0.1,2.4,[{f:f,a:0.3,b:3.5}],{lin:[[0.3,f(0.3),3.5,f(3.5),'tr2']],pts:[[0.3,f(0.3)],[3.5,f(3.5)]]})})(),
   'C32.r3':'<circle cx="80" cy="44" r="28" class="cx"/><path d="M60.2 24.2L80 44L99.8 24.2" class="dash"/><path d="M60.2 24.2A28 28 0 0 1 99.8 24.2" class="cv"/>',
+  // Para estudar sozinho (22/11/2026): tópicos inteiros de aprofundamento, chave TNN (docs/planejamento-aprofundamento.md, etapa 5)
+  'T12.s2':graf(-0.3,3.6,-1.2,2,[{f:function(x){return x*x*x/10-1},a:0,b:3.5}],{lin:[[1,0,1,-0.9,'dash'],[3,0,3,1.7,'dash'],[2,0,2,-0.2,'tr2']],pts:[[1,-0.9],[3,1.7]],tx:[[1,0.35,'a'],[3,-0.4,'b'],[2,0.35,'m']]}),
+  'T18':graf(-0.5,9.5,-0.3,3.6,[{f:Math.sqrt,a:0},{f:function(x){return 2+(x-4)/4},a:0.5,b:9.5,c:'cv2'}],{lin:[[4,2,7,2,'dash'],[7,2,7,2.75,'tr2']],pts:[[4,2]],tx:[[5.5,1.55,'dx'],[7.7,2.35,'dy']]}),
+  'T31':'<path d="M16 40H146" class="ex"/><path d="M24 40C50 26 86 16 130 12M24 40C50 54 86 64 130 68" class="cv"/><ellipse cx="130" cy="40" rx="7" ry="28" class="cx"/><ellipse cx="80" cy="40" rx="6" ry="20.5" class="ar"/><ellipse cx="80" cy="40" rx="6" ry="20.5" class="tr2"/>',
+  'T32':(function(){var f=function(x){return 0.4+1.5*Math.sin(Math.PI*x/3.6)+0.15*x},xs=[0.3,1.1,1.9,2.7,3.5],l=[],p=[];
+    for(var i=0;i<xs.length;i++){p.push([xs[i],f(xs[i])]);if(i)l.push([xs[i-1],f(xs[i-1]),xs[i],f(xs[i]),'tr2'])}
+    return graf(0.1,3.8,0.1,2.4,[{f:f,a:0.3,b:3.5}],{lin:l,pts:p})})(),
   // C33: integrais improprias
   'C33.r1':graf(-0.2,4.4,-0.2,2.4,[{f:function(x){return 1/Math.sqrt(x)},a:0.15,c:'fino'},{f:function(x){return 1/x},a:0.38},{f:function(x){return 1/(x*x)},a:0.6,c:'cv2'}],{lin:[[1,-0.2,1,2.4,'dash']]}),
   'C33.r2':graf(-0.3,9.2,-0.15,1.3,[{f:function(x){return 1-1/x},a:1,b:9}],{lin:[[-0.3,1,9.2,1,'dash']],pts:[[1,0]]}),

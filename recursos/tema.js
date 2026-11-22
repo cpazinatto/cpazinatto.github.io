@@ -713,6 +713,10 @@
   // Abas: os quadros desta aula (com filtros), miniaturas (montadas só quando a aba abre) e todas as aulas (do <template>
   // que o construir.py põe na página). A linha de progresso, no alto, tem um trecho por seção e aparece com o menu.
   var gav=null,vistos={},prog=null,rolar=null,aba='aula',filtro='tudo',alca=null,ta=0,infos=[];
+  // Seções de aprofundamento (etapa 2, 22/11/2026): a camada de cada seção, do data-camada do divisor (nunca do texto "Seção N de M").
+  var camSec={},LIVRO='<svg class="ic-livro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3 5v13c4-.5 7 0 9 1.5 2-1.5 5-2 9-1.5V5c-4-.5-7 0-9 1.5z"/><path d="M12 6.5v13"/></svg>';
+  if(!lista)qs.forEach(function(q,k){if(q.classList.contains('divisor')&&q.dataset.camada)camSec[secDe[k]]=q.dataset.camada});
+  var SELO_CURTO='<span class="selo-curto" title="Para estudar sozinho, fora da prova">'+LIVRO+'aprofundamento</span>';
   var ROT={te:'Teorema',ex:'Exemplo',sv:'Sua vez',ga:'Gancho',at:'Atenção',re:'Retomada',tit:'',div:'',gab:'Gabarito'};
   function htmlDe(el,tira){if(!el)return '';var c=el.cloneNode(true);[].forEach.call(c.querySelectorAll(tira||'.rot,.base-etq'),function(x){x.remove()});
     [].forEach.call(c.querySelectorAll('[id]'),function(x){x.removeAttribute('id')});return c.innerHTML.trim()}
@@ -730,7 +734,7 @@
     if(!gav)return;gav.querySelector('.filtros').style.display=aba==='aula'?'':'none';
     if(aba==='todas'){var tp=document.getElementById('todas-aulas');rolar.innerHTML='<div class="aulas-l">'+(tp?tp.innerHTML:'')+'</div>';
       var at=rolar.querySelector('.item-a.atual a');if(at)at.addEventListener('click',function(e){e.preventDefault();fecharIndice()});return}
-    if(aba==='minis'){var h='<div class="minis">';qs.forEach(function(q,k){h+='<button class="mini" data-k="'+k+'" aria-label="'+(q.dataset.n?'Quadro '+q.dataset.n:'Seção '+secDe[k])+'"><span class="rotn">'+(q.dataset.n||'Seção '+secDe[k])+'</span></button>'});
+    if(aba==='minis'){var h='<div class="minis">';qs.forEach(function(q,k){h+='<button class="mini'+(camSec[secDe[k]]?' aprof':'')+'" data-k="'+k+'" aria-label="'+(q.dataset.n?'Quadro '+q.dataset.n:'Seção '+secDe[k])+'"><span class="rotn">'+(q.dataset.n||'Seção '+secDe[k])+'</span></button>'});
       rolar.innerHTML=h+'</div>';
       [].forEach.call(rolar.querySelectorAll('.mini'),function(m){var c=qs[+m.dataset.k].cloneNode(true);c.classList.add('ativo');c.removeAttribute('data-n');
         c.setAttribute('aria-hidden','true');c.setAttribute('inert','');[].forEach.call(c.querySelectorAll('.oculto'),function(x){x.classList.remove('oculto')});
@@ -738,7 +742,7 @@
       marcarIndice();return}
     var h='',sec=-1;
     qs.forEach(function(q,k){var x=infos[k];
-      if(secDe[k]!==sec){sec=secDe[k];h+='<div class="secao-i">'+(nomeSec[sec]&&/^Seção/.test(((qs[k].querySelector('.ses')||{}).textContent||''))?'Seção '+sec+' · '+nomeSec[sec]:(nomeSec[sec]||''))+'</div>'}
+      if(secDe[k]!==sec){sec=secDe[k];h+='<div class="secao-i'+(camSec[sec]?' aprof':'')+'">'+(nomeSec[sec]&&/^Seção/.test(((qs[k].querySelector('.ses')||{}).textContent||''))?'Seção '+sec+' · '+nomeSec[sec]:(nomeSec[sec]||''))+(camSec[sec]?SELO_CURTO:'')+'</div>'}
       var sub=x.tipo==='gab'||x.tipo==='div';
       if(filtro==='tit'&&['tit','te','ex','ga'].indexOf(x.tipo)<0)return;
       if(filtro!=='tudo'&&filtro!=='tit'&&x.tipo!==filtro)return;
@@ -774,11 +778,18 @@
     var f=i>ks[ks.length-1]?1:i<ks[0]?0:(i-ks[0]+1)/ks.length;t.firstChild.style.width=(f*100)+'%'})}
   // Quadro moderno (etapa 5, 12/11/2026): a seção no pé do quadro, ao lado do tópico (tema.css, .pe>span[data-sec]).
   if(!lista)qs.forEach(function(q,k){var h=q.querySelector('.pe>span');if(h&&secReal[secDe[k]])h.dataset.sec='Seção '+secDe[k]+': '+nomeSec[secDe[k]]});
+  // Seção de aprofundamento (21/11/2026, docs/planejamento-aprofundamento.md): nos quadros .aprof, o nome da seção num span com o
+  // livro antes (o ::after do data-sec fica sem conteúdo no tema.css), para o ícone e o aria-label "aprofundamento". A palavra
+  // "Aprofundamento" (.pe-aprof) só aparece no papel (impressao.css, etapa 3, 22/11/2026).
+  if(!lista)qs.forEach(function(q){var h=q.classList.contains('aprof')&&q.querySelector('.pe>span[data-sec]');if(!h)return;
+    var s=document.createElement('span');s.className='pe-sec';
+    s.innerHTML=' · <svg class="ic-livro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="aprofundamento"><path d="M12 6.5C10 5 7 4.5 3 5v13c4-.5 7 0 9 1.5 2-1.5 5-2 9-1.5V5c-4-.5-7 0-9 1.5z"/><path d="M12 6.5v13"/></svg><span class="pe-aprof">Aprofundamento · </span>';
+    s.appendChild(document.createTextNode(h.dataset.sec));h.appendChild(s)});
   if(!lista&&qs.length){
     infos=qs.map(infoDe);
     var por={};secDe.forEach(function(s){por[s]=(por[s]||0)+1});
     prog=document.createElement('div');prog.className='prog';prog.setAttribute('aria-hidden','true');
-    prog.innerHTML=Object.keys(por).map(function(s){return '<div class="tr" data-s="'+s+'" style="flex:'+por[s]+'"><i></i><span>'+(nomeSec[s]?'Seção '+s+': '+nomeSec[s]:'')+'</span></div>'}).join('');
+    prog.innerHTML=Object.keys(por).map(function(s){return '<div class="tr'+(camSec[s]?' aprof':'')+'" data-s="'+s+'" style="flex:'+por[s]+'"><i></i><span>'+(nomeSec[s]?'Seção '+s+': '+nomeSec[s]:'')+'</span></div>'}).join('');
     document.body.appendChild(prog);
     var te=document.querySelector('.divisor .tit'),tit=document.title;
     if(te){te=te.cloneNode(true);[].forEach.call(te.querySelectorAll('br'),function(b){b.replaceWith(' ')});tit=te.textContent.replace(/\s+/g,' ').trim()}
@@ -905,7 +916,21 @@
       bt=document.createElement('button');bt.type='button';bt.className='rq-tudo';var ln=document.createElement('div');ln.className='rq-linha';ln.appendChild(bt);qsP[0].before(ln);
       function botao(){var todas=qsP.every(function(a){return a.classList.contains('rq-fechada')});bt.textContent=todas?'Abrir todas':'Recolher todas';bt.dataset.abrir=todas?'1':''}
       bt.onclick=function(){var abrir=!!bt.dataset.abrir;qsP.forEach(function(a){recolher(a,!abrir,true)});recolher(qsP[0],!abrir)};botao();
-      function abrirPara(id){var a=id&&document.getElementById(id);if(a&&a.classList.contains('rq-fechada'))recolher(a,false)}
+      // "Só o que cai em prova" (etapa 4 do aprofundamento, 22/11/2026; docs/planejamento-aprofundamento.md, proposta 7; mock em
+      // ../mock-layout/aprofundamento/listas/): ao lado de "Recolher todas", só na lista com questão de aprofundamento (.aprof-q,
+      // posta pela montagem a partir do secao= e da camada da seção). Esconde as de aprofundamento (html.so-nucleo-on), na página, no
+      // índice e no "Ir para"; guardado por disciplina (<disc>-so-nucleo), vale para todas as listas dela. "N de M feitas" segue
+      // somando todas. Ir a uma questão escondida (pelo endereço #q7) desliga o filtro.
+      var aprofs=qsP.filter(function(a){return a.classList.contains('aprof-q')}),chaveSN=Memoria.chave('so-nucleo'),bn=null,av=null;
+      function soNucleo(v,quieto){raiz.classList.toggle('so-nucleo-on',v);if(!bn)return;bn.setAttribute('aria-pressed',v);
+        av.textContent=v?(aprofs.length===1?'1 questão de aprofundamento escondida':aprofs.length+' questões de aprofundamento escondidas'):'';
+        if(!quieto)Memoria.gravar(chaveSN,v?'1':null)}
+      if(aprofs.length){bn=document.createElement('button');bn.type='button';bn.className='so-nucleo';bn.textContent='Só o que cai em prova';
+        bn.title='Esconde as questões de aprofundamento, para estudar sozinho, fora da prova';
+        av=document.createElement('span');av.className='so-nucleo-aviso';av.setAttribute('aria-live','polite');ln.insertBefore(av,bt);ln.appendChild(bn);
+        bn.onclick=function(){soNucleo(!raiz.classList.contains('so-nucleo-on'))};soNucleo(Memoria.ler(chaveSN)==='1',true)}
+      function abrirPara(id){var a=id&&document.getElementById(id);if(a&&a.classList.contains('aprof-q')&&raiz.classList.contains('so-nucleo-on'))soNucleo(false);
+        if(a&&a.classList.contains('rq-fechada'))recolher(a,false)}
       document.addEventListener('click',function(e){var x=e.target.closest('a[href^="#"]');if(x)abrirPara(x.getAttribute('href').slice(1))},true);
       addEventListener('hashchange',function(){abrirPara(location.hash.slice(1))});abrirPara(location.hash.slice(1))})();
     // "Você veio do quadro 7 da T14": ?de=T14-EE.7, posto pelos links dos quadros da aula.
@@ -918,7 +943,10 @@
     var bi=document.createElement('button');bi.type='button';bi.className='b-rail';bi.setAttribute('aria-expanded','false');
     bi.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Índice';
     document.body.appendChild(ip);document.body.appendChild(bi);
-    function itemQ(q,f){var a=document.createElement('a');a.className='q'+(f[q.id]?' ok':'');a.href='#'+q.id;a.dataset.id=q.id;a.textContent=tituloQ(q.querySelector('h2'));return a}
+    // Questão de aprofundamento (etapa 4, 22/11/2026): no índice, o livro do selo depois do nome, e o item com data-camada.
+    function itemQ(q,f){var a=document.createElement('a');a.className='q'+(f[q.id]?' ok':'');a.href='#'+q.id;a.dataset.id=q.id;a.textContent=tituloQ(q.querySelector('h2'));
+      var lv=q.classList.contains('aprof-q')&&q.querySelector('h2 .selo-curto .ic-livro');
+      if(lv){a.dataset.camada='aprofundamento';a.title='Para estudar sozinho, fora da prova';a.appendChild(lv.cloneNode(true))}return a}
     function montarIP(){var f=lerFeitas(),n=qsP.filter(function(q){return f[q.id]}).length;ip.innerHTML='<h2>Nesta página</h2>';
       if(qsP.length){var pl=document.createElement('div');pl.className='prog-l';pl.innerHTML='<span></span><div class="barra-p"><i></i></div>';
         pl.firstChild.textContent=n+' de '+qsP.length+(item==='questão'?' feitas':' feitos');pl.querySelector('i').style.width=(100*n/qsP.length)+'%';ip.appendChild(pl)}

@@ -32,7 +32,7 @@
   html.imprimindo,html.imprimindo body{height:auto!important;overflow:visible!important;background:#fff!important}
   html.imprimindo *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   html.imprimindo[data-imp-cor="cinza"]{filter:grayscale(1)}
-  html.imprimindo :is(header.topo,.rail-pag,.b-rail,nav.barra,.ctl,.fim-q,.ip-veu,.veu,.veu-i,.busca-sobre,.indice,.alca,.prog,.progresso,.rq-seta,.rq-tudo,.feita){display:none!important}
+  html.imprimindo :is(header.topo,.rail-pag,.b-rail,nav.barra,.ctl,.fim-q,.ip-veu,.veu,.veu-i,.busca-sobre,.indice,.alca,.prog,.progresso,.rq-seta,.rq-tudo,.feita,.so-nucleo,.so-nucleo-aviso){display:none!important}
   /* Na impressão o Chrome reserva outra folga depois do radical, que o tema.js não mede (regra de antes da decisão 21). */
   html.imprimindo :is(msqrt,mroot){margin-inline-end:-.75em!important}
 
@@ -90,6 +90,12 @@
   html.imp-aula #imp-folhas [data-ate]{visibility:hidden!important}
   html.imp-aula #imp-folhas :is(.controles input,.controles .limite){display:none}
   html.imp-aula .imp-anima{font-size:8pt;color:#555}
+  /* Seção de aprofundamento (etapa 3, 22/11/2026): no papel, que sai claro e muitas vezes em preto e branco, o pé diz a palavra
+     depois do livro ("Aprofundamento · Seção 2: ..."); a pílula da abertura já é texto. Na tela, só o traço e o livro (tema.css). */
+  html.imprimindo .quadro.aprof .pe .pe-aprof{display:inline}
+  /* Lista (etapa 4, 22/11/2026): o que sai no papel é a opção "Questões" do painel, não o filtro "Só o que cai em prova" da tela; o selo
+     da questão de aprofundamento já é texto ("aprofundamento", ao lado do nível). */
+  html.imprimindo.so-nucleo-on .questao.aprof-q:not(.imp-fora){display:block}
   html.imp-aula .imp-linhas{background:repeating-linear-gradient(#fff 0 8mm,#ccc 8mm 8.25mm);min-height:100%}
   html.imp-aula .imp-f[data-linhas] .imp-c .imp-anima{grid-column:1}
 }

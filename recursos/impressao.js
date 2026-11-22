@@ -37,19 +37,23 @@
       {nome:'o',rotulo:'O que sai',ops:[['enun','Só os enunciados'],['gab','Enunciados e gabarito curto'],['res','Com a resolução passo a passo']]},
       {nome:'q',rotulo:'Questões',ops:[['todas','Todas'],['naofeitas','Só as que ainda não marquei como feitas']]},
       {nome:'esp',rotulo:'Espaço para responder',ops:[['0','Nenhum'],['1','Algumas linhas'],['2','Meia folha']]},CORES],
+    // "Só as questões do núcleo" (etapa 4 do aprofundamento, 22/11/2026, proposta 6): sem as de aprofundamento (.aprof-q, posta pela
+    // montagem a partir do secao= da questão); a opção só aparece na lista que as tem (abaixo).
     questoes:function(op){var f=Memoria.lerJSON(chaveFeitas(),{});
-      return todos('main .questao').filter(function(q){return op.q!=='naofeitas'||!f[q.id]})},
+      return todos('main .questao').filter(function(q){return op.q==='nucleo'?!q.classList.contains('aprof-q'):op.q!=='naofeitas'||!f[q.id]})},
     estimar:function(op){var qs=this.questoes(op),fator=fatorLargura(),ab=abrirDetalhes('details.gab');
+      // Com "Só o que cai em prova" ligado na tela, as de aprofundamento estão escondidas (altura 0): medidas à vista.
+      var sn=raiz.classList.contains('so-nucleo-on');raiz.classList.remove('so-nucleo-on');
       var blocos=qs.map(function(q){var h=0;todos(':scope>h2,:scope>.enun',q).forEach(function(x){h+=x.offsetHeight});
         if(op.o!=='enun'){var g=q.querySelector('.gab-corpo');if(g)h+=g.offsetHeight+8}
         h=h*fator+7*MM;
         if(op.o==='res')h+=Math.ceil(q.querySelectorAll('.resol .quadro').length/2)*(49.5+4)*MM;
         h+={'0':0,'1':25,'2':130}[op.esp]*MM;return {h:h,rot:q.id.replace('q','Q')}});
-      voltarDetalhes(ab);
+      voltarDetalhes(ab);if(sn)raiz.classList.add('so-nucleo-on');
       var folhas=distribuir(blocos,30),ROT={enun:'só enunciados',gab:'com gabarito curto',res:'com a resolução passo a passo'};
       return {resumo:'<b>'+plural(qs.length,'questão','questões')+'</b> · '+ROT[op.o]+' · cerca de <b>'+plural(folhas.length,'folha','folhas')+'</b>',folhas:folhas}},
     preparar:function(op){var f=Memoria.lerJSON(chaveFeitas(),{});
-      todos('main .questao').forEach(function(q){q.classList.toggle('imp-fora',op.q==='naofeitas'&&!!f[q.id])});
+      todos('main .questao').forEach(function(q){q.classList.toggle('imp-fora',op.q==='naofeitas'&&!!f[q.id]||op.q==='nucleo'&&q.classList.contains('aprof-q'))});
       this.abertos=op.o!=='enun'?abrirDetalhes('main details.gab'):[];
       // Questões recolhidas na tela saem inteiras no papel.
       this.recolhidas=todos('main .questao.rq-fechada');this.recolhidas.forEach(function(q){q.classList.remove('rq-fechada')})},
@@ -75,6 +79,9 @@
       return {q:q,n:q.dataset.n||'',sec:s,gab:q.classList.contains('gabarito')}})},
     escolher:function(op){var l=this.quadros(),at=l.filter(function(x){return x.q.classList.contains('ativo')})[0]||l[0],sel;
       if(op.o==='sec')sel=l.filter(function(x){return x.sec===at.sec});
+      // "Só o que é dado em sala" (etapa 3 do aprofundamento, 22/11/2026): a aula sem as seções de aprofundamento (os quadros com a
+      // classe aprof, que a montagem põe em todos os da seção, gabaritos junto, e a abertura com data-camada).
+      else if(op.o==='sala')sel=l.filter(function(x){return !x.q.classList.contains('aprof')&&!x.q.hasAttribute('data-camada')});
       else if(op.o==='faixa'){var a=Math.min(+op.de||1,+op.ate||1),b=Math.max(+op.de||1,+op.ate||1);
         sel=l.filter(function(x,k){var n=x.n?+x.n:(l.slice(k).filter(function(y){return y.n})[0]||{n:0}).n;return +n>=a&&+n<=b})}
       else sel=l;
@@ -84,7 +91,9 @@
     estimar:function(op){var f=this.folhas(op),n=0,g=0;f.forEach(function(x){n+=x.qs.length;if(x.gab)g+=x.qs.length});
       var a=f.length?f[0].qs[0]:null,rot=function(x){return x.n?String(x.n):'abertura'};
       var nums=[].concat.apply([],f.map(function(x){return x.qs})).filter(function(x){return x.n}).map(function(x){return +x.n});
-      var faixa=nums.length?' ('+Math.min.apply(null,nums)+' a '+Math.max.apply(null,nums)+')':'';
+      // As faixas dos números (22/11/2026): em "Só o que é dado em sala" a aula tem buracos ("1 a 46, 93 a 167"); com mais de três, só a primeira e a última.
+      var fs=[];nums.slice().sort(function(a,b){return a-b}).forEach(function(n){var u=fs[fs.length-1];if(u&&n<=u[1]+1)u[1]=Math.max(u[1],n);else fs.push([n,n])});
+      var faixa=!nums.length?'':' ('+(fs.length<=3?fs:[[fs[0][0],fs[fs.length-1][1]]]).map(function(f){return f[0]+' a '+f[1]}).join(', ')+')';
       return {resumo:'<b>'+plural(n,'quadro','quadros')+'</b>'+faixa+' · '+(op.por==='3a'?'3 por folha, com linhas':op.por+' por folha')+' · <b>'+
           plural(f.length,'folha','folhas')+'</b>'+(g?' (as últimas com os '+plural(g,'gabarito','gabaritos')+')':''),
         folhas:f.map(function(x){return x.qs.map(rot)})}},
@@ -151,6 +160,13 @@
 
   // Resolução liberada ou não (publicacao.txt, semresolucao, 13/11/2026): sem os quadros da resolução na página, a opção de
   // imprimi-la não aparece. No computador do professor (saida/), a página tem tudo, e as duas versões saem.
+  // A opção "Só o que é dado em sala" só na aula com alguma seção de aprofundamento (data-camada no divisor, 22/11/2026); o padrão
+  // continua "Esta seção". Na aula sem aprofundamento (o Cálculo), o painel não muda.
+  var aprofs=todos('main.aula > .divisor[data-camada]').length;
+  if(tipo==='aula'&&aprofs)AULA.campos[0].ops.splice(1,0,['sala','Só o que é dado em sala (sem '+(aprofs===1?'a seção':'as '+aprofs+' seções')+' para estudar sozinho)']);
+  // Lista com questão de aprofundamento (etapa 4, 22/11/2026): a opção "Só as questões do núcleo"; o padrão continua "Todas".
+  var aprofsQ=tipo==='lista'?todos('main .questao.aprof-q').length:0;
+  if(aprofsQ)LISTA.campos[1].ops.push(['nucleo','Só as questões do núcleo (sem '+(aprofsQ===1?'a questão':'as '+aprofsQ+' questões')+' de aprofundamento)']);
   if(!document.querySelector('main .questao .resol .quadro'))LISTA.campos[0].ops=LISTA.campos[0].ops.filter(function(o){return o[0]!=='res'});
   if(document.querySelector('#exercicios .resol .quadro')){
     MODULO.campos.splice(2,0,{nome:'res',rotulo:'Resolução passo a passo dos '+(comp?'desafios':'exercícios'),ops:[['sem','Não, só o gabarito'],['com','Sim, em quadros, dois por linha']]});

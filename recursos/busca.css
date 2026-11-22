@@ -43,6 +43,8 @@ body.busca-aberta .busca-sobre{display:flex}
    exemplo, sua vez e exercício, atenção, gancho); o nível da questão só contornado. */
 .b-tags{display:flex;flex-wrap:wrap;gap:4px 6px;margin-bottom:4px}
 .b-item .b-tags{display:flex;margin:0 0 4px;font-size:13px;color:inherit}
+/* O selo curto ao lado do título do resultado de aprofundamento (etapa 3 do aprofundamento, 22/11/2026; .selo-curto do tema.css). */
+.b-item b .selo-curto{display:inline-flex;font-size:13px;margin:0 0 0 8px;color:var(--selo);vertical-align:1px}
 .b-tag{--k:var(--neutro);font-style:normal;font-size:13px;font-weight:700;line-height:1.2;padding:2px 8px;border-radius:999px;
   color:var(--k);background:color-mix(in srgb,var(--k) 14%,transparent);border:1px solid color-mix(in srgb,var(--k) 45%,transparent)}
 .b-tag.b-tipo{--k:var(--apoio);background:var(--apoio);color:var(--fundo);border-color:var(--apoio)}
