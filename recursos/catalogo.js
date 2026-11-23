@@ -64,3 +64,16 @@
   function filtrar(){ document.body.classList.toggle('rc-filtrando', !!f.value.trim()); }
   if (f) { f.addEventListener('input', filtrar); filtrar(); }
 })();
+// Cartão de "Para estudar sozinho" abre a aula ao clicar em qualquer parte (23/11/2026, professor: "não deveria ser capaz de abrir
+// aqui como link?"). O cartão não pode ser um <a> inteiro, porque tem dentro os links "Lista" e os botões de curso: o clique fora
+// deles segue o primeiro botão de curso à vista (o curso guardado; sem curso, o primeiro). Com Cmd ou Ctrl, abre em outra aba.
+(function(){
+  [].forEach.call(document.querySelectorAll('.mod.aprof:not(.breve)'),function(c){
+    c.addEventListener('click',function(e){
+      if(e.target.closest('a,button'))return;
+      var b=[].filter.call(c.querySelectorAll('.bts a'),function(a){return a.offsetParent!==null})[0];
+      if(!b)return;
+      if(e.metaKey||e.ctrlKey)window.open(b.href,'_blank');else location.href=b.href;
+    });
+  });
+})();

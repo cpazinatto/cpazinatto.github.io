@@ -3,7 +3,7 @@
 // compartilham o mesmo escopo (a função aberta em 01 fecha em 08) e não funcionam sozinhas.
 // Navegação das aulas. Teclas: setas, espaço, PageUp/PageDown (passador), Home, End.
 // M troca claro/escuro, T as cores, L a letra, A o tamanho da letra (tema/preferencias.js), F tela cheia, V visão geral.
-// Na aula, I abre o índice retrátil e Backspace volta a "Aulas e exercícios"; nas listas e nos módulos, I volta ao índice.
+// Na aula, I abre o índice retrátil e Backspace ou Esc voltam a "Aulas e exercícios"; nas listas e nos módulos, I volta ao índice.
 // Endereço da aula (12/11/2026): #7 é o quadro de rodapé 7; #s2 é a abertura da Seção 2.
 // Parâmetros: ?modo=escuro, ?cores=, ?letra=, ?tamanho=, ?conferir.
 // Nas animações: + e - mudam o valor (segurar repete), R volta ao valor do passo, 1 a 9 escolhem o controle quando há mais de um.
@@ -1100,6 +1100,12 @@
   document.addEventListener('touchend',fimToque,{passive:true});
   document.addEventListener('touchcancel',fimToque,{passive:true});
 
+  // Esc fecha a aula como fecha a lista e o módulo (23/11/2026, professor: "esc fecha aqui, não nas aulas"; "deveria fechar em
+  // todos"). Antes, vê na fase de captura se algum painel estava aberto: o Esc que fecha a Aparência, o "Ir para", a impressão
+  // ou o uso offline não fecha também a aula (os painéis fecham nos próprios ouvintes, antes deste).
+  var escDePainel=false;
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')escDePainel=irAberto()||
+    !!document.querySelector('#aparencia:not([hidden]),#offp:not([hidden]),.imp-veu:not([hidden])')},true);
   document.addEventListener('keydown',function(e){
     if(e.metaKey||e.ctrlKey||e.altKey)return;
     // Com o painel "Ir para" aberto, as teclas são dele (07b-ir-para.js).
@@ -1113,7 +1119,7 @@
       var ab=gav.classList.contains('ver');
       if(k==='i'||k==='I'){e.preventDefault();alternarIndice();return}
       if(k==='Escape'&&ab){fecharIndice();return}
-      if(k==='Backspace'&&!ab){e.preventDefault();location.href=sair;return}
+      if((k==='Backspace'||(k==='Escape'&&!escDePainel))&&!ab){e.preventDefault();location.href=sair;return}
       if(ab&&gav.contains(document.activeElement)&&(k==='Enter'||k===' '))return;
       if(ab&&!document.body.classList.contains('fixo')&&(k==='ArrowUp'||k==='ArrowDown')){e.preventDefault();
         var bs=[].slice.call(gav.querySelectorAll('.rolar button,.rolar a')),p=bs.indexOf(document.activeElement),

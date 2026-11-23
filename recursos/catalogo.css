@@ -74,3 +74,7 @@ html:not([data-curso=EQ]) .mod.aprof .conta.c-EQ,html[data-curso=EQ] .mod.aprof 
 html[data-curso=EE] .mod.aprof .bts .c-EQ,html[data-curso=EQ] .mod.aprof .bts .c-EE{display:none}
 @media (pointer:coarse){.mod.aprof .bts a{padding:7px 14px}}
 }
+/* O cartão inteiro abre a aula (catalogo.js), com o mesmo realce dos cartões que são link (23/11/2026). */
+.mod.aprof:not(.breve){cursor:pointer}
+.mod.aprof:not(.breve):hover{transform:translateY(-2px);border-color:var(--k)}
+@media (prefers-reduced-motion:reduce){.mod.aprof:not(.breve):hover{transform:none}}

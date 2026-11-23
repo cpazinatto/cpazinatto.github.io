@@ -408,9 +408,13 @@ mrow.barra-dz{border-top:.065em solid currentColor;padding-top:.1em}
 .tradutor .cartao-sb{border:.22cqw solid var(--grade);border-radius:1.6cqw;padding:1cqw 1.2cqw;text-align:center}
 .tradutor .cartao-sb p{margin:.3cqw 0 0;font-size:.88em}
 .tradutor .cartao-sb p.sb{font-size:1.25em;margin-top:.5cqw}
-/* Lacuna para completar, nos Sua vez (23/11/2026, professor: "deixar o espaço de preenchimento mais óbvio") */
-.lacuna{display:inline-block;width:2.4em;height:1.25em;margin:0 .3em;vertical-align:-.25em;border:.22cqw dashed var(--suavez);
-  border-radius:.35em;background:color-mix(in srgb,var(--suavez) 12%,transparent)}
+/* Lacuna para completar, nos Sua vez (23/11/2026, professor: "deixar o espaço de preenchimento mais óbvio"); folga em cima e
+   embaixo para a fração não encostar na borda (professor: "apertado") */
+.lacuna{display:inline-block;min-width:2.4em;min-height:1.25em;box-sizing:border-box;padding:.15em .4em;margin:0 .3em;text-align:center;
+  vertical-align:baseline;border:.22cqw dashed var(--suavez);border-radius:.35em;background:color-mix(in srgb,var(--suavez) 12%,transparent)}
+/* Lacuna vazia (para o aluno escrever) fica um pouco abaixo da linha; com a resposta dentro (23/11/2026, professor: "o espaço de
+   resposta não deveria ... colocar a resposta dentro dele?"), a resposta escondida já dá o tamanho, e ela aparece no lugar. */
+.lacuna:empty{vertical-align:-.25em}
 /* A bolinha na linha de base da primeira linha do item (23/11/2026, professor: "numeros e bolinhas não alinhadas com o texto"):
    presa ao alto, ela subia quando a linha tinha fichas ou fórmula alta. */
 .pistas .pista{display:flex;gap:1.2cqw;align-items:baseline;margin:.6cqw 0}

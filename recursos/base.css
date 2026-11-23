@@ -33,6 +33,11 @@
 .aviso-comp{margin:14px 0 4px;padding:10px 14px;border-left:6px solid var(--define);border-radius:6px;background:color-mix(in srgb,var(--define) 8%,var(--fundo))}
 .selo{display:inline-block;font:700 14px/1 var(--f-texto);color:var(--k);border:2px solid var(--k);border-radius:999px;padding:4px 10px;white-space:nowrap}
 .selo.d{--k:var(--define)}.selo.i{--k:var(--suavez)}.selo.a{--k:var(--apoio)}
-.quadro .selo{font-size:1.15cqw;border-width:.15cqw;padding:.35cqw .8cqw;vertical-align:middle;margin-left:.6cqw}
+/* Pílula com 62% da letra (23/11/2026, professor: "Média (62%)"; antes 1,15 cqw, quase ilegível). Dentro de um bloco (o teorema),
+   ela vai para a borda de cima, à direita, espelhando a etiqueta "Teorema N": maior, no fim da linha ela descia sozinha para uma
+   linha nova e o quadro passava da altura (nove quadros do Cálculo e da ED). */
+.quadro .selo{font-size:.62em;border-width:.2cqw;padding:.3em .7em;vertical-align:.12em;margin-left:.6cqw}
+.quadro .bloco{position:relative}
+.quadro .bloco .selo{position:absolute;top:0;right:2cqw;transform:translateY(-50%);margin:0;background:var(--fundo);font-size:1.55cqw}
 @media(max-width:620px){.teste{grid-template-columns:1fr}.erro dl{grid-template-columns:1fr;gap:2px}.erro dd{margin-bottom:8px}}
 }
