@@ -461,9 +461,38 @@
       if(e[1].indexOf('semi')===0){if(pe)s+='<path class="cheia '+o.cls+'" d="M'+(q[0]-9.5).toFixed(1)+' '+cy+'A9.5 9.5 0 0 '+(e[1]==='semi+'?0:1)+' '+(q[0]+9.5).toFixed(1)+' '+cy+'Z"/>';
         else s+='<path class="cheia '+o.cls+'" d="M'+cx+' '+(q[1]-9.5).toFixed(1)+'A9.5 9.5 0 0 '+(e[1]==='semi+'?0:1)+' '+cx+' '+(q[1]+9.5).toFixed(1)+'Z"/>'}});
     return s}
-  var animacoes=[].map.call(document.querySelectorAll('svg[data-anima],.cena[data-anima]'),function(svg){
+  // Reta com zoom (22/11/2026): o mesmo desenho de zoom_desenho() em tema/montagem/35-conjuntos.py. Mudar um pede mudar o outro.
+  function desenharZoom(o,z){var W=900,Y0=92,v=o.v,w0=o.x1-o.x0,m0=(o.x0+o.x1)/2,c=m0+(o.c-m0)*Math.min(1,z),w=w0/Math.pow(v,z),a=c-w/2,b=c+w/2,
+    X=function(x){return 40+(x-a)/(b-a)*(W-80)},k=Math.floor(z+1e-9),ps=o.dx/Math.pow(v,k),s='<line class="ax" x1="20" y1="'+Y0+'" x2="'+(W-20)+'" y2="'+Y0+'"/>',
+    i0=Math.ceil(a/ps-1e-9),i1=Math.floor(b/ps+1e-9),i,x;
+    for(i=i0;i<=i1;i++){x=i*ps;var gr=Math.abs(x/(ps*v)-Math.round(x/(ps*v)))<1e-6;
+      s+='<line class="tq'+(gr?' gr':'')+'" x1="'+X(x).toFixed(1)+'" x2="'+X(x).toFixed(1)+'" y1="'+(Y0-(gr?14:9))+'" y2="'+(Y0+(gr?14:9))+'"/>';
+      if(i1-i0<=14||gr)s+='<text class="tk" x="'+X(x).toFixed(1)+'" y="'+(Y0+44)+'" text-anchor="middle">'+x.toFixed(k).replace('-','−').replace('.',',')+'</text>'}
+    var f=z-k;if(f>.25){var fi=ps/v,op=Math.min(1,(f-.25)*2);for(i=Math.ceil(a/fi);i<=Math.floor(b/fi);i++)
+      s+='<line class="tq fino" opacity="'+op.toFixed(2)+'" x1="'+X(i*fi).toFixed(1)+'" x2="'+X(i*fi).toFixed(1)+'" y1="'+(Y0-5)+'" y2="'+(Y0+5)+'"/>'}
+    o.pts.forEach(function(q){if(q[0]>=a&&q[0]<=b)s+='<circle class="'+(q[1]==='cheia'?'cheia':'aberta')+' a" cx="'+X(q[0]).toFixed(1)+'" cy="'+Y0+'" r="9"/>'});
+    o.rot.forEach(function(q){if(q[0]>=a&&q[0]<=b){var t=document.createElement('i');t.textContent=q[1];s+='<text class="rz" x="'+X(q[0]).toFixed(1)+'" y="'+(Y0-26)+'" text-anchor="middle">'+t.innerHTML+'</text>'}});
+    return s}
+  // Grade, eixos e números da janela com zoom: grade e números a cada passo dividido por vezes a cada inteiro do zoom; números na borda.
+  function eixosZoom(d,j,z){var zp=d.zoomp,k=Math.floor(z+1e-9),f=Math.pow(zp.v,k),gx=zp.gx/f,gy=zp.gy/f,nx=zp.dx/f,ny=zp.dy/f,
+    sx=d.ux*(d.x1-d.x0)/(j[1]-j[0]),sy=d.uy*(d.y1-d.y0)/(j[3]-j[2]),X=function(v){return d.esq+(v-j[0])*sx},Y=function(v){return d.cima+(j[3]-v)*sy},
+    L=d.esq,R=d.esq+(d.x1-d.x0)*d.ux,T=d.cima,B=d.cima+(d.y1-d.y0)*d.uy,s='',v,casas=Math.max(0,Math.ceil(-Math.log10(Math.min(nx,ny))-1e-9));
+    var esc=function(v){return (+v.toFixed(casas)).toString().replace('-','−').replace('.',',')};
+    for(v=Math.ceil(j[0]/gx-1e-9)*gx;v<=j[1]+1e-9;v+=gx)s+='<line class="g" x1="'+X(v).toFixed(1)+'" x2="'+X(v).toFixed(1)+'" y1="'+T+'" y2="'+B+'"/>';
+    for(v=Math.ceil(j[2]/gy-1e-9)*gy;v<=j[3]+1e-9;v+=gy)s+='<line class="g" x1="'+L+'" x2="'+R+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'"/>';
+    if(j[2]<=0&&0<=j[3])s+='<line class="ax" x1="'+L+'" x2="'+R+'" y1="'+Y(0).toFixed(1)+'" y2="'+Y(0).toFixed(1)+'"/>';
+    if(j[0]<=0&&0<=j[1])s+='<line class="ax" x1="'+X(0).toFixed(1)+'" x2="'+X(0).toFixed(1)+'" y1="'+T+'" y2="'+B+'"/>';
+    for(v=Math.ceil(j[0]/nx-1e-9)*nx;v<=j[1]+1e-9;v+=nx)if(X(v)>L+20)s+='<text class="tk" x="'+X(v).toFixed(1)+'" y="'+(B+28)+'" text-anchor="middle">'+esc(v)+'</text>';
+    for(v=Math.ceil(j[2]/ny-1e-9)*ny;v<=j[3]+1e-9;v+=ny)if(Y(v)<B-12)s+='<text class="tk" x="'+(L-9)+'" y="'+(Y(v)+8).toFixed(1)+'" text-anchor="end">'+esc(v)+'</text>';
+    s+='<rect class="moldura" x="'+L+'" y="'+T+'" width="'+(R-L)+'" height="'+(B-T)+'"/>';
+    return s}
+  var animacoes=[].map.call(document.querySelectorAll('svg[data-anima],.cena[data-anima],table[data-anima]'),function(svg){
     var d=JSON.parse(svg.dataset.anima),caixa=svg.closest('.anima'),a={q:svg.closest('.quadro'),svg:svg,d:d,v:{},passo:0,raf:0};
-    var X=function(v){return d.esq+(v-d.x0)*d.ux},Y=function(v){return d.cima+(d.y1-v)*d.uy};
+    // Zoom no plano (22/11/2026, <grafico zoom="centro=x,y ...">): a janela encolhe com o controle zoom, e X e Y seguem a janela.
+    var jz=function(z){var zp=d.zoomp,w=(d.x1-d.x0)/Math.pow(zp.v,z),h=(d.y1-d.y0)/Math.pow(zp.v,z),t=Math.min(1,Math.max(0,z)),
+      cx=(d.x0+d.x1)/2+(zp.c[0]-(d.x0+d.x1)/2)*t,cy=(d.y0+d.y1)/2+(zp.c[1]-(d.y0+d.y1)/2)*t;return [cx-w/2,cx+w/2,cy-h/2,cy+h/2]};
+    var X=function(v){if(!d.zoomp)return d.esq+(v-d.x0)*d.ux;var j=jz(a.v.zoom||0);return d.esq+(v-j[0])*d.ux*(d.x1-d.x0)/(j[1]-j[0])},
+      Y=function(v){if(!d.zoomp)return d.cima+(d.y1-v)*d.uy;var j=jz(a.v.zoom||0);return d.cima+(j[3]-v)*d.uy*(d.y1-d.y0)/(j[3]-j[2])};
     var par=function(c){var f=compilar(c[0]),g=compilar(c[1]);return function(p){return [f(0,p,F),g(0,p,F)]}};
     // Nos sólidos e superfícies, os rótulos ficam fora da cena (.rot3), e também mudam com o controle.
     var dins=[].slice.call(svg.querySelectorAll('[data-din]')).concat(svg.classList.contains('cena')?[].slice.call(caixa.querySelectorAll('.rot3 [data-din]')):[]);
@@ -478,6 +507,7 @@
       // fn com buracos (21/11/2026, como na montagem, 30-graficos.py): onde a função não existe (divisão por zero, raiz de
       // negativo, ln de 0), a curva para e recomeça depois, num <path> de trechos (M ... L ... M ...), em vez de ligar os dois lados.
       if(o.fn){var fy=compilar(o.fn),de=compilar(o.de),ate=compilar(o.ate);fs.push(function(p){var a0=de(0,p,F),b0=ate(0,p,F),t='',novo=true;
+        if(d.zoomp){var jj=jz(p.zoom||0),mw=(jj[1]-jj[0])*.05;a0=Math.max(a0,jj[0]-mw);b0=Math.min(b0,jj[1]+mw)}
         for(var k=0;k<=o.n;k++){var x=a0+(b0-a0)*k/o.n,y;try{y=fy(x,p,F)}catch(_){y=NaN}
           if(isFinite(y)){t+=(novo?'M':'L')+X(x).toFixed(1)+' '+Y(y).toFixed(1);novo=false}else novo=true}
         e.setAttribute('d',t)})}
@@ -533,6 +563,9 @@
         e.setAttribute(circ?'cx':'x',(X(c[0])+(o.ox||0)).toFixed(1));e.setAttribute(circ?'cy':'y',(Y(c[1])+(o.oy||0)).toFixed(1))})}
       if(o.t){var tx=o.t.map(function(m){return typeof m==='string'?m:{f:compilar(m.e),s:m.s}});fs.push(function(p){
         e.textContent=tx.map(function(m){if(typeof m==='string')return m;var v=m.f(0,p,F);return m.s==='+'?parcela(v,d.casas):m.s==='*'?fator(v,d.casas):m.s==='~'?emPi(v):m.s==='#'?(Math.abs(v-1)<1e-3?'':misto(v,d.casas)):escrever(v,d.casas)}).join('')})}
+      if(o.zoom){fs.push(function(p){e.innerHTML=desenharZoom(o.zoom,p.zoom)})}
+      if(o.eixosz){var fixos=[].slice.call(svg.querySelectorAll('[data-fixo]'));fs.push(function(p){var z=p.zoom||0,dentro=z>1e-3;
+        fixos.forEach(function(f){f.style.display=dentro?'none':''});e.innerHTML=dentro?eixosZoom(d,jz(z),z):''})}
       return function(p){fs.forEach(function(f){f(p)})};
     });
     var entradas={};
@@ -550,6 +583,22 @@
       if(o.tipo==='poligonal'){for(k=0;k<n;k++){var x=a0+k*h;v+=Math.hypot(h,f(x+h,p,F)-f(x,p,F))}}
       else faixas(f,o.F?compilar(o.F):null,o.tipo,a0,b0,n,p).forEach(function(r){v+=r[1]*r[3]})
       p[o.nome]=v}});
+    // Tabela ligada (22/11/2026): um ponto no gráfico que ela segue para cada linha, no lugar do valor; passar o mouse (ou tocar)
+    // numa linha acende o ponto, e no ponto acende a linha.
+    if(d.gid){var lider=a.q&&a.q.querySelector('svg[data-gid="'+d.gid+'"]');if(lider){var ld=JSON.parse(lider.dataset.anima),
+      LX=function(v){return ld.esq+(v-ld.x0)*ld.ux},LY=function(v){return ld.cima+(ld.y1-v)*ld.uy},ns='http://www.w3.org/2000/svg',
+      grupo=document.createElementNS(ns,'g'),linhasT=[].slice.call(svg.querySelectorAll('tr[data-x]'));grupo.setAttribute('class','pts-tab');lider.appendChild(grupo);
+      var pts=linhasT.map(function(tr,k){var c=document.createElementNS(ns,'circle');c.setAttribute('class','pt a');c.setAttribute('r','8');grupo.appendChild(c);
+        var acender=function(on){tr.classList.toggle('acesa',on);c.setAttribute('r',on?'13':'8')};
+        // Mouse: acende ao passar. Toque (sem "passar"): o toque fixa o realce nesta linha e apaga o das outras; outro toque apaga.
+        [tr,c].forEach(function(el){el.addEventListener('pointerenter',function(ev){if(ev.pointerType!=='touch')acender(true)});
+          el.addEventListener('pointerleave',function(ev){if(ev.pointerType!=='touch')acender(false)});
+          el.addEventListener('pointerup',function(ev){if(ev.pointerType!=='touch')return;var on=!tr.classList.contains('acesa');
+            linhasT.forEach(function(o,m){o.classList.remove('acesa');if(pts[m])pts[m].setAttribute('r','8')});acender(on)})});return c});
+      var valorTd=function(tr){return parseFloat(tr.cells[1].textContent.replace('−','-').replace(',','.'))};
+      acoes.push(function(){linhasT.forEach(function(tr,k){var y=valorTd(tr),c=pts[k],ok=isFinite(y)&&y>=ld.y0&&y<=ld.y1;
+        c.style.display=ok?'':'none';if(ok){c.setAttribute('cx',LX(+tr.dataset.x).toFixed(1));c.setAttribute('cy',LY(y).toFixed(1))}})});
+      acoes[acoes.length-1]()}}
     if(d.solido)acoes.push(criarSolido(svg,d.solido,a));
     if(d.superficie)acoes.push(criarSuperficie(svg,d.superficie,a));
     a.acoes=acoes;a.entradas=entradas;
@@ -1019,7 +1068,7 @@
     // acionar um botão que a pessoa não via.
     if(ctl.contains(e.target)||(barraTopo&&barraTopo.contains(e.target))){engolir=!ctl.classList.contains('ver');verMenu(4000);return}
     if(e.touches.length!==1||!aberto()||raiz.classList.contains('geral'))return;
-    if(e.target.closest&&e.target.closest('input,select,button,a,.cena,.ctl,.barra,.controles,.indice,.alca'))return;
+    if(e.target.closest&&e.target.closest('input,select,button,a,.cena,.ctl,.barra,.controles,.indice,.alca,table.lig tr[data-x],.pts-tab'))return;
     if(gav&&gav.classList.contains('ver')&&!document.body.classList.contains('fixo'))return;
     tx=lx=e.touches[0].clientX;ty=ly=e.touches[0].clientY;horiz=false;vert=false;maxdy=0;
   },{passive:true});
@@ -1231,7 +1280,8 @@
           var rs=[].slice.call(rg.getClientRects()).filter(function(b){return b.width>0}).map(function(b){var c=(b.top+b.bottom)/2,m=Math.min(b.height,alt)/2;return {top:c-m,bottom:c+m}}).sort(function(a,b){return a.top-b.top});
           rs.forEach(function(b){if(b.top>=fim-1){linhas++;fim=b.bottom}else fim=Math.max(fim,b.bottom)});
           if(linhas>1)r.push('quadro '+nome+': título de bloco em '+linhas+' linhas: '+alvo.textContent.trim().slice(0,50))});
-        function rotulos(s,onde){var ts=[].slice.call(s.querySelectorAll('text,.lbf')).map(function(e){
+        // Rótulo escondido (display:none, como os números fixos de um gráfico com zoom no plano, 22/11/2026) não conta.
+        function rotulos(s,onde){var ts=[].slice.call(s.querySelectorAll('text,.lbf')).filter(function(e){return e.getClientRects().length>0}).map(function(e){
             if(e.classList.contains('lbf')){var g=document.createRange();g.selectNodeContents(e);return {b:g.getBoundingClientRect(),t:e.textContent.trim()}}
             return {b:e.getBoundingClientRect(),t:e.textContent}});
           for(var a=0;a<ts.length;a++)for(var c=a+1;c<ts.length;c++){var A=ts[a].b,B=ts[c].b,lx=Math.min(A.right,B.right)-Math.max(A.left,B.left),ly=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);

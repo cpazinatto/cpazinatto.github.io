@@ -345,6 +345,38 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 
 /* Gráficos */
 .graf{display:block;margin:auto;max-width:100%;height:auto;overflow:visible}
+/* Diagrama de Venn (<venn>, tema/montagem/35-conjuntos.py, 22/11/2026): contorno neutro, região pintada na cor a (ou b) com
+   transparência, elementos na letra do texto, contagem grande. */
+.venn{display:block;margin:auto;max-width:100%;height:auto;overflow:visible}
+.venn .ct{fill:none;stroke:var(--eixo);stroke-width:3.5}
+.venn .pinta{fill:var(--curva-a);fill-opacity:.3}
+.venn .pinta.b{fill:var(--curva-b)}
+.venn text{fill:var(--texto);font-family:var(--f-texto);paint-order:stroke;stroke:var(--sup,var(--fundo));stroke-width:5px;stroke-linejoin:round}
+.venn .el{font-size:24px}
+.venn .rot{font-size:30px;font-weight:700}
+.venn .nome{font-size:20px;opacity:.8}
+.venn .uni{font-size:22px;opacity:.75}
+.venn .num{font-size:42px;font-weight:700}
+/* Diagrama de flechas (<flechas>, 22/11/2026): flecha na cor a, inversa na b, "não vale" no coral; realce em volta do elemento. */
+.flechas{display:block;margin:auto;max-width:100%;height:auto;overflow:visible}
+.flechas .ct{fill:none;stroke:var(--eixo);stroke-width:3.5}
+.flechas text{fill:var(--texto);font-family:var(--f-texto);paint-order:stroke;stroke:var(--sup,var(--fundo));stroke-width:5px;stroke-linejoin:round}
+.flechas .el{font-size:28px}.flechas .rot{font-size:30px;font-weight:700}.flechas .dest{font-size:22px;fill:var(--curva-b)}
+.flechas .seta path{fill:none;stroke-width:3.5;stroke-linecap:round}
+.flechas .seta.a path{stroke:var(--curva-a)}.flechas .seta.b path{stroke:var(--curva-b)}.flechas .seta.ruim path{stroke:var(--atencao,#e0573c)}
+.flechas .seta path.ponta{stroke:none}.flechas .seta.a path.ponta{fill:var(--curva-a)}.flechas .seta.b path.ponta{fill:var(--curva-b)}.flechas .seta.ruim path.ponta{fill:var(--atencao,#e0573c)}
+.flechas .realce{fill:none;stroke:var(--curva-b);stroke-width:3;stroke-dasharray:7 5}.flechas .realce.ruim{stroke:var(--atencao,#e0573c)}
+/* Tabela ligada ao controle (<tabela segue>, 22/11/2026). */
+table.lig{border-collapse:collapse;margin:auto;font-variant-numeric:tabular-nums}
+table.lig th,table.lig td{padding:.25em .9em;border-bottom:2px solid var(--grade);text-align:center}
+table.lig .dif{color:var(--curva-b)}
+table.lig tr.acesa td{background:color-mix(in srgb,var(--curva-a) 16%,transparent)}
+.graf .pts-tab circle{transition:r .15s;cursor:default}
+/* Reta com zoom (<grafico ... zoom="...">, 22/11/2026). */
+.graf.zoom .tq{stroke:var(--eixo);stroke-width:2}.graf.zoom .tq.gr{stroke-width:3}.graf.zoom .tq.fino{stroke-width:1.5}
+.graf .eixosz .moldura{fill:none;stroke:var(--grade);stroke-width:2}
+.graf.zoom .rz{fill:var(--curva-a);font-size:30px;font-family:var(--f-texto)}
+.graf.zoom circle.cheia.a{fill:var(--curva-a)}.graf.zoom circle.aberta.a{fill:var(--sup,var(--fundo));stroke:var(--curva-a);stroke-width:4}
 .graf .g{stroke:var(--grade);stroke-width:1.5}
 .graf .ax{stroke:var(--eixo);stroke-width:3;fill:none}
 .graf .pt{fill:var(--eixo)}
