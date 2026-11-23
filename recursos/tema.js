@@ -1261,8 +1261,15 @@
         // Espaço sobrando embaixo de um quadro com gráfico (19/11/2026, professor: "a figura não pode crescer?"): dica, não problema;
         // o gráfico tinha sido encolhido quando o que passava da altura era o texto. Quadros centrados ficam de fora.
         else if(inn.querySelector('svg.graf')&&!q.classList.contains('centro')&&(limite-ult)/qr.width*100>6)dicas.push('dica: quadro '+nome+': sobram '+((limite-ult)/qr.width*100).toFixed(0)+' cqw embaixo; o gráfico pode crescer');
+        // Rótulo da conta que quebra em duas linhas (23/11/2026, professor: "pq o espaço gigante?"): dica, só nas disciplinas com
+        // "rotulos_curtos" no disciplina.json (Matemática I); no Cálculo e na ED há rótulos longos de propósito.
+        if(document.documentElement.hasAttribute('data-rotulos-curtos'))[].forEach.call(inn.querySelectorAll('table.passos-conta .rt'),function(e){var g=document.createRange();g.selectNodeContents(e.classList.contains('it')?e.lastElementChild:e);
+          var rs=[].filter.call(g.getClientRects(),function(x){return x.width>1&&x.height>1}),fim=1e9;
+          rs.forEach(function(x){fim=Math.min(fim,x.bottom)});
+          if(rs.some(function(x){return x.top>=fim-1}))dicas.push('dica: quadro '+nome+': rótulo da conta em 2 linhas: "'+e.textContent.trim().slice(0,40)+'"')});
+        // O <svg> em si entra (23/11/2026: sete fichas com nowrap saíam do quadro sem aviso); só o que está dentro dele fica de fora.
         [].forEach.call(inn.querySelectorAll('*'),function(e){var b=e.getBoundingClientRect();
-          if(b.width&&b.right>qr.right-qr.width*0.02&&!e.closest('svg')){r.push('quadro '+nome+': passa da largura <'+e.tagName+'>')}});
+          if(b.width&&b.right>qr.right-qr.width*0.02&&!(e.parentElement&&e.parentElement.closest('svg'))){r.push('quadro '+nome+': passa da largura <'+e.tagName+'>')}});
         // Fórmula que passa da borda direita do bloco (T27, quadros 7 e 9: o "+ C" na borda), mesmo sem passar do quadro.
         [].forEach.call(inn.querySelectorAll('.bloco math'),function(m){var bl=m.closest('.bloco').getBoundingClientRect(),b=m.getBoundingClientRect();
           if(b.width&&b.right>bl.right-qr.width*0.004){var t='quadro '+nome+': fórmula passa da borda do bloco';if(r.indexOf(t)<0)r.push(t)}});

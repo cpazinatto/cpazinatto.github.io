@@ -11,6 +11,9 @@ header.topo{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--
 header.topo .lin{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
 .marca{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--texto);font-weight:700;white-space:nowrap}
 .marca .sel{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0C7E54,#0A6B47);color:#fff;display:grid;place-items:center;font:20px/1 var(--f-math)}
+/* Símbolo com mais de dois caracteres, como o f(x) de Matemática I (23/11/2026, professor: "rompe o espaço"): letra menor, para
+   caber no quadrado. */
+.marca .sel.longo{font-size:13px;letter-spacing:-.5px}
 .caminho{display:flex;gap:6px;align-items:center;color:var(--apoio);font-size:14px;min-width:0;overflow:hidden;white-space:nowrap}
 .caminho a{color:var(--apoio);text-decoration:none}.caminho a:hover{color:var(--texto);text-decoration:underline}
 .caminho [aria-current]{overflow:hidden;text-overflow:ellipsis}

@@ -121,6 +121,8 @@ main.aula>.quadro,.resol>.quadro{touch-action:pinch-zoom}
 /* Na visão geral os quadros ficam empilhados e a página rola: o arrasto vertical volta a ser do navegador (no celular, a visão geral não rolava; 15/11/2026). */
 html.geral main.aula>.quadro{touch-action:pan-y pinch-zoom}
 html:has(main.aula),html:has(body.visor-aberto){overscroll-behavior:none}
+/* Na visão geral a página rola como qualquer página (23/11/2026, roda sem efeito no Safari). */
+html.geral:has(main.aula){overscroll-behavior:auto}
 /* Troca de quadro: um véu da cor de fundo cobre o atual e sai de cima do seguinte (tempo em tema.js).
    O quadro em si nunca fica transparente. */
 .veu{position:fixed;inset:0;z-index:8;background:var(--fundo);opacity:0;pointer-events:none;transition:opacity var(--fade,0s) ease}
@@ -168,6 +170,9 @@ html:not(.geral) tr.oculto>*{border-color:transparent}
 .base-etq{position:absolute;top:-1.55cqw;right:1.4cqw;background:var(--fundo);color:var(--k);border:.2cqw solid var(--k);
   font-size:calc(2.2cqw*var(--tam));line-height:1;padding:.45cqw .8cqw;font-weight:700}
 .bloco>h3.rotulado>.base-etq{position:static;margin:0 -.4cqw 0 auto}
+/* prova= no quadro: a etiqueta no canto de cima, acima do título, sem tirar largura dele (título longo não quebra por causa dela). */
+section.quadro:has(h2.com-etq){position:relative}
+h2.com-etq>.base-etq{position:absolute;top:.5cqw;right:3cqw;--k:var(--define)}
 .base-etq a{color:inherit;text-decoration:none}
 .base-etq a:hover{text-decoration:underline}
 /* Códigos citados no texto dos módulos (ligar_codigos): a cor do texto, com sublinhado discreto; mais forte ao passar o mouse. */
@@ -314,7 +319,13 @@ table.passos-conta{width:100%}
 table.passos-conta td{text-align:left;vertical-align:baseline;padding:.3cqw .6cqw}
 table.passos-conta td.r{width:1%;white-space:nowrap;color:var(--texto);padding-left:0}
 table.passos-conta td.r.t{white-space:normal;color:var(--apoio)}
-table.passos-conta .rt{display:block;width:var(--c1,26cqw)}
+/* Do tamanho do texto, até 26 cqw (23/11/2026; antes, sempre 26). Com 34, contas do Cálculo e da ED passavam da largura. */
+table.passos-conta .rt{display:block;width:max-content;max-width:var(--c1,26cqw);box-sizing:border-box}
+/* Respiro antes da conta, dentro do limite (border-box), só na disciplina com "rotulo_max" (Matemática I, rótulos curtos): no
+   Cálculo e na ED, os rótulos longos quebravam uma linha a mais e estouravam a altura. */
+html[data-rotulos-curtos] table.passos-conta .rt{padding-right:.8cqw}
+table.passos-conta .rt.it{display:flex;align-items:baseline;gap:1cqw}
+table.passos-conta td.r.t:has(.it){color:var(--texto)}
 table.passos-conta td.l{width:1%;white-space:nowrap;text-align:right;padding-right:0}
 table.passos-conta td.d{padding-left:0}
 table.passos-conta td.r .rnum{width:auto;margin-right:.6cqw}
@@ -347,6 +358,8 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .graf{display:block;margin:auto;max-width:100%;height:auto;overflow:visible}
 /* Diagrama de Venn (<venn>, tema/montagem/35-conjuntos.py, 22/11/2026): contorno neutro, região pintada na cor a (ou b) com
    transparência, elementos na letra do texto, contagem grande. */
+/* Barra da dízima: um respiro entre o algarismo e o traço (40-formulas.py, classe barra-dz). */
+mrow.barra-dz{border-top:.065em solid currentColor;padding-top:.1em}
 .venn{display:block;margin:auto;max-width:100%;height:auto;overflow:visible}
 .venn .ct{fill:none;stroke:var(--eixo);stroke-width:3.5}
 .venn .pinta{fill:var(--curva-a);fill-opacity:.3}
@@ -357,6 +370,59 @@ table.qs{align-self:center;margin:0 auto;font-size:calc(3.2cqw*var(--tam))}
 .venn .nome{font-size:20px;opacity:.8}
 .venn .uni{font-size:22px;opacity:.75}
 .venn .num{font-size:42px;font-weight:700}
+.venn .el.av{font-size:20px}
+/* Cada cerca na cor do seu conjunto, com fundo leve (23/11/2026) */
+.venn circle.ct.cj-a{stroke:var(--curva-a);fill:color-mix(in srgb,var(--curva-a) 7%,transparent)}
+.venn circle.ct.cj-b{stroke:var(--curva-b);fill:color-mix(in srgb,var(--curva-b) 7%,transparent)}
+.venn circle.ct.cj-c{stroke:var(--suavez);fill:color-mix(in srgb,var(--suavez) 7%,transparent)}
+.venn text.rot.cj-a{fill:var(--curva-a)} .venn text.rot.cj-b{fill:var(--curva-b)} .venn text.rot.cj-c{fill:var(--suavez)}
+/* Itens da lista como fichas na cor do conjunto (23/11/2026) */
+.venn .tk circle,.venn .tk rect{stroke-width:3}
+.venn .tk-a circle,.venn .tk-a rect{fill:color-mix(in srgb,var(--curva-a) 16%,var(--sup,var(--fundo)));stroke:var(--curva-a)}
+.venn .tk-b circle,.venn .tk-b rect{fill:color-mix(in srgb,var(--curva-b) 16%,var(--sup,var(--fundo)));stroke:var(--curva-b)}
+.venn .tk-c circle,.venn .tk-c rect{fill:color-mix(in srgb,var(--suavez) 16%,var(--sup,var(--fundo)));stroke:var(--suavez)}
+.venn .tk-m circle,.venn .tk-m rect{fill:color-mix(in srgb,color-mix(in srgb,var(--curva-a) 50%,var(--curva-b)) 18%,var(--sup,var(--fundo)));stroke:color-mix(in srgb,var(--curva-a) 50%,var(--curva-b))}
+.venn .tk-f circle,.venn .tk-f rect{fill:var(--sup,var(--fundo));stroke:var(--apoio);stroke-dasharray:5 4}
+.venn .tkt{font-size:26px;font-weight:700;stroke-width:0}
+.fichas text.fx-n,.fichas text.fx-c{fill:var(--texto);stroke-width:0}
+.fichas text.fx-c{fill:var(--apoio)}
+.fichas .tkt{font-size:38px}
+/* Colegas desenhados, ícones e balões de fala (23/11/2026, tema/montagem/36-personagens.py) */
+.avatar{display:inline-block;vertical-align:middle;height:auto;flex:none}
+.icone{display:inline-block;width:1.6em;height:auto;vertical-align:middle}
+.icone.ic-a .ic-f{fill:var(--curva-a)}
+.icone.ic-b .ic-f{fill:var(--curva-b)}
+.fala{display:flex;align-items:flex-start;gap:2.4cqw;margin:.6cqw 0}
+.fala .balao{position:relative;background:var(--sup,var(--fundo));border:.22cqw solid var(--grade);border-radius:1.6cqw;padding:1cqw 1.6cqw;
+  box-shadow:0 .3cqw 1.2cqw color-mix(in srgb,var(--texto) 10%,transparent)}
+/* Ponta do balão (23/11/2026, professor: "seta não ficou pequena demais?"): maior e emendada no contorno; o ::before é a borda,
+   o ::after, na cor do fundo, cobre o contorno onde a ponta sai. */
+.fala .balao::before,.fala .balao::after{content:"";position:absolute;border-style:solid;border-color:transparent}
+.fala .balao::before{left:-2.02cqw;top:1.6cqw;border-width:1.2cqw 1.8cqw 1.2cqw 0;border-right-color:var(--grade)}
+.fala .balao::after{left:-1.7cqw;top:1.83cqw;border-width:.97cqw 1.48cqw .97cqw 0;border-right-color:var(--sup,var(--fundo))}
+.turma{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:1.1cqw;margin-top:1cqw;text-align:center;font-size:.8em}
+.turma .aluno .avatar{width:100%}
+.turma .marcas{display:flex;justify-content:center;gap:.5cqw;min-height:3.4cqw;margin-top:.3cqw}
+.turma .marcas .icone{width:3.2cqw}
+.tradutor{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw 1.6cqw;margin-top:.4cqw}
+.tradutor .cartao-sb{border:.22cqw solid var(--grade);border-radius:1.6cqw;padding:1cqw 1.2cqw;text-align:center}
+.tradutor .cartao-sb p{margin:.3cqw 0 0;font-size:.88em}
+.tradutor .cartao-sb p.sb{font-size:1.25em;margin-top:.5cqw}
+/* Lacuna para completar, nos Sua vez (23/11/2026, professor: "deixar o espaço de preenchimento mais óbvio") */
+.lacuna{display:inline-block;width:2.4em;height:1.25em;margin:0 .3em;vertical-align:-.25em;border:.22cqw dashed var(--suavez);
+  border-radius:.35em;background:color-mix(in srgb,var(--suavez) 12%,transparent)}
+/* A bolinha na linha de base da primeira linha do item (23/11/2026, professor: "numeros e bolinhas não alinhadas com o texto"):
+   presa ao alto, ela subia quando a linha tinha fichas ou fórmula alta. */
+.pistas .pista{display:flex;gap:1.2cqw;align-items:baseline;margin:.6cqw 0}
+.pistas .pista p{margin:.2cqw 0}
+.pistas .pista>div{flex:1;min-width:0}
+/* Regra curta em destaque, sem bloco (23/11/2026) */
+p.regra{border-left:.6cqw solid var(--define);background:color-mix(in srgb,var(--define) 9%,transparent);padding:.6cqw 1.2cqw;border-radius:0 1cqw 1cqw 0}
+.pistas .pista .n,.rt.it .n{flex:none;width:3cqw;height:3cqw;border-radius:50%;background:var(--suavez);color:var(--sobre-suavez);display:grid;place-items:center;font-weight:700;font-size:.75em}
+/* O algarismo no meio da bolinha (23/11/2026, professor: "as bolinhas não centralizaram bem o número"): na Luciole a caixa da
+   letra tem 0,79 em acima da linha de base e 0,22 embaixo, e o algarismo (0,77 em de altura) ficava 0,1 em acima do meio. O
+   espaço de 0,2 em no alto desce o centro da caixa em 0,1 em. (text-box-trim não vale aqui: a bolinha é grade, não bloco.) */
+.pistas .pista .n,.rt.it .n{box-sizing:border-box;padding-top:.2em;line-height:1;font-variant-numeric:tabular-nums}
 /* Diagrama de flechas (<flechas>, 22/11/2026): flecha na cor a, inversa na b, "não vale" no coral; realce em volta do elemento. */
 .flechas{display:block;margin:auto;max-width:100%;height:auto;overflow:visible}
 .flechas .ct{fill:none;stroke:var(--eixo);stroke-width:3.5}
@@ -557,7 +623,9 @@ body.fixo .veu-i{display:none}
 body.fixo .prog{left:var(--larg-ind)}
 
 /* Visão geral */
-.geral,.geral body{overflow:auto;height:auto}
+/* Só a janela rola (23/11/2026, professor: roda sem efeito na visão geral, no Safari): com overflow:auto no html e no body,
+   o Safari pode tomar o body como contêiner de rolagem e a roda não move a página (como em entrada.css, 13/11/2026). */
+.geral,.geral body{overflow:visible;height:auto}
 .geral body{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding:14px;align-items:start}
 .geral .quadro{display:block;width:100%;outline:1px solid var(--apoio);cursor:pointer}
 .geral .quadro.aqui{outline:3px solid var(--define);outline-offset:1px}
