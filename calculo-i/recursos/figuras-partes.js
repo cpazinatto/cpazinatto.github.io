@@ -1,6 +1,7 @@
-// Figuras dos cartões das partes dos módulos (Revisão, "Por que vale?", Demonstrações), pedido do professor em 12/11/2026:
-// minimalistas e ilustrativas, no estilo dos catálogos (tema/figuras.js, caixa 160 x 80, currentColor). Chave: módulo.grupo,
-// como B06.r1 (parte 1 da revisão) e B06.p2 (parte 2 do "Por que vale?"). Parte nova pede um desenho novo aqui.
+// Figuras dos cartões das partes dos módulos do acervo comum da base do superior (22/11/2026), vindas de
+// disciplinas/calculo-i/tema/figuras-partes.js (as da base, B01 a B28; a ED não tinha desenhos de partes da base). Mesmo estilo
+// (caixa 160 x 80, currentColor); chave módulo.grupo, como B06.r1. A montagem de cada disciplina que usa o acervo junta este
+// arquivo com o figuras-partes.js dela (o dela por último). Parte nova pede um desenho novo aqui.
 (function(A){if(!A)return;var graf=A.graf,tx=A.tx,F=A.F;
 /*PARTES*/
 // Lote A
@@ -224,6 +225,16 @@ Object.assign(F,{
   'B28.p2':graf(-4.5,6.5,-0.5,8,[],{lin:[[-3,-0.5,-3,8,'dash'],[1,-0.5,1,8,'dash'],[5,-0.5,5,8,'dash'],[-3,1,5,7,'cv']],pts:[[-3,1],[5,7],[1,4,'ab']]}),
   'B28.p3':(function(){function c(s){return function(x){return 2+s*Math.sqrt(Math.max(0,25-(x-1)*(x-1)))}}
     return graf(-9.5,22,-5.5,8.5,[{f:c(1),a:-4,b:6,c:'fino'},{f:c(-1),a:-4,b:6,c:'fino'},{f:function(x){return -0.75*x+9},a:-1,b:13,c:'cv2'}],{lin:[[1,2,4,6,'cv'],[1,2,8,3,'dash']],pts:[[1,2,'ab'],[4,6],[8,3]]})})(),
+});
+})(window.FIG_AUX);
+
+// Figuras dos cartões das partes dos módulos (Revisão, "Por que vale?", Demonstrações), pedido do professor em 12/11/2026:
+// minimalistas e ilustrativas, no estilo dos catálogos (tema/figuras.js, caixa 160 x 80, currentColor). Chave: módulo.grupo,
+// como B06.r1 (parte 1 da revisão) e B06.p2 (parte 2 do "Por que vale?"). Parte nova pede um desenho novo aqui.
+(function(A){if(!A)return;var graf=A.graf,tx=A.tx,F=A.F;
+/*PARTES*/
+// Lote D (continuação: complementares)
+Object.assign(F,{
   'C01.r1':'<rect x="60" y="18" width="44" height="44" class="cx"/><path d="M60 62L104 18" class="cv2"/><text x="78" y="76" class="rt">1</text><text x="108" y="44" class="rt">1</text><text x="62" y="36" class="rt">√2</text>',
   'C01.r2':'<path d="M12 52H148" class="ex"/><path d="M30 52H70M90 52H130" class="tr2"/><path d="M30 46Q60 20 90 46M70 46Q100 20 130 46" class="dash"/><circle cx="30" cy="52" r="3.2" class="pt"/><circle cx="70" cy="52" r="3.2" class="pt"/><circle cx="90" cy="52" r="3.2" class="ab"/><circle cx="130" cy="52" r="3.2" class="ab"/><text x="26" y="70" class="rt">a</text><text x="66" y="70" class="rt">b</text>',
   'C01.r3':'<path d="M12 62H148" class="ex"/><path d="M70 56v12" class="tr"/><path d="M70 46H106M100 42L106 46L100 50" class="cv"/><path d="M106 28H46M52 24L46 28L52 32" class="cv2"/><path d="M46 28V62" class="fino"/><circle cx="46" cy="62" r="3.2" class="pt"/><text x="66" y="78" class="rt">0</text>',
