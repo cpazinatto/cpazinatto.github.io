@@ -311,6 +311,8 @@ td{padding:.75cqw 1.2cqw;border-bottom:.07cqw solid var(--grade)}
 .esq td,.esq th{text-align:left}
 /* As casas de partes (<partes>, 19/11/2026): a grade na largura toda, uma faixa por etapa, o porquê embaixo de cada casa. */
 table.casas{width:100%;table-layout:fixed}
+/* Tabuleiro: casas com borda, para parecer o tabuleiro (Matemática I, T03, 23/11/2026). */
+table.tabuleiro td{border:.15cqw solid var(--apoio);min-width:6cqw;height:3.4cqw;text-align:center}
 table.casas th{width:24%;white-space:nowrap;text-align:left;color:var(--texto);font-weight:400;border-bottom:.07cqw solid var(--grade);padding-left:0}
 table.casas th,table.casas td{vertical-align:baseline}
 table.casas td{text-align:left}
@@ -431,7 +433,7 @@ p.regra{border-left:.6cqw solid var(--define);background:color-mix(in srgb,var(-
 .flechas{display:block;margin:auto;max-width:100%;height:auto;overflow:visible}
 .flechas .ct{fill:none;stroke:var(--eixo);stroke-width:3.5}
 .flechas text{fill:var(--texto);font-family:var(--f-texto);paint-order:stroke;stroke:var(--sup,var(--fundo));stroke-width:5px;stroke-linejoin:round}
-.flechas .el{font-size:28px}.flechas .rot{font-size:30px;font-weight:700}.flechas .dest{font-size:22px;fill:var(--curva-b)}
+.flechas .el{font-size:34px}.flechas .rot{font-size:34px;font-weight:700}.flechas .dest{font-size:22px;fill:var(--curva-b)}
 .flechas .seta path{fill:none;stroke-width:3.5;stroke-linecap:round}
 .flechas .seta.a path{stroke:var(--curva-a)}.flechas .seta.b path{stroke:var(--curva-b)}.flechas .seta.ruim path{stroke:var(--atencao,#e0573c)}
 .flechas .seta path.ponta{stroke:none}.flechas .seta.a path.ponta{fill:var(--curva-a)}.flechas .seta.b path.ponta{fill:var(--curva-b)}.flechas .seta.ruim path.ponta{fill:var(--atencao,#e0573c)}
@@ -448,6 +450,7 @@ table.lig tr.acesa td{background:color-mix(in srgb,var(--curva-a) 16%,transparen
 .graf.zoom .rz{fill:var(--curva-a);font-size:30px;font-family:var(--f-texto)}
 .graf.zoom circle.cheia.a{fill:var(--curva-a)}.graf.zoom circle.aberta.a{fill:var(--sup,var(--fundo));stroke:var(--curva-a);stroke-width:4}
 .graf .g{stroke:var(--grade);stroke-width:1.5}
+.graf.malha .g{stroke:color-mix(in srgb,var(--apoio) 45%,transparent);stroke-width:2}
 .graf .ax{stroke:var(--eixo);stroke-width:3;fill:none}
 .graf .pt{fill:var(--eixo)}
 .graf .pt.a{fill:var(--curva-a);stroke:none}.graf .pt.b{fill:var(--curva-b);stroke:none}
@@ -658,6 +661,24 @@ body.fixo .prog{left:var(--larg-ind)}
 .geral .anima.solido .cena{pointer-events:none}
 .graf .cpt{stroke:none}.graf .cpt.a{fill:var(--curva-a)}.graf .cpt.b{fill:var(--curva-b)}
 .nb{white-space:nowrap}
+/* Retas empilhadas (23/11/2026, tema/montagem/31-retas.py): base fina, trecho grosso na cor da reta, nome à esquerda. A cor "res"
+   é a do resultado das operações, a do texto. */
+.graf.retas .base{stroke:var(--eixo);stroke-width:2.5}
+/* Bolinha cheia e vazada no texto (24/11/2026): os caracteres ● e ○ saíam minúsculos na Luciole; o motor
+   (preparar(), 60-quadros.py) os troca por este desenho, na cor do texto em volta. */
+.bol{display:inline-block;width:.72em;height:.72em;border:.14em solid currentColor;border-radius:50%;
+  box-sizing:border-box;vertical-align:-.04em;margin:0 .08em}
+.bol.cheia{background:currentColor}
+.bol.vazada{background:var(--fundo)}
+.graf.retas .seg{stroke-width:7;stroke-linecap:butt}
+.graf.retas .res{stroke:var(--texto)}
+.graf.retas .pt.res{fill:var(--texto);stroke:none}
+.graf.retas .cheia.res{fill:var(--texto);stroke:var(--texto)}
+.graf.retas .aberta.res{stroke:var(--texto)}
+.graf.retas .nome{font-size:26px;font-style:italic;font-weight:700;fill:var(--texto);stroke:none}
+.graf.retas .nome.a{fill:var(--curva-a)}.graf.retas .nome.b{fill:var(--curva-b)}
+.graf.retas .vazio{font-size:30px;fill:var(--apoio);stroke:none}
+.graf.retas .tk.fraco{fill:var(--apoio);font-size:20px}
 }
 /* Capturas de tela (tema/capturas.py, ?captura=1, 13/11/2026): nada se move, para duas capturas da mesma página saírem iguais. */
 .captura *,.captura *::before,.captura *::after{transition:none!important;animation:none!important}
