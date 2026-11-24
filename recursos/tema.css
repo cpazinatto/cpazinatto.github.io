@@ -453,7 +453,7 @@ table.lig tr.acesa td{background:color-mix(in srgb,var(--curva-a) 16%,transparen
 .graf.malha .g{stroke:color-mix(in srgb,var(--apoio) 45%,transparent);stroke-width:2}
 .graf .ax{stroke:var(--eixo);stroke-width:3;fill:none}
 .graf .pt{fill:var(--eixo)}
-.graf .pt.a{fill:var(--curva-a);stroke:none}.graf .pt.b{fill:var(--curva-b);stroke:none}
+.graf .pt.a{fill:var(--curva-a);stroke:none}.graf .pt.original{fill:var(--apoio);stroke:none}.graf .pt.b{fill:var(--curva-b);stroke:none}
 .graf text{font-family:var(--f-texto);paint-order:stroke;stroke:var(--sup,var(--fundo));stroke-width:5px;stroke-linejoin:round}
 .graf .tk{fill:var(--texto);font-size:24px}
 .graf.reta .tk{font-size:28px}
